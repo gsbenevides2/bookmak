@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { MockResponses } from "../mocks/mock";
+import { faker } from "@faker-js/faker";
 
 const checkoutRouter = Router();
 
@@ -109,11 +110,70 @@ checkoutRouter.post("/bookmark", (req, res) => {
     bookmarkText,
     bookmarkStyle,
   };
-  res.redirect("/checkout/register");
+  res.redirect("/login?goToCheckout=true");
 });
 
-checkoutRouter.get("/register", (_req, res) => {
-  res.send("Not implemented");
+checkoutRouter.get("/address", (req, res) => {
+  res.render("checkout/address", {
+    error: null,
+    addresses: MockResponses.addresses,
+  });
+});
+
+checkoutRouter.post("/address", (req, res) => {
+  const {
+    selectedAddress,
+    nickname,
+    typeOfResidence,
+    typeOfStreat,
+    streat,
+    number,
+    district,
+    code,
+    city,
+    state,
+    country,
+    observation,
+  } = req.body;
+
+  if (selectedAddress != null && selectedAddress.length > 0) {
+    const address = MockResponses.addresses.find(
+      (address) => address.id === selectedAddress,
+    );
+    if (address != null) {
+      MockResponses.order = {
+        ...MockResponses.order,
+        address,
+      };
+      res.redirect("/checkout/payment");
+    }
+    res.render("checkout/address", {
+      error: "Selecione um endereço válido.",
+      addresses: MockResponses.addresses,
+    });
+    return;
+  }
+
+  const newAddress = {
+    id: faker.string.uuid(),
+    nickname,
+    typeOfResidence,
+    typeOfStreat,
+    streat,
+    number,
+    district,
+    code,
+    city,
+    state,
+    country,
+    observation,
+  };
+  MockResponses.addresses.push(newAddress);
+  MockResponses.order = {
+    ...MockResponses.order,
+    address: newAddress,
+  };
+  res.redirect("/checkout/payment");
 });
 
 export default checkoutRouter;

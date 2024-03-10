@@ -95,9 +95,85 @@ for (let i = 0; i < qtdItensInCart; i++) {
 }
 
 interface Order {
-  bookmarkText: string;
-  bookmarkStyle: string;
+  address?: Address;
+  bookmarkText?: string;
+  bookmarkStyle?: string;
 }
+
+interface Account {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  cpf: string;
+  birthdate: Date;
+  isAdmin: boolean;
+}
+
+const accounts: Account[] = [
+  {
+    id: faker.string.uuid(),
+    name: "Guilherme da Silva Benevides",
+    email: "gsbenevides2@gmail.com",
+    password: "123456789",
+    cpf: "12345678901",
+    birthdate: new Date("1998-08-25"),
+    isAdmin: true,
+  },
+  {
+    id: faker.string.uuid(),
+    name: "João da Silva",
+    email: "joaoSilva@gmail.com",
+    password: "123456789",
+    cpf: "12345678902",
+    birthdate: new Date("1998-08-25"),
+    isAdmin: false,
+  },
+];
+
+interface Address {
+  id: string;
+  nickname: string;
+  typeOfResidence: string;
+  typeOfStreat: string;
+  streat: string;
+  number: string;
+  district: string;
+  code: string;
+  city: string;
+  state: string;
+  country: string;
+  observation?: string;
+}
+
+const addresses: Address[] = [
+  {
+    id: faker.string.uuid(),
+    nickname: "Casa",
+    typeOfResidence: "Casa",
+    typeOfStreat: "Rua",
+    streat: "Rua das Flores",
+    number: "123",
+    district: "Centro",
+    code: "12345678",
+    city: "São Paulo",
+    state: "SP",
+    country: "Brasil",
+  },
+  {
+    id: faker.string.uuid(),
+    nickname: "Apartamento",
+    typeOfResidence: "Apartamento",
+    typeOfStreat: "Avenida",
+    streat: "Avenida Paulista",
+    number: "123",
+    district: "Centro",
+    code: "12345678",
+    city: "São Paulo",
+    state: "SP",
+    country: "Brasil",
+  },
+];
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class MockResponses {
@@ -113,7 +189,7 @@ export class MockResponses {
       .toFixed(2);
   }
 
-  public static order?: Order;
+  public static order: Order = {};
   public static bookmarkStyles: string[] = ["Estilo A", "Estilo 2", "Estilo C"];
   public static aiBookmarkTexts: string[] = [
     faker.lorem.sentence(),
@@ -121,4 +197,7 @@ export class MockResponses {
     faker.lorem.sentence(),
     faker.lorem.sentence(),
   ];
+
+  public static accounts: Account[] = accounts;
+  public static addresses: Address[] = addresses;
 }
