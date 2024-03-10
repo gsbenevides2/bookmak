@@ -1,17 +1,27 @@
 import express from "express";
-import "reflect-metadata";
+import booksRouter from "./routes/books";
+import accountsRouter from "./routes/accounts";
+import loginRouter from "./routes/login";
+import checkoutRouter from "./routes/checkout";
+import cookieParser from "cookie-parser";
 
 const server = express();
-
-server.use(express.json());
-server.use(express.urlencoded({ extended: true }));
-server.use(express.static("public"));
-server.set("view engine", "ejs");
-
 const serverPort = process.env.PORT ?? 3000;
 
+server.use(express.json());
+server.use(cookieParser());
+server.use(express.urlencoded({ extended: true }));
+server.use(express.static("dist/public"));
+server.set("views", "dist/views");
+server.set("view engine", "ejs");
+
+server.use("/books", booksRouter);
+server.use("/accounts", accountsRouter);
+server.use("/login", loginRouter);
+server.use("/checkout", checkoutRouter);
+
 server.get("/", (_req, res) => {
-  res.render("index");
+  res.redirect("/books");
 });
 
 server.listen(serverPort, () => {

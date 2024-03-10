@@ -9,40 +9,31 @@
   "private": true,
   "scripts": {
     "start": "node dist/index.js",
-    "build": "tsc",
-    "dev": "nodemon dist/index.js",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.{json,jsonc,scss}": [
-      "prettier --write"
-    ]
+    "dev": "nodemon",
+    "build": "rm dist -rf && tsc && cp -r src/views dist/views && cp -r src/public dist/public"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.0.3",
-    "@commitlint/config-conventional": "^19.0.3",
+    "@faker-js/faker": "^8.4.1",
+    "@types/cookie-parser": "^1.4.7",
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.25",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard-with-typescript": "^43.0.1",
+    "eslint-plugin-ejs": "^0.0.2",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
     "eslint-plugin-promise": "^6.0.0",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
     "prettier": "3.2.5",
-    "typescript": "*"
+    "prettier-plugin-ejs": "^1.0.3",
+    "typescript": "*",
+    "nodemon": "^3.1.0"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "ejs": "^3.1.9",
     "express": "^4.18.3",
-    "nodemon": "^3.1.0",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.2.1",
     "typeorm": "^0.3.20"
