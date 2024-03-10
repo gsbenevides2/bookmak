@@ -150,8 +150,14 @@
           <% }) %>
         </div>
       </section>
+      <!--Busca Vazia-->
+      <% if (books.length === 0 && Object.keys(filters).length > 1) { %>
+      <div class="alert alert-warning mt-5" role="alert">
+        Nenhum livro encontrado com os filtros aplicados.
+      </div>
+      <% } %>
     </main>
-    <!--Bootstrap JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
+   <!--Bootstrap JS-->
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </html>

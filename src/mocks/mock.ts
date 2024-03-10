@@ -1,12 +1,9 @@
 import { faker } from "@faker-js/faker";
 
 interface CartItem {
-  cartItemId: string;
-  bookId: string;
-  cover: string;
-  title: string;
+  book: Book;
+  subtotal: string;
   quantity: number;
-  unitPrice: string;
 }
 
 interface Book {
@@ -54,7 +51,7 @@ for (let i = 0; i < qtdFakerBooks; i++) {
   const category =
     categories[Math.floor(Math.random() * categories.length)].name;
   const author = authors[Math.floor(Math.random() * authors.length)].name;
-  const id = faker.datatype.uuid();
+  const id = faker.string.uuid();
   const price = faker.commerce.price({
     max: 100,
     min: 10,
@@ -83,19 +80,23 @@ const cart: CartItem[] = [];
 
 for (let i = 0; i < qtdItensInCart; i++) {
   const book = books[Math.floor(Math.random() * books.length)];
+  const hasInCart = cart.find((item) => item.book.id === book.id);
+  if (hasInCart != null) continue;
   const quantity = faker.number.int({
     min: 1,
     max: 5,
   });
-  const cartItemId = faker.datatype.uuid();
+  const subtotal = (parseFloat(book.price) * quantity).toFixed(2);
   cart.push({
-    cartItemId,
-    bookId: book.id,
-    cover: book.cover,
-    title: book.title,
+    book,
     quantity,
-    unitPrice: book.price,
+    subtotal,
   });
+}
+
+interface Order {
+  bookmarkText: string;
+  bookmarkStyle: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -104,4 +105,20 @@ export class MockResponses {
   public static authors: Author[] = authors;
   public static books: Book[] = books;
   public static cart: CartItem[] = cart;
+  public static get total(): string {
+    return cart
+      .reduce((acc, item) => {
+        return acc + parseFloat(item.subtotal);
+      }, 0)
+      .toFixed(2);
+  }
+
+  public static order?: Order;
+  public static bookmarkStyles: string[] = ["Estilo A", "Estilo 2", "Estilo C"];
+  public static aiBookmarkTexts: string[] = [
+    faker.lorem.sentence(),
+    faker.lorem.sentence(),
+    faker.lorem.sentence(),
+    faker.lorem.sentence(),
+  ];
 }

@@ -8,8 +8,6 @@
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/styles/checkout.css" />
   </head>
@@ -18,7 +16,7 @@
     <header>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-          <a href="/" class="navbar-brand">BookMark - Carrinho</a>
+          <a href="/" class="navbar-brand">BookMark</a>
         </div>
       </nav>
     </header>
@@ -27,25 +25,31 @@
       <h1 class="mt-3 text-center">Carrinho</h1>
       <!--Produtos do Carrinho-->
       <ul class="list-group mt-3">
-        <% cart.forEach((book) => { %>
+        <% cart.forEach((cartItem) => { %>
         <li
           class="list-group-item d-flex justify-content-between align-items-center"
         >
           <div class="d-flex align-items-center">
             <img
-              src="<%= book.cover %>"
-              alt="<%= book.title %>"
-              class="me-3 book-cover"
+              src="<%= cartItem.book.cover %>"
+              alt="<%= cartItem.book.title %>"
+              class="me-3 book-cover cursor-pointer"
+              role="button"
+              onClick="window.location.href='/books/<%= cartItem.book.id %>'"
             />
             <div class="d-flex flex-column">
-              <span class="fw-bold"><%= book.title %></span>
-              <span class="text-muted"
-                ><%= book.author %>
+              <span class="fw-bold"><%= cartItem.book.title %></span>
+              <span class="text-muted" alt="<%= cartItem.book.title %>"
+                ><%= cartItem.book.author %>
                 -
-                <%= book.genre %></span
+                <%= cartItem.book.category %></span
               >
-              <span class="text-muted"> Quantidade: <%= book.quantity %> </span>
-              <span class=""> Preço Unitário: R$ <%= book.unitPrice %> </span>
+              <span class="text-muted">
+                Quantidade: <%= cartItem.quantity %>
+              </span>
+              <span class="">
+                Preço Unitário: R$ <%= cartItem.book.price %>
+              </span>
             </div>
           </div>
 
@@ -55,7 +59,11 @@
               method="POST"
               class="d-flex flex-column mb-0"
             >
-              <input type="hidden" name="bookId" value="<%= book.id %>" />
+              <input
+                type="hidden"
+                name="bookId"
+                value="<%= cartItem.book.id %>"
+              />
               <input type="hidden" name="action" value="UPDATE_QUANTITY" />
               <div class="d-flex flex-column">
                 <label for="quantity" class="form-label mt-3 mb-0"
@@ -64,7 +72,7 @@
                 <input
                   type="number"
                   name="quantity"
-                  value="<%= book.quantity %>"
+                  value="<%= cartItem.quantity %>"
                   class="form-control mt-1"
                 />
               </div>
@@ -77,11 +85,18 @@
               method="POST"
               class="d-flex flex-column mt-2 mb-0"
             >
-              <input type="hidden" name="bookId" value="<%= book.id %>" />
+              <input
+                type="hidden"
+                name="bookId"
+                value="<%= cartItem.book.id %>"
+              />
               <input type="hidden" name="action" value="REMOVE" />
               <button type="submit" class="btn btn-danger mt-1">Remover</button>
             </form>
-            <span class="fw-bold mt-3">Subtotal: R$ <%= book.subtotal %></span>
+            <span class="fw-bold mt-3"
+              >Subtotal: R$
+              <%= cartItem.subtotal %></span
+            >
           </div>
         </li>
         <% }); %>
@@ -93,14 +108,13 @@
           <%= total %>
         </h3>
       </div>
-      <!--BotÃĢo de Compra-->
-      <button class="btn btn-success mt-3 w-100">Continuar Compra</button>
+      <!--Botão de Compra-->
+      <a href="/" class="btn btn-primary mt-3 w-100">Escolher Mais</a>
+      <a href="/checkout/bookmark" class="btn btn-success mt-3 w-100"
+        >Continuar Compra</a
+      >
     </main>
     <!--Bootstrap JS-->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
