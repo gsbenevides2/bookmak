@@ -46,7 +46,7 @@
           />
         </div>
         <button type="submit" class="btn btn-dark">Entrar</button>
-        <a href="/login/register<%= goToCheckout ? '?goToCheckout=true' : ''  %>" class="btn btn-link">Cadastre-se</a>
+        <a href="/login/register<%= redirectTo ? `?redirectTo=${redirectTo}` : ''  %>" class="btn btn-link">Cadastre-se</a>
         <% if (error) { %>
         <div class="alert alert-danger mt-3" role="alert">
           <%= error %>

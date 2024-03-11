@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { MockResponses } from "../mocks/mock";
-import { faker } from "@faker-js/faker";
 
 const checkoutRouter = Router();
 
@@ -75,7 +74,6 @@ checkoutRouter.post("/bookmark", (req, res) => {
     customText?: string;
     bookmarkStyle?: string;
   }
-  console.log(req.body);
   const { text, customText, bookmarkStyle } = req.body as Body;
   const bookmarkText =
     customText != null ? (customText.length > 0 ? customText : text) : text;
@@ -110,70 +108,62 @@ checkoutRouter.post("/bookmark", (req, res) => {
     bookmarkText,
     bookmarkStyle,
   };
-  res.redirect("/login?goToCheckout=true");
+  res.redirect("/login?redirectTo=/checkout/addresses");
 });
 
-checkoutRouter.get("/address", (req, res) => {
-  res.render("checkout/address", {
+checkoutRouter.get("/addresses", (req, res) => {
+  res.render("checkout/selectAddresses", {
     error: null,
     addresses: MockResponses.addresses,
   });
 });
 
-checkoutRouter.post("/address", (req, res) => {
-  const {
-    selectedAddress,
-    nickname,
-    typeOfResidence,
-    typeOfStreat,
-    streat,
-    number,
-    district,
-    code,
-    city,
-    state,
-    country,
-    observation,
-  } = req.body;
+checkoutRouter.post("/addresses", (req, res) => {
+  const { billingAddress, shippingAddress } = req.body;
+  const addresses = MockResponses.addresses;
+  const address = addresses.find((address) => address.id === billingAddress);
+  if (address != null) {
+    MockResponses.order = {
+      ...MockResponses.order,
+      addressPayment: address,
+    };
+  }
+  const shipping = addresses.find((address) => address.id === shippingAddress);
+  if (shipping != null) {
+    MockResponses.order = {
+      ...MockResponses.order,
+      addressShipping: shipping,
+    };
+  }
+  res.redirect("/checkout/payment");
+});
 
-  if (selectedAddress != null && selectedAddress.length > 0) {
-    const address = MockResponses.addresses.find(
-      (address) => address.id === selectedAddress,
-    );
-    if (address != null) {
-      MockResponses.order = {
-        ...MockResponses.order,
-        address,
-      };
-      res.redirect("/checkout/payment");
-    }
-    res.render("checkout/address", {
-      error: "Selecione um endereço válido.",
-      addresses: MockResponses.addresses,
-    });
+checkoutRouter.get("/payment", (req, res) => {
+  const accountId = req.cookies.accountId;
+  const account = MockResponses.accounts.find(
+    (account) => account.id === accountId,
+  );
+  if (account == null) {
+    res.redirect("/login?redirectTo=/checkout/payment");
     return;
   }
 
-  const newAddress = {
-    id: faker.string.uuid(),
-    nickname,
-    typeOfResidence,
-    typeOfStreat,
-    streat,
-    number,
-    district,
-    code,
-    city,
-    state,
-    country,
-    observation,
-  };
-  MockResponses.addresses.push(newAddress);
-  MockResponses.order = {
-    ...MockResponses.order,
-    address: newAddress,
-  };
-  res.redirect("/checkout/payment");
+  res.render("checkout/payment", {
+    error: null,
+    order: MockResponses.order,
+    cart: MockResponses.cart,
+    total: MockResponses.total,
+    account: {
+      ...account,
+      birthdate: account.birthdate
+        .toISOString()
+        .split("T")[0]
+        .split("-")
+        .reverse()
+        .join("/"),
+    },
+    cards: MockResponses.cards,
+  });
 });
 
 export default checkoutRouter;

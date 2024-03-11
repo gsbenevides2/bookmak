@@ -47,6 +47,26 @@ const qtdFakerBooks = faker.number.int({
   max: 50,
 });
 
+interface Card {
+  id: string;
+  cardNumber: string;
+  cardName: string;
+  cardExpiry: string;
+  cardCVV: string;
+  cardBrand: string;
+}
+
+const cards: Card[] = [
+  {
+    id: faker.string.uuid(),
+    cardNumber: "1234567890123456",
+    cardName: "Guilherme da Silva Benevides",
+    cardExpiry: "12/2025",
+    cardCVV: "123",
+    cardBrand: "Mastercard",
+  },
+];
+
 for (let i = 0; i < qtdFakerBooks; i++) {
   const category =
     categories[Math.floor(Math.random() * categories.length)].name;
@@ -95,7 +115,8 @@ for (let i = 0; i < qtdItensInCart; i++) {
 }
 
 interface Order {
-  address?: Address;
+  addressShipping?: Address;
+  addressPayment?: Address;
   bookmarkText?: string;
   bookmarkStyle?: string;
 }
@@ -133,42 +154,42 @@ const accounts: Account[] = [
 
 interface Address {
   id: string;
-  nickname: string;
-  typeOfResidence: string;
-  typeOfStreat: string;
-  streat: string;
+  addressName: string;
+  residenceType: string;
+  streetType: string;
+  street: string;
   number: string;
   district: string;
-  code: string;
+  zip: string;
   city: string;
   state: string;
   country: string;
-  observation?: string;
+  observations?: string;
 }
 
 const addresses: Address[] = [
   {
     id: faker.string.uuid(),
-    nickname: "Casa",
-    typeOfResidence: "Casa",
-    typeOfStreat: "Rua",
-    streat: "Rua das Flores",
+    addressName: "Casa",
+    residenceType: "Casa",
+    streetType: "Rua",
+    street: "das Flores",
     number: "123",
     district: "Centro",
-    code: "12345678",
+    zip: "12345678",
     city: "São Paulo",
     state: "SP",
     country: "Brasil",
   },
   {
     id: faker.string.uuid(),
-    nickname: "Apartamento",
-    typeOfResidence: "Apartamento",
-    typeOfStreat: "Avenida",
-    streat: "Avenida Paulista",
+    addressName: "Apartamento",
+    residenceType: "Apartamento",
+    streetType: "Avenida",
+    street: "Avenida Paulista",
     number: "123",
     district: "Centro",
-    code: "12345678",
+    zip: "12345678",
     city: "São Paulo",
     state: "SP",
     country: "Brasil",
@@ -200,4 +221,5 @@ export class MockResponses {
 
   public static accounts: Account[] = accounts;
   public static addresses: Address[] = addresses;
+  public static cards: Card[] = cards;
 }

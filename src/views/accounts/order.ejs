@@ -1,0 +1,128 @@
+<html lang="pt-br">
+  <head>
+    <title>BookMark</title>
+    <!--Meta Tags-->
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Bootstrap CSS-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/checkout.css" />
+  </head>
+  <style>
+    .book-cover {
+      width: 100px;
+      height: 150px;
+      object-fit: cover;
+    }
+  </style>
+  <body>
+    <!--Header-->
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a href="/" class="navbar-brand">BookMark</a>
+        </div>
+      </nav>
+    </header>
+    <!--Conteudo-->
+    <main class="container mb-5">
+      <h1 class="mt-3 text-center">Pedido: 001</h1>
+
+      <div class="mt-3 border p-3">
+        <h5>Status:</h5>
+        <p class="mb-0">Pagamento em Processamento</p>
+        <a
+          href="/accounts/me/orders/1/change"
+          class="btn btn-outline-secondary mt-2"
+          >Trocar Pedido</a
+        >
+        <a
+          href="/accounts/me/orders/1/cancel"
+          class="btn btn-outline-secondary mt-2"
+        >
+          Cancelar/Devolver Pedido
+        </a>
+      </div>
+      <!--Lista de Produtos-->
+      <ul class="list-group mt-3 border p-3">
+        <h5>Lista de Produtos:</h5>
+        <li class="list-group-item d-flex align-items-center border-0">
+          <img
+            src="https://picsum.photos/200/300"
+            alt="Nome do Livro"
+            class="me-3 book-cover cursor-pointer"
+            role="button"
+          />
+          <div class="d-flex flex-column">
+            <h6 class="fw-bold">Nome do Livro</h6>
+            <p>Autor: AAA</p>
+            <p>
+              Preço Unitário: R$ 12,00 <br />Quantidade: 1 <br />Subtotal: R$
+              12,00
+            </p>
+          </div>
+        </li>
+      </ul>
+      <!--Dados do Cliente-->
+      <div class="mt-3 border p-3">
+        <h5>Dados do Cliente:</h5>
+        <div class="row">
+          <div class="col-7">Nome: José da Silva</div>
+          <div class="col-5">Email: gsbenevides2@gmail.com</div>
+          <div class="col-7">CPF: 12345678901</div>
+          <div class="col-5">Data de Nascimento:30/05/2003</div>
+        </div>
+      </div>
+      <!--Endereço de Envio-->
+      <div class="mt-3 border p-3">
+        <h5>Endereço de Envio:</h5>
+        <p class="mb-0">
+          Estrada Hiroshi Tobinaga Nº1115 CEP:08633-138 Suzano - SP Brasil<br />
+          Observações: Na frente do Rancho do Verde
+        </p>
+      </div>
+      <!--Endereço de Cobrança-->
+      <div class="mt-3 border p-3">
+        <h5>Endereço de Cobrança:</h5>
+        <p class="mb-0">
+          Estrada Hiroshi Tobinaga Nº1115 CEP:08633-138 Suzano - SP Brasil<br />
+          Observações: Na frente do Rancho do Verde
+        </p>
+      </div>
+      <!--Cupom-->
+      <div class="mt-3 border p-3">
+        <h5>Cupons:</h5>
+
+        <div class="row">
+          <div class="mb-0 d-flex justify-content-between">
+            <p class="mb-0">Cupon 1</p>
+          </div>
+        </div>
+      </div>
+      <!--Resumo-->
+      <div class="mt-3 border p-3">
+        <h5>Resumo:</h5>
+        <div class="row">
+          <div class="col-6">Subtotal</div>
+          <div class="col-6 text-end">R$ 12,00</div>
+          <div class="col-6">Frete</div>
+          <div class="col-6 text-end">R$ 0,00</div>
+          <div class="col-6">Desconto</div>
+          <div class="col-6 text-end">R$ 0,00</div>
+          <div class="col-6">Total</div>
+          <div class="col-6 text-end">R$ 12,00</div>
+        </div>
+      </div>
+      <!--Pagamento-->
+      <div class="mt-3 border p-3">
+        <h5>Pagamento:</h5>
+        <p class="mb-0">Cartão 01</p>
+      </div>
+    </main>
+    <!--Bootstrap JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
