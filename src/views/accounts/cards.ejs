@@ -68,6 +68,14 @@
           <% }) %>
         </div>
       </div>
+      <% if(success) { %>
+      <div class="alert alert-success mt-3 row" role="alert">
+        <%= success %>
+      </div>
+      <% } %>
+      <% if(error) { %>
+      <div class="alert alert-danger mt-3 row" role="alert"><%= error %></div>
+      <% } %>
     </main>
     <!--Bootstrap JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>

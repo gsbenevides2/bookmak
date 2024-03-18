@@ -1,3 +1,5 @@
+import "dotenv/config";
+import "reflect-metadata";
 import express from "express";
 import booksRouter from "./routes/books";
 import accountsRouter from "./routes/accounts";
@@ -19,6 +21,10 @@ server.use("/books", booksRouter);
 server.use("/accounts", accountsRouter);
 server.use("/login", loginRouter);
 server.use("/checkout", checkoutRouter);
+
+server.use("/status", (_req, res) => {
+  res.status(200).send("Server is running");
+});
 
 server.get("/", (_req, res) => {
   res.redirect("/books");

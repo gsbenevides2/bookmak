@@ -1,65 +1,84 @@
 import { type Controller } from "../types/controller";
-import { MockResponses } from "../mocks/mock";
-
-interface UserData {
-  admin: boolean;
-  name: string;
-  email: string;
-  cpf: string;
-  dateOfBirth: string;
-}
+import { getCustomerData } from "../useCases/customer/getCustomerData";
+import updateCustomerData from "../useCases/customer/updateCustomerData";
+import { deactivateAccount } from "../useCases/customer/deactivateAccount";
+import registerNewAddress from "../useCases/customer/registerNewAddress";
+import getAddresses from "../useCases/customer/getAddresses";
+import getAdddress from "../useCases/customer/getAddress";
+import updateAddress from "../useCases/customer/updateAddress";
+import removeAddress from "../useCases/customer/removeAddress";
+import registerNewCard from "../useCases/customer/registerNewCard";
+import { getCards } from "../useCases/customer/getCards";
+import deleteCard from "../useCases/customer/deleteCard";
 
 export const getMyAccountController: Controller = (req, res) => {
-  const accountIdCookie = req.cookies?.accountId;
-  const account = MockResponses.accounts.find(
-    (account) => account.id === accountIdCookie,
-  );
-
-  if (account == null) {
-    res.redirect("/login");
-  } else {
-    const user: UserData = {
-      admin: account.isAdmin,
-      email: account.email,
-      name: account.name,
-      cpf: account.cpf,
-      dateOfBirth: account.birthdate.toISOString().split("T")[0],
-    };
-    res.render("accounts/account", { user });
-  }
+  const accountIdCookie = req.cookies?.accountId as string;
+  getCustomerData(accountIdCookie)
+    .then((account) => {
+      if (account == null) {
+        res.redirect("/login");
+      } else {
+        const user = {
+          admin: false,
+          email: account.email,
+          name: account.name,
+          cpf: account.cpf,
+          dateOfBirth: account.dateOfBirth.toISOString().split("T")[0],
+          gender: account.gender,
+          phoneAreaCode: account.phoneAreaCode,
+          phoneNumber: account.phoneNumber,
+          phoneType: account.phoneType,
+        };
+        res.render("accounts/account", {
+          user,
+          success: req.query.success,
+          error: req.query.error,
+        });
+      }
+    })
+    .catch(() => {
+      res.redirect("/login?error=Erro ao buscar dados");
+    });
 };
-
 export const changeMyAccountDataController: Controller = (req, res) => {
-  const accountIdCookie = req.cookies?.accountId;
-  const { name, email, cpf, dateOfBirth } = req.body;
-  const index = MockResponses.accounts.findIndex(
-    (account) => account.id === accountIdCookie,
-  );
-  if (index === -1) {
-    res.redirect("/login");
-    return;
-  }
-  MockResponses.accounts[index] = {
-    ...MockResponses.accounts[index],
+  const accountIdCookie = req.cookies?.accountId as string;
+  const {
     name,
     email,
     cpf,
-    birthdate: new Date(dateOfBirth as string),
-  };
-  res.redirect("/accounts/me");
+    dateOfBirth,
+    gender,
+    phoneAreaCode,
+    phoneNumber,
+    phoneType,
+  } = req.body;
+  updateCustomerData(accountIdCookie, {
+    name,
+    email,
+    cpf,
+    dateOfBirth,
+    gender,
+    phoneAreaCode,
+    phoneNumber,
+    phoneType,
+  })
+    .then(() => {
+      res.redirect("/accounts/me?success=Dados atualizados");
+    })
+    .catch((error) => {
+      res.redirect(`/accounts/me?error=${error.message}`);
+    });
 };
-
-export const deleteAddressController: Controller = (req, res) => {
-  const id = req.params.id;
-  const index = MockResponses.addresses.findIndex(
-    (address) => address.id === id,
-  );
-  if (index === -1) {
-    res.redirect("/accounts/me/addresses");
-    return;
-  }
-  MockResponses.addresses.splice(index, 1);
-  res.redirect("/accounts/me/addresses");
+export const deactivateMyAccountController: Controller = (req, res) => {
+  const accountIdCookie = req.cookies?.accountId as string;
+  deactivateAccount(accountIdCookie)
+    .then(() => {
+      res.clearCookie("accountId");
+      res.redirect("/login?error=Conta desativada");
+    })
+    .catch(() => {
+      res.redirect("/accounts/me?error=Erro ao desativar conta");
+    });
 };
 
 export const newAddressController: Controller = (req, res) => {
@@ -74,54 +93,158 @@ export const newAddressController: Controller = (req, res) => {
     addressName,
     residenceType,
     streetType,
+    observations,
   } = req.body;
-  const newAddress = {
-    id: Math.random().toString(36).substring(7),
+  const accountIdCookie = req.cookies?.accountId as string;
+
+  registerNewAddress({
+    city,
+    country,
+    customerId: accountIdCookie,
+    district,
+    houseType: residenceType,
+    nickname: addressName,
+    number,
+    observations,
+    state,
+    street,
+    streetType,
+    zipCode: zip,
+  })
+    .then(() => {
+      res.redirect("/accounts/me/addresses?success=Novo endereço cadastrado");
+    })
+    .catch((error) => {
+      res.render(`accounts/new-address`, {
+        error: error.message,
+      });
+    });
+};
+export const getAddressesController: Controller = (req, res) => {
+  const accountId = req.cookies?.accountId as string;
+  getAddresses(accountId)
+    .then((addresses) => {
+      res.render("accounts/addresses", {
+        error: req.query.error,
+        success: req.query.success,
+        addresses,
+      });
+    })
+    .catch(() => {
+      res.redirect("/accounts/me?error=Erro ao buscar endereços");
+    });
+};
+export const getAddressController: Controller = (req, res) => {
+  const addressId = req.params.id;
+  const accountId = req.cookies?.accountId as string;
+  getAdddress(addressId, accountId)
+    .then((address) => {
+      res.render("accounts/newAddress", {
+        error: req.query.error,
+        success: req.query.success,
+        ...address,
+      });
+    })
+    .catch(() => {
+      res.redirect("/accounts/me/addresses?error=Erro ao buscar endereço");
+    });
+};
+export const editAddressController: Controller = (req, res) => {
+  const addressId = req.params.id;
+  const accountId = req.cookies?.accountId as string;
+  const {
+    street,
+    number,
+    city,
+    state,
+    zip,
+    district,
+    country,
     addressName,
     residenceType,
     streetType,
-    street,
-    number,
-    district,
-    zip,
-    city,
-    state,
-    country,
-  };
+    observations,
+  } = req.body;
 
-  MockResponses.addresses.push(newAddress);
-  res.redirect("/accounts/me/addresses");
+  updateAddress({
+    addressId,
+    city,
+    country,
+    customerId: accountId,
+    district,
+    houseType: residenceType,
+    nickname: addressName,
+    number,
+    observations,
+    state,
+    street,
+    streetType,
+    zipCode: zip,
+  })
+    .then(() => {
+      res.redirect("/accounts/me/addresses?success=Endereço atualizado");
+    })
+    .catch((error) => {
+      res.redirect(`/accounts/me/addresses?error=${error.message}`);
+    });
+};
+export const deleteAddressController: Controller = (req, res) => {
+  const id = req.params.id;
+  const accountId = req.cookies?.accountId as string;
+
+  removeAddress(id, accountId)
+    .then(() => {
+      res.redirect("/accounts/me/addresses?success=Endereço removido");
+    })
+    .catch((error) => {
+      res.redirect(`/accounts/me/addresses?error=${error.message}`);
+    });
 };
 
 export const newCardController: Controller = (req, res) => {
-  const {
+  const accountId = req.cookies?.accountId as string;
+  const { cardNumber, cardName, cardCVV, cardBrand, cardExpiry } = req.body;
+  console.log(cardNumber, cardName, cardCVV, cardBrand, cardExpiry);
+  registerNewCard({
     cardNumber,
-    cardName,
-    cardExpiration,
-    cardCVV,
-    cardBrand,
-    cardExpiry,
-  } = req.body;
-  const newCard = {
-    id: Math.random().toString(36).substring(7),
-    cardNumber,
-    cardName,
-    cardExpiration,
-    cardCVV,
-    cardBrand,
-    cardExpiry: cardExpiry.split("-").reverse().join("/"),
-  };
-
-  MockResponses.cards.push(newCard);
-  res.redirect("/accounts/me/cards");
+    holderName: cardName,
+    expirationDate: cardExpiry,
+    cvv: cardCVV,
+    flag: cardBrand,
+    customerId: accountId,
+  })
+    .then(() => {
+      res.redirect("/accounts/me/cards?success=Novo cartão cadastrado");
+    })
+    .catch((error) => {
+      res.render(`accounts/newCard`, {
+        error: error.message,
+        success: req.query.success,
+      });
+    });
+};
+export const getCardsController: Controller = (req, res) => {
+  const accountId = req.cookies?.accountId as string;
+  getCards(accountId)
+    .then((cards) => {
+      res.render("accounts/cards", {
+        error: req.query.error,
+        success: req.query.success,
+        cards,
+      });
+    })
+    .catch(() => {
+      res.redirect("/accounts/me?error=Erro ao buscar cartões");
+    });
 };
 export const deleteCardController: Controller = (req, res) => {
   const id = req.params.id;
-  const index = MockResponses.cards.findIndex((card) => card.id === id);
-  if (index === -1) {
-    res.redirect("/accounts/me/cards");
-    return;
-  }
-  MockResponses.cards.splice(index, 1);
-  res.redirect("/accounts/me/cards");
+  const accountId = req.cookies?.accountId as string;
+  deleteCard(id, accountId)
+    .then(() => {
+      res.redirect("/accounts/me/cards?success=Cartão removido");
+    })
+    .catch((error) => {
+      res.redirect(`/accounts/me/cards?error=${error.message}`);
+    });
 };
