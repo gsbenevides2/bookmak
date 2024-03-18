@@ -82,8 +82,8 @@ export default async function registerCustomer(
   throwErrorIfFalse(validateCPF(registerData.cpf), "CPF inválido");
 
   const customer = new Customer(
-    registerData.name,
     registerData.email,
+    registerData.name,
     registerData.cpf,
     dateOfBirth,
     GenderEnum[genderEnumKey],
