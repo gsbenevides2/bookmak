@@ -248,3 +248,7 @@ export const deleteCardController: Controller = (req, res) => {
       res.redirect(`/accounts/me/cards?error=${error.message}`);
     });
 };
+
+export const getMyCuponsController: Controller = (req, res) => {
+  res.render("accounts/mycupons");
+}

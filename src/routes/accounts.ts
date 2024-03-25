@@ -76,4 +76,6 @@ accountsRouter.get("/me/orders/1/cancel", (_req, res) => {
   res.render("accounts/cancelOrder");
 });
 
+accountsRouter.get("/me/cupons", AccountsController.getMyCuponsController);
+
 export default accountsRouter;
