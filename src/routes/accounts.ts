@@ -13,6 +13,13 @@ accountsRouter.get(
   "/me/deactivate",
   AccountsController.deactivateMyAccountController,
 );
+accountsRouter.get("/me/changePassword", (_req, res) => {
+  res.render("accounts/changePassword", { error: null, success: null });
+});
+accountsRouter.post(
+  "/me/changePassword",
+  AccountsController.changeMyPasswordController,
+);
 // Addresses
 accountsRouter.get("/me/addresses", AccountsController.getAddressesController);
 accountsRouter.get("/me/addresses/new", (req, res) => {

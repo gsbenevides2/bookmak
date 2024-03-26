@@ -10,6 +10,7 @@ import removeAddress from "../useCases/customer/removeAddress";
 import registerNewCard from "../useCases/customer/registerNewCard";
 import { getCards } from "../useCases/customer/getCards";
 import deleteCard from "../useCases/customer/deleteCard";
+import changePassword from "../useCases/customer/changePassword";
 
 export const getMyAccountController: Controller = (req, res) => {
   const accountIdCookie = req.cookies?.accountId as string;
@@ -78,6 +79,25 @@ export const deactivateMyAccountController: Controller = (req, res) => {
     })
     .catch(() => {
       res.redirect("/accounts/me?error=Erro ao desativar conta");
+    });
+};
+export const changeMyPasswordController: Controller = (req, res) => {
+  interface ChangePasswordRequestBody {
+    password: string;
+    newPassword: string;
+    confirmPassword: string;
+  }
+  const { password, newPassword, confirmPassword } =
+    req.body as ChangePasswordRequestBody;
+  const accountIdCookie = req.cookies?.accountId as string;
+  changePassword(password, newPassword, confirmPassword, accountIdCookie)
+    .then(() => {
+      res.redirect("/accounts/me?success=Senha alterada");
+    })
+    .catch((error) => {
+      res.render("accounts/changePassword", {
+        error: error.message,
+      });
     });
 };
 
@@ -251,4 +271,4 @@ export const deleteCardController: Controller = (req, res) => {
 
 export const getMyCuponsController: Controller = (req, res) => {
   res.render("accounts/mycupons");
-}
+};
