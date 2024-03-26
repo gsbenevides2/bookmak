@@ -133,5 +133,14 @@ export default async function registerCustomer(
     throw new Error("Erro ao salvar endereço");
   });
 
+  address.customer = savedCustomer;
+
+  await dataSource
+    .getRepository(Address)
+    .save(address)
+    .catch(() => {
+      throw new Error("Erro ao salvar endereço");
+    });
+
   return savedCustomer.id;
 }
