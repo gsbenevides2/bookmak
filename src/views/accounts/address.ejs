@@ -9,6 +9,8 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <!--AutoCEP JS-->
+    <script src="/scripts/autoCEP.js"></script>
   </head>
   <body>
     <!--Header-->
@@ -55,7 +57,7 @@
         <div class="mb-3 col-3">
           <label for="houseType" class="form-label">Tipo de Residência</label>
           <select class="form-select" id="houseType" name="houseType" required>
-            <option 
+            <option disabled
               <%=typeof(houseType) === 'undefined' ? 'selected' : '' %>
             >Escolha...</option>
             <option value="house"
@@ -71,7 +73,7 @@
         <div class="mb-3 col-3">
           <label for="streetType" class="form-label">Tipo de Logradouro</label>
           <select class="form-select" id="streetType" name="streetType" required>
-            <option
+            <option disabled
               <%= typeof(streetType) === 'undefined' ? 'selected' : '' %>
             >Escolha...</option>
             <option value="street"
