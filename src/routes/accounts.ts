@@ -23,22 +23,7 @@ accountsRouter.post(
 // Addresses
 accountsRouter.get("/me/addresses", AccountsController.getAddressesController);
 accountsRouter.get("/me/addresses/new", (req, res) => {
-  res.render("accounts/newAddress", {
-    error: null,
-    id: req.query.id,
-    addressId: null,
-    addressName: null,
-    residenceType: null,
-    streetType: null,
-    street: null,
-    number: null,
-    district: null,
-    zip: null,
-    city: null,
-    state: null,
-    country: null,
-    observations: null,
-  });
+  res.render("accounts/address", {});
 });
 accountsRouter.get(
   "/me/addresses/edit/:id",

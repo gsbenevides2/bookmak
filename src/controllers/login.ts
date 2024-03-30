@@ -44,7 +44,6 @@ export const logInController: Controller = (req, res) => {
       },
       select: ["id"],
     });
-    console.log(account);
 
     if (account != null) {
       res.cookie("accountId", account.id);

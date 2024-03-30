@@ -1,12 +1,19 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Customer } from "../../models/Customer";
 
-export default async function changePassword(
-  oldPassword: string,
-  newPassword: string,
-  passwordConfirm: string,
-  accountId: string,
-): Promise<void> {
+interface ChangePasswordData {
+  oldPassword: string;
+  newPassword: string;
+  passwordConfirm: string;
+  accountId: string;
+}
+
+export default async function changePassword({
+  oldPassword,
+  newPassword,
+  passwordConfirm,
+  accountId,
+}: ChangePasswordData): Promise<void> {
   if (passwordConfirm !== newPassword) {
     throw new Error("Nova senha e confirmação de senha não conferem");
   }

@@ -8,6 +8,7 @@ import {
 import { validateCPF } from "../../utils/cpf";
 import { validateBirthDate } from "../../utils/date";
 import { secure, throwErrorIfFalse } from "../../utils/errors";
+import { Address } from "../../models/Address";
 
 interface CustomerDataToUpdate {
   name: string;
@@ -18,6 +19,8 @@ interface CustomerDataToUpdate {
   phoneType: string;
   phoneAreaCode: string;
   phoneNumber: string;
+  billingAddressId: string;
+  deliveryAddressId: string;
 }
 
 export default async function updateCustomerData(
@@ -54,6 +57,7 @@ export default async function updateCustomerData(
   });
 
   const customerRepository = dataSource.getRepository(Customer);
+  const addressRepository = dataSource.getRepository(Address);
 
   const customer = await customerRepository
     .findOne({
@@ -69,6 +73,40 @@ export default async function updateCustomerData(
     throw new Error("Cliente não encontrado");
   }
 
+  const billingAddress = await addressRepository
+    .findOne({
+      where: {
+        id: updateData.billingAddressId,
+        customer: {
+          id: customerId,
+        },
+      },
+    })
+    .catch(() => {
+      throw new Error("Erro ao buscar endereço de cobrança");
+    });
+
+  if (billingAddress == null) {
+    throw new Error("Endereço de cobrança não encontrado");
+  }
+
+  const deliveryAddress = await addressRepository
+    .findOne({
+      where: {
+        id: updateData.deliveryAddressId,
+        customer: {
+          id: customerId,
+        },
+      },
+    })
+    .catch(() => {
+      throw new Error("Erro ao buscar endereço de entrega");
+    });
+
+  if (deliveryAddress == null) {
+    throw new Error("Endereço de entrega não encontrado");
+  }
+
   customer.name = updateData.name;
   customer.email = updateData.email;
   customer.cpf = updateData.cpf;
@@ -77,7 +115,9 @@ export default async function updateCustomerData(
   customer.phoneType = PhoneTypeEnum[phoneTypeEnumKey];
   customer.phoneAreaCode = updateData.phoneAreaCode;
   customer.phoneNumber = updateData.phoneNumber;
-
+  customer.billingAddress = billingAddress;
+  customer.deliveryAddress = deliveryAddress;
+  
   await customerRepository
     .update(
       {

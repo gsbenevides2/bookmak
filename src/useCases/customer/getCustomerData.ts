@@ -1,6 +1,11 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Customer } from "../../models/Customer";
 
+interface AddressReturn {
+  nickname: string;
+  id: string;
+}
+
 interface CustomerReturn {
   name: string;
   email: string;
@@ -10,6 +15,9 @@ interface CustomerReturn {
   phoneAreaCode: string;
   phoneNumber: string;
   phoneType: string;
+  addresses: AddressReturn[];
+  billingAddress: AddressReturn;
+  deliveryAddress: AddressReturn;
 }
 
 export async function getCustomerData(
@@ -20,16 +28,7 @@ export async function getCustomerData(
     where: {
       id: customerId,
     },
-    select: [
-      "name",
-      "email",
-      "cpf",
-      "dateOfBirth",
-      "gender",
-      "phoneAreaCode",
-      "phoneNumber",
-      "phoneType",
-    ],
+    relations: ["addresses", "billingAddress", "deliveryAddress"],
   });
   if (account == null) {
     return null;
@@ -43,5 +42,17 @@ export async function getCustomerData(
     phoneNumber: account.phoneNumber,
     phoneType: account.phoneType,
     gender: account.gender,
+    addresses: account.addresses.map((address) => ({
+      nickname: address.nickname,
+      id: address.id,
+    })),
+    billingAddress: {
+      nickname: account.billingAddress.nickname,
+      id: account.billingAddress.id,
+    },
+    deliveryAddress: {
+      nickname: account.deliveryAddress.nickname,
+      id: account.deliveryAddress.id,
+    },
   };
 }

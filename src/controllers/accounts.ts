@@ -19,19 +19,8 @@ export const getMyAccountController: Controller = (req, res) => {
       if (account == null) {
         res.redirect("/login");
       } else {
-        const user = {
-          admin: false,
-          email: account.email,
-          name: account.name,
-          cpf: account.cpf,
-          dateOfBirth: account.dateOfBirth.toISOString().split("T")[0],
-          gender: account.gender,
-          phoneAreaCode: account.phoneAreaCode,
-          phoneNumber: account.phoneNumber,
-          phoneType: account.phoneType,
-        };
         res.render("accounts/account", {
-          user,
+          account,
           success: req.query.success,
           error: req.query.error,
         });
@@ -43,26 +32,19 @@ export const getMyAccountController: Controller = (req, res) => {
 };
 export const changeMyAccountDataController: Controller = (req, res) => {
   const accountIdCookie = req.cookies?.accountId as string;
-  const {
-    name,
-    email,
-    cpf,
-    dateOfBirth,
-    gender,
-    phoneAreaCode,
-    phoneNumber,
-    phoneType,
-  } = req.body;
-  updateCustomerData(accountIdCookie, {
-    name,
-    email,
-    cpf,
-    dateOfBirth,
-    gender,
-    phoneAreaCode,
-    phoneNumber,
-    phoneType,
-  })
+  interface Body {
+    name: string;
+    email: string;
+    cpf: string;
+    dateOfBirth: string;
+    gender: string;
+    phoneAreaCode: string;
+    phoneNumber: string;
+    phoneType: string;
+    billingAddressId: string;
+    deliveryAddressId: string;
+  }
+  updateCustomerData(accountIdCookie, req.body as Body)
     .then(() => {
       res.redirect("/accounts/me?success=Dados atualizados");
     })
@@ -82,15 +64,19 @@ export const deactivateMyAccountController: Controller = (req, res) => {
     });
 };
 export const changeMyPasswordController: Controller = (req, res) => {
-  interface ChangePasswordRequestBody {
+  interface Body {
     password: string;
     newPassword: string;
     confirmPassword: string;
   }
-  const { password, newPassword, confirmPassword } =
-    req.body as ChangePasswordRequestBody;
+  const body = req.body as Body;
   const accountIdCookie = req.cookies?.accountId as string;
-  changePassword(password, newPassword, confirmPassword, accountIdCookie)
+  changePassword({
+    accountId: accountIdCookie,
+    newPassword: body.newPassword,
+    oldPassword: body.password,
+    passwordConfirm: body.confirmPassword,
+  })
     .then(() => {
       res.redirect("/accounts/me?success=Senha alterada");
     })
@@ -102,40 +88,31 @@ export const changeMyPasswordController: Controller = (req, res) => {
 };
 
 export const newAddressController: Controller = (req, res) => {
-  const {
-    street,
-    number,
-    city,
-    state,
-    zip,
-    district,
-    country,
-    addressName,
-    residenceType,
-    streetType,
-    observations,
-  } = req.body;
-  const accountIdCookie = req.cookies?.accountId as string;
+  interface Body {
+    street: string;
+    number: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    district: string;
+    country: string;
+    nickname: string;
+    houseType: string;
+    streetType: string;
+    observations: string;
+  }
+  const body = req.body as Body;
+  const customerId = req.cookies?.accountId as string;
 
   registerNewAddress({
-    city,
-    country,
-    customerId: accountIdCookie,
-    district,
-    houseType: residenceType,
-    nickname: addressName,
-    number,
-    observations,
-    state,
-    street,
-    streetType,
-    zipCode: zip,
+    ...body,
+    customerId,
   })
     .then(() => {
       res.redirect("/accounts/me/addresses?success=Novo endereço cadastrado");
     })
     .catch((error) => {
-      res.render(`accounts/new-address`, {
+      res.render(`accounts/address`, {
         error: error.message,
       });
     });
@@ -159,7 +136,7 @@ export const getAddressController: Controller = (req, res) => {
   const accountId = req.cookies?.accountId as string;
   getAdddress(addressId, accountId)
     .then((address) => {
-      res.render("accounts/newAddress", {
+      res.render("accounts/address", {
         error: req.query.error,
         success: req.query.success,
         ...address,
@@ -171,35 +148,26 @@ export const getAddressController: Controller = (req, res) => {
 };
 export const editAddressController: Controller = (req, res) => {
   const addressId = req.params.id;
-  const accountId = req.cookies?.accountId as string;
-  const {
-    street,
-    number,
-    city,
-    state,
-    zip,
-    district,
-    country,
-    addressName,
-    residenceType,
-    streetType,
-    observations,
-  } = req.body;
+  interface Body {
+    street: string;
+    number: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    district: string;
+    country: string;
+    nickname: string;
+    houseType: string;
+    streetType: string;
+    observations: string;
+  }
+  const body = req.body as Body;
+  const customerId = req.cookies?.accountId as string;
 
   updateAddress({
+    ...body,
     addressId,
-    city,
-    country,
-    customerId: accountId,
-    district,
-    houseType: residenceType,
-    nickname: addressName,
-    number,
-    observations,
-    state,
-    street,
-    streetType,
-    zipCode: zip,
+    customerId,
   })
     .then(() => {
       res.redirect("/accounts/me/addresses?success=Endereço atualizado");
@@ -224,7 +192,6 @@ export const deleteAddressController: Controller = (req, res) => {
 export const newCardController: Controller = (req, res) => {
   const accountId = req.cookies?.accountId as string;
   const { cardNumber, cardName, cardCVV, cardBrand, cardExpiry } = req.body;
-  console.log(cardNumber, cardName, cardCVV, cardBrand, cardExpiry);
   registerNewCard({
     cardNumber,
     holderName: cardName,

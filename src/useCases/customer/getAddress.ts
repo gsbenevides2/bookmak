@@ -3,13 +3,13 @@ import { Address } from "../../models/Address";
 
 interface GetAddressReturn {
   id: string;
-  addressName: string;
-  residenceType: string;
+  nickname: string;
+  houseType: string;
   streetType: string;
   street: string;
   number: string;
   district: string;
-  zip: string;
+  zipCode: string;
   city: string;
   state: string;
   country: string;
@@ -36,13 +36,13 @@ export default async function getAdddress(
   }
   return {
     id: address.id,
-    addressName: address.nickname,
-    residenceType: address.houseType,
+    nickname: address.nickname,
+    houseType: address.houseType,
     streetType: address.streetType,
     street: address.street,
     number: address.number,
     district: address.district,
-    zip: address.zipCode,
+    zipCode: address.zipCode,
     city: address.city,
     state: address.state,
     country: address.country,
