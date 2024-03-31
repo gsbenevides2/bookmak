@@ -68,53 +68,31 @@ export const logOutController: Controller = (_req, res) => {
 };
 
 export const registerController: Controller = (req, res) => {
-  const {
-    name,
-    email,
-    password,
-    cpf,
-    dateOfBirth,
-    gender,
-    phoneAreaCode,
-    phoneNumber,
-    phoneType,
+  interface Body {
+    name: string;
+    email: string;
+    password: string;
+    cpf: string;
+    dateOfBirth: string;
+    gender: string;
+    phoneAreaCode: string;
+    phoneNumber: string;
+    phoneType: string;
     // Address
-    street,
-    number,
-    city,
-    state,
-    zip,
-    district,
-    country,
-    addressName,
-    residenceType,
-    streetType,
-    observations,
-  } = req.body;
-
-  registerCustomer({
-    gender,
-    phoneAreaCode,
-    phoneNumber,
-    phoneType,
-    name,
-    email,
-    cpf,
-    dateOfBirth,
-    password,
-    // Address
-    city,
-    country,
-    district,
-    houseType: residenceType,
-    nickname: addressName,
-    number,
-    observations,
-    state,
-    street,
-    streetType,
-    zipCode: zip,
-  })
+    street: string;
+    number: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    district: string;
+    country: string;
+    nickname: string;
+    houseType: string;
+    streetType: string;
+    observations: string;
+  }
+  const body = req.body as Body;
+  registerCustomer(body)
     .then((userId) => {
       res.cookie("accountId", userId);
       if (req.query.redirectTo?.length != null) {

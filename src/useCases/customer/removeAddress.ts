@@ -1,5 +1,6 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Address } from "../../models/Address";
+import { Customer } from "../../models/Customer";
 
 export default async function removeAddress(
   addressId: string,
@@ -10,6 +11,33 @@ export default async function removeAddress(
   });
 
   const addressRepository = dataSource.getRepository(Address);
+  const customerRepository = dataSource.getRepository(Customer);
+  const customerData = await customerRepository
+    .findOne({
+      where: {
+        id: accountId,
+      },
+      relations: ["billingAddress", "deliveryAddress"],
+    })
+    .catch(() => {
+      throw new Error("Erro ao buscar cliente");
+    });
+
+  if (customerData == null) {
+    throw new Error("Cliente não encontrado");
+  }
+
+  if (customerData.billingAddress?.id === addressId) {
+    throw new Error(
+      "Endereço de cobrança não pode ser deletado. Altere o endereço de cobrança antes de deletar",
+    );
+  }
+
+  if (customerData.deliveryAddress?.id === addressId) {
+    throw new Error(
+      "Endereço de entrega não pode ser deletado. Altere o endereço de entrega antes de deletar",
+    );
+  }
 
   const address = await addressRepository
     .findOne({
@@ -28,7 +56,9 @@ export default async function removeAddress(
     throw new Error("Endereço não encontrado");
   }
 
-  await addressRepository.delete(addressId).catch(() => {
+  address.active = false;
+
+  await addressRepository.save(address).catch(() => {
     throw new Error("Erro ao deletar endereço");
   });
 }

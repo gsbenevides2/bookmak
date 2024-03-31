@@ -26,7 +26,7 @@ export default async function getAdddress(
   const address = await dataSource
     .getRepository(Address)
     .findOne({
-      where: { id: addressId, customer: { id: accountId } },
+      where: { id: addressId, customer: { id: accountId }, active: true },
     })
     .catch(() => {
       throw new Error("Nâo foi possivel buscar endereço");

@@ -63,6 +63,11 @@ export class Address {
   })
   observations?: string;
 
+  @Column({
+    default: true,
+  })
+  active: boolean = true;
+
   public constructor(
     customer: Customer,
     houseType: HouseType,

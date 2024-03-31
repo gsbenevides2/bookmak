@@ -6,10 +6,17 @@
     },
     "plugins": ["ejs"],
     "extends": ["standard-with-typescript", "prettier"],
+    
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
     "rules": {
-    }
+    },
+    "overrides": [
+        {
+            "files": ["*.ejs", "*.html", "*.ts"],
+            "excludedFiles":["src/cypress/**/*"],
+        }
+    ]
 }

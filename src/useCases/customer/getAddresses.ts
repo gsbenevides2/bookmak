@@ -26,7 +26,7 @@ export default async function getAddresses(
   const addresses = await datasource
     .getRepository(Address)
     .find({
-      where: { customer: { id: customerId } },
+      where: { customer: { id: customerId }, active: true },
     })
     .catch(() => {
       throw new Error("Nâo foi possivel buscar endereços");

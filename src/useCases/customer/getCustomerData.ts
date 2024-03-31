@@ -27,6 +27,7 @@ export async function getCustomerData(
   const account = await dataSource.getRepository(Customer).findOne({
     where: {
       id: customerId,
+      addresses: { active: true },
     },
     relations: ["addresses", "billingAddress", "deliveryAddress"],
   });
