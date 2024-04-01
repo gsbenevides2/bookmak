@@ -201,9 +201,9 @@ export class MockResponses {
   public static categories: Category[] = categories;
   public static authors: Author[] = authors;
   public static books: Book[] = books;
-  public static cart: CartItem[] = cart;
+  public static cart: CartItem[] = [];
   public static get total(): string {
-    return cart
+    return this.cart
       .reduce((acc, item) => {
         return acc + parseFloat(item.subtotal);
       }, 0)

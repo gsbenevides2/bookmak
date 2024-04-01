@@ -38,16 +38,18 @@
               onClick="window.location.href='/books/<%= cartItem.book.id %>'"
             />
             <div class="d-flex flex-column">
-              <span class="fw-bold"><%= cartItem.book.title %></span>
-              <span class="text-muted" alt="<%= cartItem.book.title %>"
+              <span class="fw-bold cart-item-title"
+                ><%= cartItem.book.title %></span
+              >
+              <span class="text-muted"
                 ><%= cartItem.book.author %>
                 -
                 <%= cartItem.book.category %></span
               >
-              <span class="text-muted">
+              <span class="text-muted cart-item-quantity">
                 Quantidade: <%= cartItem.quantity %>
               </span>
-              <span class="">
+              <span class="cart-item-price">
                 Preço Unitário: R$ <%= cartItem.book.price %>
               </span>
             </div>
@@ -93,7 +95,7 @@
               <input type="hidden" name="action" value="REMOVE" />
               <button type="submit" class="btn btn-danger mt-1">Remover</button>
             </form>
-            <span class="fw-bold mt-3"
+            <span class="fw-bold mt-3 cart-item-subtotal"
               >Subtotal: R$
               <%= cartItem.subtotal %></span
             >

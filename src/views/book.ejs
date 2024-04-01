@@ -32,11 +32,11 @@
           alt="<%= book.title %>"
         />
         <div class="col-6">
-          <h1 class="mt-3"><%= book.title %></h1>
+          <h1 class="mt-3 book-name"><%= book.title %></h1>
           <p class="mt-3"><%= book.description %></p>
           <p class="mt-3 mb-0">Autor: <%= book.author %></p>
           <p class="">Categoria: <%= book.category %></p>
-          <p class="mt-3">R$ <%= book.price %></p>
+          <p class="mt-3 book-price">R$ <%= book.price %></p>
           <form action="/checkout/cart" method="POST">
             <input type="hidden" name="action" value="ADD" />
             <input type="hidden" name="bookId" value="<%= book.id %>" />
@@ -54,7 +54,7 @@
               />
             </div>
             <input type="hidden" name="productId" value="<%= book.id %>" />
-            <button type="submit" class="btn btn-dark">Adicionar ao Carrinho</button>
+            <button type="submit" class="btn btn-dark buy-button">Adicionar ao Carrinho</button>
           </form>
       </div>
     </main>

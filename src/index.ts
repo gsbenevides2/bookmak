@@ -6,7 +6,7 @@ import booksRouter from "./routes/books";
 import accountsRouter from "./routes/accounts";
 import loginRouter from "./routes/login";
 import checkoutRouter from "./routes/checkout";
-
+import minifyHTML from "express-minify-html-2";
 
 import cookieParser from "cookie-parser";
 
@@ -19,6 +19,21 @@ server.use(express.urlencoded({ extended: true }));
 server.use(express.static("dist/public"));
 server.set("views", "dist/views");
 server.set("view engine", "ejs");
+
+server.use(
+  minifyHTML({
+    override: true,
+    exception_url: false,
+    htmlMinifier: {
+      removeComments: true,
+      collapseWhitespace: true,
+      collapseBooleanAttributes: true,
+      removeAttributeQuotes: true,
+      removeEmptyAttributes: true,
+      minifyJS: true,
+    },
+  }),
+);
 
 server.use("/books", booksRouter);
 server.use("/accounts", accountsRouter);
