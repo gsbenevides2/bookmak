@@ -122,6 +122,10 @@ describe("fluxo de compra", function () {
       cy.get("input[name='password']").type(user.password);
       cy.get("button[type='submit']").click();
     });
+
+    // Escolhe o endereço de  entrega
+
+    // Escolhe o endereco de cobrança
   });
 
   afterEach(function () {
