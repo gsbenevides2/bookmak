@@ -103,16 +103,15 @@
         </li>
         <% }); %>
       </ul>
-      <!--SomatÃģrio-->
+      <!--Somatório-->
       <div class="mt-3 text-center">
-        <h3>
-          Total: R$
-          <%= total %>
-        </h3>
+        <h3 class="total-price">Total: R$ <%= total %></h3>
       </div>
       <!--Botão de Compra-->
       <a href="/" class="btn btn-primary mt-3 w-100">Escolher Mais</a>
-      <a href="/checkout/bookmak" class="btn btn-success mt-3 w-100"
+      <a
+        href="/checkout/bookmark"
+        class="btn btn-success mt-3 w-100 continue-btn"
         >Continuar Compra</a
       >
     </main>

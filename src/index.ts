@@ -9,6 +9,7 @@ import checkoutRouter from "./routes/checkout";
 import minifyHTML from "express-minify-html-2";
 
 import cookieParser from "cookie-parser";
+import { DatabaseConnection } from "./dbConnection";
 
 const server = express();
 const serverPort = process.env.PORT ?? 3000;
@@ -48,6 +49,7 @@ server.get("/", (_req, res) => {
   res.redirect("/books");
 });
 
-server.listen(serverPort, () => {
+server.listen(serverPort, async () => {
+  await DatabaseConnection.connect();
   console.log(`Server is running at http://localhost:${serverPort}`);
 });
