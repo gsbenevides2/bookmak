@@ -125,11 +125,10 @@ checkoutRouter.post(
   checkoutController.updateAddressSettingsForCurrentOrder,
 );
 
-checkoutRouter.get("/payment", authMiddleware, (req, res) => {
-  res.render("checkout/payment", {
-    error: null,
-    cards: [],
-  });
-});
+checkoutRouter.get(
+  "/payment",
+  authMiddleware,
+  checkoutController.getAllDataForCheckout,
+);
 
 export default checkoutRouter;

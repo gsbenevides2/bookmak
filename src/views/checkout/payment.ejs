@@ -61,7 +61,10 @@
           <div class="col-7">Nome: <%= account.name %></div>
           <div class="col-5">Email: <%= account.email %></div>
           <div class="col-7">CPF: <%= account.cpf %></div>
-          <div class="col-5">Data de Nascimento: <%= account.birthdate %></div>
+          <div class="col-5">
+            Data de Nascimento: <%=
+            account.dateOfBirth.toISOString().split("T")[0].split("-").reverse().join("/")%>
+          </div>
         </div>
       </div>
       <!--Endereço de Envio-->
