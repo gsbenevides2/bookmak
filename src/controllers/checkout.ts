@@ -8,7 +8,18 @@ import { getCustomerData } from "../useCases/customer/getCustomerData";
 
 export const getAddressSettigsForCurrentOrder: Controller = (req, res) => {
   const customerId = req.cookies?.accountId as string;
+  if (MockResponses.cart.length === 0) {
+    res.redirect("/checkout/cart");
+    return;
+  }
 
+  if (
+    MockResponses.order.bookmarkText == null ||
+    MockResponses.order.bookmarkStyle == null
+  ) {
+    res.redirect("/checkout/bookmark");
+    return;
+  }
   Promise.all([
     getAddresses(customerId),
     getCustomerAddressSettings(customerId),
@@ -76,11 +87,14 @@ export const getAllDataForCheckout: Controller = (req, res) => {
         return;
       }
 
+      console.log(MockResponses.order);
+
       res.render("checkout/payment", {
         account: customer,
         cards: cards,
         billingAddress: MockResponses.order.addressPayment,
         deliveryAddress: MockResponses.order.addressShipping,
+        cartItens: MockResponses.cart,
       });
     })
     .catch(() => {

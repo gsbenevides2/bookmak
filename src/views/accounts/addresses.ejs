@@ -36,7 +36,7 @@
           <div class="mt-3 border p-3 row">
             <div class="col-12 mb-2">
               <strong>Nome do Endereço:</strong>
-              <%= address.addressName %>
+              <%= address.nickname %>
             </div>
             <div class="col-12">
               <strong>Tipo de Residência:</strong>
@@ -60,7 +60,7 @@
             </div>
             <div class="col-3">
               <strong>CEP:</strong>
-              <%= address.zip %>
+              <%= formatZipCode(address.zipCode) %>
             </div>
             <div class="col-3">
               <strong>Cidade:</strong>

@@ -7,7 +7,7 @@ import accountsRouter from "./routes/accounts";
 import loginRouter from "./routes/login";
 import checkoutRouter from "./routes/checkout";
 import minifyHTML from "express-minify-html-2";
-
+import * as locals from "./utils/locals";
 import cookieParser from "cookie-parser";
 import { DatabaseConnection } from "./dbConnection";
 
@@ -20,6 +20,9 @@ server.use(express.urlencoded({ extended: true }));
 server.use(express.static("dist/public"));
 server.set("views", "dist/views");
 server.set("view engine", "ejs");
+server.locals = {
+  ...locals,
+};
 
 server.use(
   minifyHTML({

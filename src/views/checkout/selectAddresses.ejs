@@ -42,7 +42,7 @@
           >
             <% addresses.forEach((address) => { %>
             <option value="<%= address.id %>" <%- address.id === addressSettings.deliveryAddress.id ? "selected" : ""%>>
-              <%= address.addressName %>
+              <%= address.nickname %>
             </option>
             <% }) %>
           </select>
@@ -54,7 +54,7 @@
           <select class="form-select" id="billingAddress" name="billingAddress">
             <% addresses.forEach((address) => { %>
             <option value="<%= address.id %>" <%- address.id === addressSettings.billingAddress.id ? "selected" : ""%>>
-              <%= address.addressName %>
+              <%= address.nickname %>
             </option>
             <% }) %>
           </select>
