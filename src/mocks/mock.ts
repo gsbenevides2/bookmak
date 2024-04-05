@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { Address } from "../models/Address";
 
 interface CartItem {
   book: Book;
@@ -46,26 +47,6 @@ const qtdFakerBooks = faker.number.int({
   min: 30,
   max: 50,
 });
-
-interface Card {
-  id: string;
-  cardNumber: string;
-  cardName: string;
-  cardExpiry: string;
-  cardCVV: string;
-  cardBrand: string;
-}
-
-const cards: Card[] = [
-  {
-    id: faker.string.uuid(),
-    cardNumber: "1234567890123456",
-    cardName: "Guilherme da Silva Benevides",
-    cardExpiry: "12/2025",
-    cardCVV: "123",
-    cardBrand: "Mastercard",
-  },
-];
 
 for (let i = 0; i < qtdFakerBooks; i++) {
   const category =
@@ -121,81 +102,6 @@ interface Order {
   bookmarkStyle?: string;
 }
 
-interface Account {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  cpf: string;
-  birthdate: Date;
-  isAdmin: boolean;
-}
-
-const accounts: Account[] = [
-  {
-    id: faker.string.uuid(),
-    name: "Guilherme da Silva Benevides",
-    email: "gsbenevides2@gmail.com",
-    password: "123456789",
-    cpf: "12345678901",
-    birthdate: new Date("1998-08-25"),
-    isAdmin: true,
-  },
-  {
-    id: faker.string.uuid(),
-    name: "João da Silva",
-    email: "joaoSilva@gmail.com",
-    password: "123456789",
-    cpf: "12345678902",
-    birthdate: new Date("1998-08-25"),
-    isAdmin: false,
-  },
-];
-
-interface Address {
-  id: string;
-  addressName: string;
-  residenceType: string;
-  streetType: string;
-  street: string;
-  number: string;
-  district: string;
-  zip: string;
-  city: string;
-  state: string;
-  country: string;
-  observations?: string;
-}
-
-const addresses: Address[] = [
-  {
-    id: faker.string.uuid(),
-    addressName: "Casa",
-    residenceType: "Casa",
-    streetType: "Rua",
-    street: "das Flores",
-    number: "123",
-    district: "Centro",
-    zip: "12345678",
-    city: "São Paulo",
-    state: "SP",
-    country: "Brasil",
-  },
-  {
-    id: faker.string.uuid(),
-    addressName: "Apartamento",
-    residenceType: "Apartamento",
-    streetType: "Avenida",
-    street: "Avenida Paulista",
-    number: "123",
-    district: "Centro",
-    zip: "12345678",
-    city: "São Paulo",
-    state: "SP",
-    country: "Brasil",
-  },
-];
-
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class MockResponses {
   public static categories: Category[] = categories;
@@ -218,8 +124,4 @@ export class MockResponses {
     faker.lorem.sentence(),
     faker.lorem.sentence(),
   ];
-
-  public static accounts: Account[] = accounts;
-  public static addresses: Address[] = addresses;
-  public static cards: Card[] = cards;
 }

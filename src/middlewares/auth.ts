@@ -10,7 +10,9 @@ export const authMiddleware = (
   const handler = async (): Promise<void> => {
     const accountIdCookie = req.cookies?.accountId;
     if (accountIdCookie == null) {
-      res.redirect("/login?error=Você precisa estar logado");
+      res.redirect(
+        "/login?error=Você precisa estar logado&redirectTo=" + req.originalUrl,
+      );
       return;
     }
     const dataSource = await DatabaseConnection.getDataSource();
@@ -21,11 +23,14 @@ export const authMiddleware = (
       },
     });
     if (customer == null) {
-      res.redirect("/login?error=Você precisa estar logado");
+      res.redirect(
+        "/login?error=Você precisa estar logado&redirectTo=" + req.originalUrl,
+      );
       return;
     }
 
     next();
+    
   };
   void handler();
 };

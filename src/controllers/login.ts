@@ -4,14 +4,16 @@ import { Customer } from "../models/Customer";
 import { type Controller } from "../types/controller";
 import registerCustomer from "../useCases/customer/registerCustomer";
 
-export const getLogInPageController: Controller = (req, res) => {
+export const getLogInPageController: Controller = async (req, res) => {
   const { redirectTo, error } = req.query;
   if (req.cookies.accountId == null) {
     res.render("login/login", { error, redirectTo });
   } else {
-    const account = MockResponses.accounts.find(
-      (account) => account.id === req.cookies.accountId,
-    );
+    const dataSource = await DatabaseConnection.getDataSource();
+    const customerRepository = dataSource.getRepository(Customer);
+    const account = await customerRepository.findOne({
+      where: { id: req.cookies.accountId },
+    });
     if (account == null || error != null) {
       res.cookie("accountId", "", { maxAge: 0 });
       res.render("login/login", {

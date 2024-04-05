@@ -22,25 +22,26 @@
     </header>
     <!--Conteudo-->
     <main class="container mb-5">
-      <h1 class="mt-3 text-center">Endereços de Cobrança e Envio</h1>
+      <h1 class="mt-3 text-center mb-3">Endereços de Cobrança e Envio</h1>
       <% if(error) { %>
       <div class="alert alert-danger" role="alert"><%= error %></div>
       <% } %>
       <!---->
       <form method="POST">
-        <p>Escolha um dos endereços cadastrados ou cadastre um novo</p>
+        <p class="mt-0 mb-1">
+          Escolha um dos endereços cadastrados ou cadastre um novo
+        </p>
         <div class="mb-3">
-          <label for="shippingAddress" class="form-label"
+          <label for="deliveryAddress" class="form-label"
             >Escolha um endereço para envio:</label
           >
           <select
             class="form-select"
-            id="shippingAddress"
-            name="shippingAddress"
+            id="deliveryAddress"
+            name="deliveryAddress"
           >
-            <option value="" selected>Selecione um endereço</option>
             <% addresses.forEach((address) => { %>
-            <option value="<%= address.id %>">
+            <option value="<%= address.id %>" <%- address.id === addressSettings.deliveryAddress.id ? "selected" : ""%>>
               <%= address.addressName %>
             </option>
             <% }) %>
@@ -51,29 +52,30 @@
             >Escolha um endereço para cobrança:</label
           >
           <select class="form-select" id="billingAddress" name="billingAddress">
-            <option value="" selected>Selecione um endereço</option>
             <% addresses.forEach((address) => { %>
-            <option value="<%= address.id %>">
+            <option value="<%= address.id %>" <%- address.id === addressSettings.billingAddress.id ? "selected" : ""%>>
               <%= address.addressName %>
             </option>
             <% }) %>
           </select>
         </div>
-        <a
-          href="/accounts/me/addresses/new"
-          target="_blank"
-          class="btn btn-outline-dark"
-        >
-          Novo Endereço
-        </a>
-        <button
-          type="button"
-          class="btn btn-outline-dark"
-          onclick="window.location.reload"
-        >
-          Recarregar Endereços
-        </button>
-        <button type="submit" class="btn btn-primary">Continuar</button>
+        <div class="d-flex gap-2">
+          <a
+            href="/accounts/me/addresses/new"
+            target="_blank"
+            class="btn btn-outline-dark"
+          >
+            Novo Endereço
+          </a>
+          <button
+            type="button"
+            class="btn btn-outline-dark"
+            onclick="window.location.reload"
+          >
+            Recarregar Endereços
+          </button>
+          <button type="submit" class="btn btn-primary">Continuar</button>
+        </div>
       </form>
     </main>
     <!--Bootstrap JS-->

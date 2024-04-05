@@ -9,10 +9,13 @@
   "private": true,
   "scripts": {
     "start": "dotenvx run --env-file=.env.production -- node dist/index.js",
+    "start:watch": "nodemon --watch src --ext \"*\" --exec \"npm run build && npm run start\"",
     "test": "dotenvx run --env-file=.env.test -- node dist/index.js",
-    "dev": "dotenvx run --env-file=.env.development -- node dist/index.js",
-    "build:watch": "nodemon",
+    "test:watch": "nodemon --watch src --ext \"*\" --exec \"npm run build && npm run test\"",
+    "dev": "dotenvx run --env-file=.env.development -- nodemon dist/index.js",
+    "dev:watch": "nodemon --watch dist --ext \"*\" --exec \"npm run dev\"",
     "build": "rm dist -rf && tsc && cp -r src/views dist/views && cp -r src/public dist/public",
+    "build:watch": "nodemon --watch src --ext \"*\" --exec \"npm run build\"",
     "cypress:open": "cypress open --config-file src/cypress/cypress.config.ts",
     "cypress:run": "cypress run --config-file src/cypress/cypress.config.ts"
   },

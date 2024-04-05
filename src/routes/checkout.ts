@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { MockResponses } from "../mocks/mock";
+import { authMiddleware } from "../middlewares/auth";
+import * as checkoutController from "../controllers/checkout";
 
 const checkoutRouter = Router();
 
@@ -108,61 +110,25 @@ checkoutRouter.post("/bookmark", (req, res) => {
     bookmarkText,
     bookmarkStyle,
   };
-  res.redirect("/login?redirectTo=/checkout/addresses");
+  res.redirect("/checkout/addresses");
 });
 
-checkoutRouter.get("/addresses", (req, res) => {
-  res.render("checkout/selectAddresses", {
-    error: null,
-    addresses: MockResponses.addresses,
-  });
-});
+checkoutRouter.get(
+  "/addresses",
+  authMiddleware,
+  checkoutController.getAddressSettigsForCurrentOrder,
+);
 
-checkoutRouter.post("/addresses", (req, res) => {
-  const { billingAddress, shippingAddress } = req.body;
-  const addresses = MockResponses.addresses;
-  const address = addresses.find((address) => address.id === billingAddress);
-  if (address != null) {
-    MockResponses.order = {
-      ...MockResponses.order,
-      addressPayment: address,
-    };
-  }
-  const shipping = addresses.find((address) => address.id === shippingAddress);
-  if (shipping != null) {
-    MockResponses.order = {
-      ...MockResponses.order,
-      addressShipping: shipping,
-    };
-  }
-  res.redirect("/checkout/payment");
-});
+checkoutRouter.post(
+  "/addresses",
+  authMiddleware,
+  checkoutController.updateAddressSettingsForCurrentOrder,
+);
 
-checkoutRouter.get("/payment", (req, res) => {
-  const accountId = req.cookies.accountId;
-  const account = MockResponses.accounts.find(
-    (account) => account.id === accountId,
-  );
-  if (account == null) {
-    res.redirect("/login?redirectTo=/checkout/payment");
-    return;
-  }
-
+checkoutRouter.get("/payment", authMiddleware, (req, res) => {
   res.render("checkout/payment", {
     error: null,
-    order: MockResponses.order,
-    cart: MockResponses.cart,
-    total: MockResponses.total,
-    account: {
-      ...account,
-      birthdate: account.birthdate
-        .toISOString()
-        .split("T")[0]
-        .split("-")
-        .reverse()
-        .join("/"),
-    },
-    cards: MockResponses.cards,
+    cards: [],
   });
 });
 
