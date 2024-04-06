@@ -1,0 +1,18 @@
+<% const houseTypes = getAvailableHouseTypes(); %>
+<% const hasHouseTypeSelected = typeof(houseType) === 'string'; %>
+
+<div class="<%- className %>">
+  <label for="houseType" class="form-label">Tipo de Residência</label>
+  <select class="form-select" id="houseType" name="houseType" required>
+    <option  <%- !hasHouseTypeSelected && 'selected' %> value="" disabled>Escolha...</option>
+
+    <% houseTypes.forEach((houseTypeListItem) => { %>
+        <% const isSelected = hasHouseTypeSelected && houseType === houseTypeListItem.value; %>
+        <option  
+            value="<%= houseTypeListItem.value %>" 
+            <%- isSelected && "selected" %> > 
+            <%= houseTypeListItem.text %>
+        </option>
+    <% }); %>
+  </select>
+</div>

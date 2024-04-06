@@ -7,6 +7,12 @@ export enum HouseType {
   Farm = "farm",
 }
 
+export const houseTypesTexts = {
+  [HouseType.House]: "Casa",
+  [HouseType.Apartment]: "Apartamento",
+  [HouseType.Farm]: "Fazenda",
+};
+
 export enum StreetType {
   Street = "street",
   Avenue = "avenue",
@@ -14,13 +20,20 @@ export enum StreetType {
   Alley = "alley",
 }
 
+export const streetTypesTexts = {
+  [StreetType.Street]: "Rua",
+  [StreetType.Avenue]: "Avenida",
+  [StreetType.Road]: "Estrada",
+  [StreetType.Alley]: "Beco",
+};
+
 @Entity()
 export class Address {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
   @ManyToOne(() => Customer, (customer) => customer.addresses)
-  customer!: Customer;
+  customer?: Customer;
 
   @Column({
     type: "enum",
@@ -69,7 +82,6 @@ export class Address {
   active: boolean = true;
 
   public constructor(
-    customer: Customer,
     houseType: HouseType,
     streetType: StreetType,
     nickname: string,
@@ -81,6 +93,7 @@ export class Address {
     state: string,
     country: string,
     observations?: string,
+    customer?: Customer,
   ) {
     this.customer = customer;
     this.houseType = houseType;

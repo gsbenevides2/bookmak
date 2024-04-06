@@ -36,24 +36,24 @@
           <div class="mt-3 border p-3 row">
             <div class="col-6 mb-2">
               <strong>Número do Cartão:</strong>
-              <%= card.cardNumber %>
+              <%= card.number %>
             </div>
             <div class="col-6">
               <strong>Bandeira:</strong>
-              <%= card.cardBrand %>
+              <%= card.flag %>
             </div>
             <div class="col-6">
               <strong>Nome:</strong>
-              <%= card.cardName %>
+              <%= card.holderName %>
             </div>
             <div class="col-3">
               <strong>Vencimento:</strong>
-              <%= card.cardExpiry %>
+              <%= card.monthOfValidity %>/<%= card.yearOfValidity %>
             </div>
 
             <div class="col-3">
               <strong>CVV:</strong>
-              <%= card.cardCVV %>
+              <%= card.cvv %>
             </div>
             <form
               method="POST"

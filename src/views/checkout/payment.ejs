@@ -35,6 +35,9 @@
         Confirme os produtos a seguir, o endereço de entrega e seus dados, no
         final coloque o cupom e o endereço de cobrança
       </p>
+      <%- typeof(error) === "string" ? `
+      <div class="alert alert-danger" role="alert">${error}</div>
+      ` : '' %>
       <!--Lista de Produtos-->
       <ul class="list-group mt-3 border p-3">
         <h5>Lista de Produtos:</h5>
@@ -50,10 +53,11 @@
             <h6 class="fw-bold"><%- cartItem.book.title %></h6>
             <p>Autor: <%- cartItem.book.author %></p>
             <p>
-              Preço Unitário: R$ <%= cartItem.book.price %> <br />Quantidade:
+              Preço Unitário: <%= formatPrice(cartItem.book.price) %>
+              <br />Quantidade:
               <%- cartItem.quantity %>
-              <br />Subtotal: R$
-              <%= cartItem.subtotal %>
+              <br />Subtotal:
+              <%= formatPrice(cartItem.subtotal) %>
             </p>
           </div>
         </li>
@@ -133,27 +137,27 @@
         <h5>Resumo:</h5>
         <div class="row">
           <div class="col-6">Subtotal</div>
-          <div class="col-6 text-end">R$ 12,00</div>
+          <div class="col-6 text-end"><%- formatPrice(subTotal) %></div>
           <div class="col-6">Frete</div>
-          <div class="col-6 text-end">R$ 0,00</div>
+          <div class="col-6 text-end"><%- formatPrice(shippingPrice) %></div>
           <div class="col-6">Desconto</div>
           <div class="col-6 text-end">R$ 0,00</div>
           <div class="col-6">Total</div>
-          <div class="col-6 text-end">R$ 12,00</div>
+          <div class="col-6 text-end"><%- formatPrice(totalPrice) %></div>
         </div>
       </div>
       <!--Pagamento-->
       <div class="mt-3 border p-3">
         <h5>Pagamento:</h5>
 
-        <form>
+        <form method="POST" action="/checkout/payment">
           <div class="mb-3">
             <label for="card" class="form-label">Selecione o Cartão:</label>
-            <select class="form-select" id="card">
+            <select class="form-select" id="card" name="cardId">
               <option selected>Selecione o Cartão</option>
               <% cards.forEach((card) => { %>
               <option value="<%= card.id %>">
-                <%= card.cardNumber %> - <%= card.cardBrand %>
+                <%= card.number %> - <%= card.flag %>
               </option>
               <% }) %>
             </select>
@@ -172,7 +176,7 @@
               class="btn btn-outline-primary"
               >Adicionar Cartão</a
             >
-            <a href="/accounts/me/orders/1" class="btn btn-primary">Pagar</a>
+            <button type="submit" class="btn btn-primary">Pagar</button>
           </div>
         </form>
       </div>

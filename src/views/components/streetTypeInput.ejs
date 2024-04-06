@@ -1,0 +1,17 @@
+<% const streetTypes = getAvailableStreetTypes(); %>
+<% const hasStreetTypeSelected = typeof(streetType) === 'string'; %>
+
+<div class="<%- className %>">
+  <label for="streetType" class="form-label">Tipo de Logradouro</label>
+  <select class="form-select" id="streetType" name="streetType" required>
+    <option <%- !hasStreetTypeSelected && 'selected' %> value="" disabled>Escolha...</option>
+    <% streetTypes.forEach((streetTypeListItem) => { %>
+        <% const isSelected = hasStreetTypeSelected && streetType === streetTypeListItem.value; %>
+        <option 
+            value="<%= streetTypeListItem.value %>" 
+            <%- isSelected && "selected" %> > 
+            <%= streetTypeListItem.text %>
+        </option>
+    <% }); %>
+  </select>
+</div>

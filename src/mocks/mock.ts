@@ -1,9 +1,12 @@
 import { faker } from "@faker-js/faker";
 import { Address } from "../models/Address";
+import { Coupon } from "../models/Coupon";
+import { Card } from "../models/Card";
+import { Customer } from "../models/Customer";
 
 interface CartItem {
   book: Book;
-  subtotal: string;
+  subtotal: number;
   quantity: number;
 }
 
@@ -12,7 +15,7 @@ interface Book {
   title: string;
   author: string;
   description: string;
-  price: string;
+  price: number;
   id: string;
   category: string;
 }
@@ -53,9 +56,9 @@ for (let i = 0; i < qtdFakerBooks; i++) {
     categories[Math.floor(Math.random() * categories.length)].name;
   const author = authors[Math.floor(Math.random() * authors.length)].name;
   const id = faker.string.uuid();
-  const price = faker.commerce.price({
-    max: 100,
-    min: 10,
+  const price = faker.number.int({
+    max: 10000,
+    min: 100,
   });
   books.push({
     id,
@@ -87,7 +90,7 @@ for (let i = 0; i < qtdItensInCart; i++) {
     min: 1,
     max: 5,
   });
-  const subtotal = (parseFloat(book.price) * quantity).toFixed(2);
+  const subtotal = book.price * quantity;
   cart.push({
     book,
     quantity,
@@ -95,11 +98,34 @@ for (let i = 0; i < qtdItensInCart; i++) {
   });
 }
 
+export enum OrderStatus {
+  PENDING = "pending",
+  PROCESSING = "processing",
+  COMPLETED = "completed",
+  CANCELED = "canceled",
+}
+
+export const orderStatusText = {
+  [OrderStatus.PENDING]: "Pendente",
+  [OrderStatus.PROCESSING]: "Processando",
+  [OrderStatus.COMPLETED]: "Completado",
+  [OrderStatus.CANCELED]: "Cancelado",
+};
+
 interface Order {
+  id: string;
+  status?: OrderStatus;
   addressShipping?: Address;
   addressPayment?: Address;
   bookmarkText?: string;
   bookmarkStyle?: string;
+  coupons: Coupon[];
+  shippingPrice?: number;
+  subTotal?: number;
+  totalPrice?: number;
+  totalDiscount?: number;
+  card?: Card;
+  customer?: Customer;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -108,15 +134,13 @@ export class MockResponses {
   public static authors: Author[] = authors;
   public static books: Book[] = books;
   public static cart: CartItem[] = [];
-  public static get total(): string {
-    return this.cart
-      .reduce((acc, item) => {
-        return acc + parseFloat(item.subtotal);
-      }, 0)
-      .toFixed(2);
-  }
 
-  public static order: Order = {};
+  public static order: Order = {
+    id: faker.string.uuid(),
+    coupons: [],
+  };
+
+  public static makedOrders: Order[] = [];
   public static bookmarkStyles: string[] = ["Estilo A", "Estilo 2", "Estilo C"];
   public static aiBookmarkTexts: string[] = [
     faker.lorem.sentence(),

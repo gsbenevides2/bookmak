@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +10,7 @@ import {
 } from "typeorm";
 import { Address } from "./Address";
 import { Card } from "./Card";
+import { Coupon } from "./Coupon";
 
 export enum Gender {
   Male = "male",
@@ -71,13 +73,17 @@ export class Customer {
   @OneToMany(() => Card, (card) => card.customer)
   cards: Card[];
 
-  @OneToOne(() => Address)
+  @OneToOne(() => Address, { nullable: false })
   @JoinColumn()
-  deliveryAddress!: Address;
+  deliveryAddress: Address;
 
-  @OneToOne(() => Address)
+  @OneToOne(() => Address, { nullable: false })
   @JoinColumn()
-  billingAddress!: Address;
+  billingAddress: Address;
+
+  @OneToMany(() => Coupon, (coupon) => coupon.attachedCustomer)
+  @JoinColumn()
+  attachedCoupons!: Coupon[];
 
   public constructor(
     email: string,
@@ -92,6 +98,8 @@ export class Customer {
     password: string,
     addresses: Address[],
     cards: Card[],
+    billingAddress: Address,
+    deliveryAddress: Address,
   ) {
     this.email = email;
     this.name = name;
@@ -105,5 +113,7 @@ export class Customer {
     this.password = password;
     this.addresses = addresses;
     this.cards = cards;
+    this.billingAddress = billingAddress;
+    this.deliveryAddress = deliveryAddress;
   }
 }

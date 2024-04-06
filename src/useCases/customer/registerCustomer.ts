@@ -7,8 +7,15 @@ import {
 } from "../../models/Customer";
 import { validateCPF } from "../../utils/cpf";
 import { validateBirthDate } from "../../utils/date";
-import { getEnumKeyByEnumValue } from "../../utils/enums";
-import { secure, throwErrorIfFalse } from "../../utils/errors";
+import {
+  getEnumKeyByEnumValue,
+  transformEnumKeyToEnumValue,
+} from "../../utils/enums";
+import {
+  secure,
+  throwErrorIfFalse,
+  throwErrorIfNull,
+} from "../../utils/errors";
 import registerNewAddress from "./registerNewAddress";
 
 interface CustomerDataToRegister {
@@ -38,41 +45,30 @@ interface CustomerDataToRegister {
 export default async function registerCustomer(
   registerData: CustomerDataToRegister,
 ): Promise<string> {
-  const phoneTypeEnumKey = getEnumKeyByEnumValue(
-    PhoneTypeEnum,
-    registerData.phoneType,
+  const houseTypeEnum = throwErrorIfNull(
+    getEnumKeyByEnumValue(HouseType, registerData.houseType),
+    "Tipo de endereço inválido",
   );
-  if (phoneTypeEnumKey == null) {
-    throw new Error("Tipo de telefone inválido");
-  }
 
-  const genderEnumKey = getEnumKeyByEnumValue(GenderEnum, registerData.gender);
-  if (genderEnumKey == null) {
-    throw new Error("Gênero inválido");
-  }
+  const streetTypeEnum = throwErrorIfNull(
+    getEnumKeyByEnumValue(StreetType, registerData.streetType),
+    "Tipo de rua inválido",
+  );
+
+  const phoneTypeEnumKey = throwErrorIfNull(
+    getEnumKeyByEnumValue(PhoneTypeEnum, registerData.phoneType),
+    "Tipo de telefone inválido",
+  );
+
+  const genderEnumKey = throwErrorIfNull(
+    getEnumKeyByEnumValue(GenderEnum, registerData.gender),
+    "Gênero inválido",
+  );
 
   const dateOfBirth = secure(
     () => new Date(registerData.dateOfBirth),
     "Data inválida",
   );
-
-  const houseTypeEnum = getEnumKeyByEnumValue(
-    HouseType,
-    registerData.houseType,
-  );
-
-  if (houseTypeEnum == null) {
-    throw new Error("Tipo de endereço inválido");
-  }
-
-  const streetTypeEnum = getEnumKeyByEnumValue(
-    StreetType,
-    registerData.streetType,
-  );
-
-  if (streetTypeEnum == null) {
-    throw new Error("Tipo de rua inválido");
-  }
 
   throwErrorIfFalse(
     validateBirthDate(dateOfBirth),
@@ -81,66 +77,54 @@ export default async function registerCustomer(
 
   throwErrorIfFalse(validateCPF(registerData.cpf), "CPF inválido");
 
-  const customer = new Customer(
-    registerData.email,
-    registerData.name,
-    registerData.cpf,
-    dateOfBirth,
-    GenderEnum[genderEnumKey],
-    PhoneTypeEnum[phoneTypeEnumKey],
-    registerData.phoneAreaCode,
-    registerData.phoneNumber,
-    true,
-    registerData.password,
-    [],
-    [],
-  );
-
   const dataSource = await DatabaseConnection.getDataSource().catch(() => {
     throw new Error("Erro ao conectar com o banco de dados");
   });
 
-  const customerRepository = dataSource.getRepository(Customer);
-
-  const savedCustomer = await customerRepository
-    .save(customer)
-    .catch((error: Error) => {
-      const isUniqueContraintError =
-        error.message.includes("unique constraint");
-      if (isUniqueContraintError) {
-        throw new Error("Email ou CPF já cadastrado");
+  return await dataSource
+    .transaction(async (manager) => {
+      const addressRepository = manager.getRepository(Address);
+      const customerRepository = manager.getRepository(Customer);
+      const address = await addressRepository.save({
+        houseType: HouseType[houseTypeEnum],
+        streetType: StreetType[streetTypeEnum],
+        nickname: registerData.nickname,
+        street: registerData.street,
+        number: registerData.number,
+        district: registerData.district,
+        zipCode: registerData.zipCode,
+        city: registerData.city,
+        state: registerData.state,
+        country: registerData.country,
+        observations: registerData.observations,
+      });
+      const customer = await customerRepository.save({
+        name: registerData.name,
+        email: registerData.email,
+        cpf: registerData.cpf,
+        dateOfBirth,
+        gender: GenderEnum[genderEnumKey],
+        phoneType: PhoneTypeEnum[phoneTypeEnumKey],
+        addresses: [address],
+        billingAddress: address,
+        deliveryAddress: address,
+        phoneAreaCode: registerData.phoneAreaCode,
+        phoneNumber: registerData.phoneNumber,
+        password: registerData.password,
+        isActive: true,
+        cards: [],
+      });
+      address.customer = customer;
+      await addressRepository.save(address);
+      return customer.id;
+    })
+    .catch((error) => {
+      if (error["constraint"] === "unique_email") {
+        throw new Error("Email já cadastrado");
       }
-      throw new Error("Erro ao salvar o cliente");
+      if (error["constraint"] === "unique_cpf") {
+        throw new Error("CPF já cadastrado");
+      }
+      throw new Error("Erro ao salvar cliente");
     });
-
-  const addressId = await registerNewAddress({
-    ...registerData,
-    customerId: savedCustomer.id,
-  });
-
-  const address = await dataSource.getRepository(Address).findOne({
-    where: { id: addressId },
-  });
-
-  if (address == null) {
-    throw new Error("Endereço não encontrado");
-  }
-
-  savedCustomer.deliveryAddress = address;
-  savedCustomer.billingAddress = address;
-
-  await customerRepository.save(savedCustomer).catch(() => {
-    throw new Error("Erro ao salvar endereço");
-  });
-
-  address.customer = savedCustomer;
-
-  await dataSource
-    .getRepository(Address)
-    .save(address)
-    .catch(() => {
-      throw new Error("Erro ao salvar endereço");
-    });
-
-  return savedCustomer.id;
 }

@@ -2,6 +2,7 @@ import { DatabaseConnection } from "../../dbConnection";
 import { Address, HouseType, StreetType } from "../../models/Address";
 import { Customer } from "../../models/Customer";
 import { getEnumKeyByEnumValue } from "../../utils/enums";
+import { throwErrorIfNull } from "../../utils/errors";
 
 interface DataToRegisterNewAddress {
   customerId: string;
@@ -21,17 +22,15 @@ interface DataToRegisterNewAddress {
 export default async function registerNewAddress(
   data: DataToRegisterNewAddress,
 ): Promise<string> {
-  const houseTypeEnum = getEnumKeyByEnumValue(HouseType, data.houseType);
+  const houseTypeEnum = throwErrorIfNull(
+    getEnumKeyByEnumValue(HouseType, data.houseType),
+    "Tipo de endereço inválido",
+  );
 
-  if (houseTypeEnum == null) {
-    throw new Error("Tipo de endereço inválido");
-  }
-
-  const streetTypeEnum = getEnumKeyByEnumValue(StreetType, data.streetType);
-
-  if (streetTypeEnum == null) {
-    throw new Error("Tipo de rua inválido");
-  }
+  const streetTypeEnum = throwErrorIfNull(
+    getEnumKeyByEnumValue(StreetType, data.streetType),
+    "Tipo de rua inválido",
+  );
 
   const dataSource = await DatabaseConnection.getDataSource().catch(() => {
     throw new Error("Erro ao conectar com o banco de dados");
@@ -56,7 +55,6 @@ export default async function registerNewAddress(
   const addressRepository = dataSource.getRepository(Address);
 
   const address = new Address(
-    customer,
     HouseType[houseTypeEnum],
     StreetType[streetTypeEnum],
     data.nickname,
@@ -68,6 +66,7 @@ export default async function registerNewAddress(
     data.state,
     data.country,
     data.observations,
+    customer,
   );
 
   const savedAddress = await addressRepository.save(address).catch(() => {

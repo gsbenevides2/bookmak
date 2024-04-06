@@ -50,7 +50,7 @@
                 Quantidade: <%= cartItem.quantity %>
               </span>
               <span class="cart-item-price">
-                Preço Unitário: R$ <%= cartItem.book.price %>
+                Preço Unitário: <%= formatPrice(cartItem.book.price) %>
               </span>
             </div>
           </div>
@@ -96,8 +96,8 @@
               <button type="submit" class="btn btn-danger mt-1">Remover</button>
             </form>
             <span class="fw-bold mt-3 cart-item-subtotal"
-              >Subtotal: R$
-              <%= cartItem.subtotal %></span
+              >Subtotal:
+              <%= formatPrice(cartItem.subtotal) %></span
             >
           </div>
         </li>
@@ -105,7 +105,7 @@
       </ul>
       <!--Somatório-->
       <div class="mt-3 text-center">
-        <h3 class="total-price">Total: R$ <%= total %></h3>
+        <h3 class="total-price">Total: <%= formatPrice(total) %></h3>
       </div>
       <!--Botão de Compra-->
       <a href="/" class="btn btn-primary mt-3 w-100">Escolher Mais</a>

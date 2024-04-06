@@ -12,3 +12,10 @@ export function throwErrorIfFalse(condition: boolean, message: string): void {
     throw new Error(message);
   }
 }
+
+export function throwErrorIfNull<T>(value: T | null, message: string): T {
+  if (value === null) {
+    throw new Error(message);
+  }
+  return value;
+}

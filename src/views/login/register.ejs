@@ -132,30 +132,8 @@
           />
         </div>
 
-        <div class="mb-3 col-3">
-          <label for="houseType" class="form-label">Tipo de Residência</label>
-          <select class="form-select" id="houseType" name="houseType" required>
-            <option selected value="" disabled>Escolha...</option>
-            <option value="house">Casa</option>
-            <option value="apartment">Apartamento</option>
-            <!-- Adicione mais opções conforme necessário -->
-          </select>
-        </div>
-
-        <div class="mb-3 col-3">
-          <label for="streetType" class="form-label">Tipo de Logradouro</label>
-          <select
-            class="form-select"
-            id="streetType"
-            name="streetType"
-            required
-          >
-            <option selected value="" disabled>Escolha...</option>
-            <option value="street">Rua</option>
-            <option value="avenue">Avenida</option>
-            <!-- Adicione mais opções conforme necessário -->
-          </select>
-        </div>
+        <%- include('../components/houseTypeInput', {className: "mb-3 col-3"}) %>
+        <%- include('../components/streetTypeInput', {className: "mb-3 col-3"}) %>
 
         <div class="mb-3 col-6">
           <label for="street" class="form-label">Logradouro</label>

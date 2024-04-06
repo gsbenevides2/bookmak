@@ -40,11 +40,11 @@
             </div>
             <div class="col-12">
               <strong>Tipo de Residência:</strong>
-              <%= address.residenceType ===  "house" ? "Casa" : "Apartamento" %>
+              <%= renderHouseType(address.houseType) %>
             </div>
             <div class="col-3">
               <strong>Tipo de Logradouro:</strong>
-              <%= address.streetType ===  "avenue" ? "Avenida" : "Rua" %>
+              <%= renderStreetType(address.streetType) %>
             </div>
             <div class="col-6">
               <strong>Logradouro:</strong>

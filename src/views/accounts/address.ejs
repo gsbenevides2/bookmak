@@ -54,38 +54,15 @@
           />
         </div>
 
-        <div class="mb-3 col-3">
-          <label for="houseType" class="form-label">Tipo de Residência</label>
-          <select class="form-select" id="houseType" name="houseType" required>
-            <option disabled
-              <%=typeof(houseType) === 'undefined' ? 'selected' : '' %>
-            >Escolha...</option>
-            <option value="house"
-              <%= typeof(houseType) === 'string' && houseType === 'house' ? 'selected' : '' %>
-            >Casa</option>
-            <option value="apartment"
-              <%= typeof(houseType) === 'string' && houseType === 'apartment' ? 'selected' : '' %>
-            >Apartamento</option>
-            <!-- Adicione mais opções conforme necessário -->
-          </select>
-        </div>
-
-        <div class="mb-3 col-3">
-          <label for="streetType" class="form-label">Tipo de Logradouro</label>
-          <select class="form-select" id="streetType" name="streetType" required>
-            <option disabled
-              <%= typeof(streetType) === 'undefined' ? 'selected' : '' %>
-            >Escolha...</option>
-            <option value="street"
-              <%= typeof(streetType) === 'string' && streetType === 'street' ? 'selected' : '' %>
-            >Rua</option>
-            <option value="avenue"
-              <%= typeof(streetType) === 'string' && streetType === 'avenue' ? 'selected' : '' %>
-            >Avenida</option>
-            <!-- Adicione mais opções conforme necessário -->
-          </select>
-        </div>
-
+        <%- include('../components/houseTypeInput', {
+          className: "mb-3 col-3",
+          houseType: typeof(houseType) === "string" ? houseType : undefined
+        }) %>
+        <%- include('../components/streetTypeInput', {
+          className: "mb-3 col-3", 
+          streetType: typeof(streetType) === "string" ? streetType : undefined
+        }) %>
+        
         <div class="mb-3 col-6">
           <label for="street" class="form-label">Logradouro</label>
           <input 

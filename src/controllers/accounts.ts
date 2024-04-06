@@ -11,6 +11,7 @@ import registerNewCard from "../useCases/customer/registerNewCard";
 import { getCards } from "../useCases/customer/getCards";
 import deleteCard from "../useCases/customer/deleteCard";
 import changePassword from "../useCases/customer/changePassword";
+import { MockResponses } from "../mocks/mock";
 
 export const getMyAccountController: Controller = (req, res) => {
   const accountIdCookie = req.cookies?.accountId as string;
@@ -238,4 +239,16 @@ export const deleteCardController: Controller = (req, res) => {
 
 export const getMyCuponsController: Controller = (req, res) => {
   res.render("accounts/mycupons");
+};
+
+export const getMyOrdersController: Controller = (req, res) => {
+  const accountId = req.cookies?.accountId as string;
+
+  const orders = MockResponses.makedOrders.filter(
+    (order) => order.customer?.id === accountId,
+  );
+
+  res.render("accounts/orders", {
+    orders,
+  });
 };

@@ -53,9 +53,7 @@ accountsRouter.post(
 accountsRouter.post("/me/cards/new", AccountsController.newCardController);
 
 // Orders
-accountsRouter.get("/me/orders", (_req, res) => {
-  res.render("accounts/orders");
-});
+accountsRouter.get("/me/orders", AccountsController.getMyOrdersController);
 
 accountsRouter.get("/me/orders/1", (_req, res) => {
   res.render("accounts/order");

@@ -143,7 +143,7 @@
               <h5 class="card-title book-shelf-item-title"><%= book.title %></h5>
               <p class="card-text fst-italic">Autor: <%= book.author %></p>
               <p class="card-text"><%= book.description %></p>
-              <p class="card-text fw-bold mt-auto book-shelf-item-price">R$ <%= book.price %></p>
+              <p class="card-text fw-bold mt-auto book-shelf-item-price"><%= formatPrice(book.price) %></p>
               <a href="/books/<%= book.id %>" class="btn btn-dark">Comprar</a>
             </div>
           </div>
