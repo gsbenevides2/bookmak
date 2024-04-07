@@ -29,22 +29,35 @@
     </header>
     <!--Conteudo-->
     <main class="container mb-5">
-      <h1 class="mt-3 text-center">Solicitação de Troca</h1>
+      <h1 class="mt-3 text-center">Enviar Pedido</h1>
 
       <div class="mt-3 border p-3">
         <h5>Pedido: <%= orderId %></h5>
         <p class="mb-0">
-          Ao pedir a troca, você receberá um código de postagem para enviar o
-          produto de volta. E após o recebimento de todos os itens um cupom de
-          troca.
+          O pedido foi preparado e enviado? Se sim preencha as informações a
+          baixo
         </p>
         <form method="POST">
+          <input
+            type="text"
+            name="transporter"
+            class="form-control mt-2"
+            required
+            placeholder="Transportadora"
+          />
+          <input
+            type="text"
+            name="trackingCode"
+            class="form-control mt-2"
+            placeholder="Código de Rastreio"
+            required
+          />
           <button type="submit" class="btn btn-outline-secondary mt-2">
-            Trocar Pedido
+            Registrar Envio
           </button>
         </form>
         <a
-          href="/accounts/me/orders/<%= orderId %>"
+          href="/admin/orders/<%= orderId %>"
           class="btn btn-outline-secondary mt-2"
         >
           Voltar

@@ -2,8 +2,8 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Customer } from "./Customer";
 
 export enum CardFlag {
-  MasterCard = "MasterCard",
-  Visa = "Visa",
+  MasterCard = "mastercard",
+  Visa = "visa",
 }
 
 @Entity()

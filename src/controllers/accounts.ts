@@ -11,7 +11,8 @@ import registerNewCard from "../useCases/customer/registerNewCard";
 import { getCards } from "../useCases/customer/getCards";
 import deleteCard from "../useCases/customer/deleteCard";
 import changePassword from "../useCases/customer/changePassword";
-import { MockResponses } from "../mocks/mock";
+import { MockResponses, OrderStatus } from "../mocks/mock";
+import { formatOrderStatus } from "../utils/locals";
 
 export const getMyAccountController: Controller = (req, res) => {
   const accountIdCookie = req.cookies?.accountId as string;
@@ -251,4 +252,87 @@ export const getMyOrdersController: Controller = (req, res) => {
   res.render("accounts/orders", {
     orders,
   });
+};
+export const getDataFromOrder: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const order = MockResponses.makedOrders.find((order) => order.id === orderId);
+  if (order == null) {
+    res.redirect("/accounts/me/orders");
+    return;
+  }
+
+  if (order.customer?.id !== req.cookies?.accountId) {
+    res.redirect("/accounts/me/orders");
+    return;
+  }
+
+  res.render("accounts/order", {
+    id: order.id,
+    account: order.customer,
+    card: order.card,
+    deliveryAddress: order.addressShipping,
+    billingAddress: order.addressPayment,
+    cartItens: order.items,
+    shippingPrice: order.shippingPrice,
+    subTotal: order.subTotal,
+    totalPrice: order.totalPrice,
+    totalDiscount: order.totalDiscount,
+    coupons: order.coupons,
+    status: order.status,
+    statusObservation: order.statusObservation,
+  });
+};
+export const checkOrderIsExchangeable: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const accountId = req.cookies?.accountId as string;
+  const orderIndex = MockResponses.makedOrders.findIndex(
+    (order) => order.id === orderId,
+  );
+  if (orderIndex === -1) {
+    res.redirect("/accounts/me/orders");
+    return;
+  }
+
+  const order = MockResponses.makedOrders[orderIndex];
+  if (order.customer?.id !== accountId) {
+    res.redirect("/accounts/me/orders");
+    return;
+  }
+
+  if (order.status !== OrderStatus.SENDED) {
+    res.redirect(`/accounts/me/orders/${orderId}`);
+    return;
+  }
+
+  res.render("accounts/exchangeOrder", {
+    orderId,
+  });
+};
+export const exchangeOrderController: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const accountId = req.cookies?.accountId as string;
+  const orderIndex = MockResponses.makedOrders.findIndex(
+    (order) => order.id === orderId,
+  );
+  if (orderIndex === -1) {
+    res.redirect("/accounts/me/orders");
+    return;
+  }
+
+  const order = MockResponses.makedOrders[orderIndex];
+  if (order.customer?.id !== accountId) {
+    res.redirect("/accounts/me/orders");
+    return;
+  }
+
+  if (order.status !== OrderStatus.SENDED) {
+    res.redirect(`/accounts/me/orders/${orderId}`);
+    return;
+  }
+
+  MockResponses.makedOrders[orderIndex].status = OrderStatus.EXCHANGING;
+  MockResponses.makedOrders[orderIndex].statusObservation?.push(
+    `${new Date().toLocaleString()} - ${formatOrderStatus(OrderStatus.EXCHANGING)} - Estamos processando a troca. Aguarde!`,
+  );
+  res.redirect(`/accounts/me/orders/${orderId}`);
 };

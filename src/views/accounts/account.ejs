@@ -17,8 +17,8 @@
         <div class="container-fluid">
           <a href="/" class="navbar-brand">Bookmak</a>
           <div class="d-flex justify-content-end gap-1">
-            <% if (account.admin) { %>
-            <a href="/admin.html" class="btn btn-outline-light">Painel Admin</a>
+            <% if (account.isAdmin) { %>
+            <a href="/admin" class="btn btn-outline-light">Painel Admin</a>
             <% } %>
             <a href="/checkout/cart" class="btn btn-outline-light">Carrinho</a>
           </div>

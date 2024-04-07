@@ -40,9 +40,27 @@
         <p class="mt-0 status"><%= formatOrderStatus(status) %></p>
         <h5>Histórico</h5>
         <p class="mt-0 statusObs"><%- statusObservation.join("<br>") %></p>
-        <%- status === OrderStatusEnum.SENDED ? `
-        <a href="/accounts/me/orders/${id}/change" class="btn btn-outline-secondary mt-2 change">Trocar Pedido</a>
-        ` : '' %>
+        
+        <div class="d-flex justify-content-between">
+          <%- status === OrderStatusEnum.PROCESSING ? `
+          <a href="/admin/order/${id}/aprovePayment" class="btn btn-outline-secondary mt-2 aprovePayment">Pagamento Recebido</a>
+          <a href="/admin/order/${id}/rejectPayment" class="btn btn-outline-secondary mt-2 rejectPayment">Recusar Pagamento</a>
+          ` : '' %>
+          <%- status === OrderStatusEnum.EXCHANGING ? `
+          <a href="/admin/order/${id}/change" class="btn btn-outline-secondary mt-2 change">Trocar Pedido</a>
+          <a href="/admin/order/${id}/cancelChange" class="btn btn-outline-secondary mt-2 cancelChange">Cancelar Troca</a>
+          ` : '' %>
+          <%- status === OrderStatusEnum.PAYMENT_APPROVED ? `
+          <a href="/admin/order/${id}/startPreparing" class="btn btn-outline-secondary mt-2 startPreparing">Iniciar Preparação</a>
+          ` : '' %>
+          <%- status === OrderStatusEnum.PREPARING ? `
+          <a href="/admin/order/${id}/sendOrder" class="btn btn-outline-secondary mt-2 sendOrder">Enviar Pedido</a>
+          ` : '' %>
+          <%- status === OrderStatusEnum.SENDING ? `
+          <a href="/admin/order/${id}/sendedOrder" class="btn btn-outline-secondary mt-2 sendedOrder">Confirmar Entrega</a>
+          ` : '' %>
+        </div>
+      
       </div>
       <!--Lista de Produtos-->
       <ul class="list-group mt-3 border p-3">

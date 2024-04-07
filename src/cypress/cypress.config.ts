@@ -1,10 +1,9 @@
 import { defineConfig } from "cypress";
-import {
-  createDemoCustommerDown,
-  createDemoCustommerUp,
-} from "./plugins/db/createDemoCustomer";
+import * as dbTasks from "./plugins/db";
+import * as mockTasks from "./plugins/mocks";
 
 export default defineConfig({
+  projectId: "rwjpu4",
   viewportWidth: 1280,
   viewportHeight: 720,
 
@@ -13,8 +12,11 @@ export default defineConfig({
     specPattern: "src/cypress/e2e/**/*.cy.ts",
     setupNodeEvents(on, config) {
       on("task", {
-        "db:createDemoCustomer:up": createDemoCustommerUp,
-        "db:createDemoCustomer:down": createDemoCustommerDown,
+        "db:createDemoCustomer": dbTasks.createDemoCustommer,
+        "db:createDemoAdmin": dbTasks.createDemoAdmin,
+        "db:down": dbTasks.down,
+        "mock:clear": mockTasks.clear,
+        "mock:set": mockTasks.set,
       });
     },
   },

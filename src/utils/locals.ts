@@ -1,3 +1,4 @@
+import { OrderStatus, orderStatusText } from "../mocks/mock";
 import {
   Address,
   StreetType,
@@ -51,4 +52,9 @@ export function formatPrice(price: number) {
     style: "currency",
     currency: "BRL",
   });
+}
+export const OrderStatusEnum = OrderStatus;
+
+export function formatOrderStatus(status: OrderStatus) {
+  return orderStatusText[status];
 }

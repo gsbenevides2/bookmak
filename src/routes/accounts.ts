@@ -55,16 +55,20 @@ accountsRouter.post("/me/cards/new", AccountsController.newCardController);
 // Orders
 accountsRouter.get("/me/orders", AccountsController.getMyOrdersController);
 
-accountsRouter.get("/me/orders/1", (_req, res) => {
-  res.render("accounts/order");
-});
+accountsRouter.get("/me/orders/:orderId", AccountsController.getDataFromOrder);
 
-accountsRouter.get("/me/orders/1/change", (_req, res) => {
-  res.render("accounts/changeOrder");
+accountsRouter.get("/me/orders/:orderId/change", (req, res) => {
+  res.render("accounts/changeOrder", {
+    orderId: req.params.orderId,
+  });
 });
 accountsRouter.get("/me/orders/1/cancel", (_req, res) => {
   res.render("accounts/cancelOrder");
 });
+accountsRouter.post(
+  "/me/orders/:orderId/change",
+  AccountsController.exchangeOrderController,
+);
 
 accountsRouter.get("/me/cupons", AccountsController.getMyCuponsController);
 

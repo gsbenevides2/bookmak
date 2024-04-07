@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { MockResponses, OrderStatus } from "../mocks/mock";
+import { MockResponses, OrderStatus, orderStatusText } from "../mocks/mock";
 import { Address } from "../models/Address";
 import { Controller } from "../types/controller";
 import getAddresses from "../useCases/customer/getAddresses";
@@ -9,7 +9,7 @@ import { getCustomerData } from "../useCases/customer/getCustomerData";
 import { shippingSimulator } from "../utils/shippingSimulator";
 
 export const getCart: Controller = (_req, res) => {
-  const cart = MockResponses.cart;
+  const cart = MockResponses.order.items;
   const total = cart.reduce((acc, item) => acc + item.subtotal, 0);
   if (cart.length === 0) {
     res.render("checkout/empty-cart");
@@ -21,7 +21,7 @@ export const getCart: Controller = (_req, res) => {
 };
 export const updateCart: Controller = (req, res) => {
   const { action, bookId } = req.body;
-  const cart = MockResponses.cart;
+  const cart = MockResponses.order.items;
   if (action === "ADD") {
     const { quantity } = req.body;
     const book = MockResponses.books.find((book) => book.id === bookId);
@@ -54,13 +54,17 @@ export const updateCart: Controller = (req, res) => {
     cart[index].subtotal = cart[index].book.price * quantity;
   }
 
-  MockResponses.cart = cart;
+  MockResponses.order.items = cart;
 
   res.redirect("/checkout/cart");
 };
 
 export const getAvailableBokmarkTexts: Controller = (req, res) => {
-  const { aiBookmarkTexts, bookmarkStyles, cart } = MockResponses;
+  const {
+    aiBookmarkTexts,
+    bookmarkStyles,
+    order: { items: cart },
+  } = MockResponses;
   if (cart.length === 0) return res.redirect("/checkout/cart");
   res.render("checkout/bookmark", {
     aiBookmarkTexts,
@@ -114,7 +118,7 @@ export const updateBookmarkTextInOrder: Controller = (req, res) => {
 
 export const getAddressSettigsForCurrentOrder: Controller = (req, res) => {
   const customerId = req.cookies?.accountId as string;
-  if (MockResponses.cart.length === 0) {
+  if (MockResponses.order.items.length === 0) {
     res.redirect("/checkout/cart");
     return;
   }
@@ -174,7 +178,7 @@ export const getAllDataForCheckout: Controller = (req, res) => {
   const error = req.query.error;
   Promise.all([getCustomerData(accountId), getCards(accountId)])
     .then(([customer, cards]) => {
-      if (MockResponses.cart.length === 0) {
+      if (MockResponses.order.items.length === 0) {
         res.redirect("/checkout/cart");
         return;
       }
@@ -195,8 +199,7 @@ export const getAllDataForCheckout: Controller = (req, res) => {
         return;
       }
 
-      console.log(MockResponses.order);
-      const subTotal = MockResponses.cart.reduce(
+      const subTotal = MockResponses.order.items.reduce(
         (acc, item) => acc + item.subtotal,
         0,
       );
@@ -215,7 +218,7 @@ export const getAllDataForCheckout: Controller = (req, res) => {
         cards: cards,
         billingAddress: MockResponses.order.addressPayment,
         deliveryAddress: MockResponses.order.addressShipping,
-        cartItens: MockResponses.cart,
+        cartItens: MockResponses.order.items,
         shippingPrice,
         subTotal,
         totalPrice,
@@ -245,20 +248,43 @@ export const finishCheckout: Controller = (req, res) => {
         return;
       }
 
+      const subTotal = MockResponses.order.items.reduce(
+        (acc, item) => acc + item.subtotal,
+        0,
+      );
+
+      const shippingPrice = shippingSimulator();
+
+      const discouts = MockResponses.order.coupons.reduce(
+        (acc, coupon) => coupon.value + acc,
+        0,
+      );
+
+      const totalPrice = subTotal + shippingPrice - discouts;
+      const statusText = [
+        `${new Date().toLocaleString()} - ${orderStatusText[OrderStatus.PROCESSING]} - Estamos recebendo seu pagamento. Aguarde!`,
+      ];
       MockResponses.order = {
         ...MockResponses.order,
         card,
         customer,
-        status: OrderStatus.PENDING,
+        status: OrderStatus.PROCESSING,
+        statusObservation: statusText,
+        subTotal,
+        shippingPrice,
+        totalPrice,
       };
       const orderId = MockResponses.order.id;
 
-      MockResponses.makedOrders.push(MockResponses.order);
+      MockResponses.makedOrders.push({
+        ...MockResponses.order,
+      });
 
-      MockResponses.cart = [];
+      MockResponses.order.items = [];
       MockResponses.order = {
         id: faker.string.uuid(),
         coupons: [],
+        items: [],
       };
       res.redirect("/accounts/me/orders/" + orderId);
     },

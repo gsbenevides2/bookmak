@@ -1,24 +1,17 @@
 /// <reference types="cypress" />
 import { faker } from "@faker-js/faker";
-
-/*
-Colocar a task, para que o banco seja limpo antes de cada teste
-Mudar para function para que o this seja acessível
-*/
-
-interface User {
-  email: string;
-  password: string;
-}
+import { Customer } from "../plugins/db";
+import { formatCardNumber, maskCPF } from "../utils";
 
 describe("fluxo de compra", function () {
   beforeEach(function () {
-    cy.task("db:createDemoCustomer:down");
-    cy.task("db:createDemoCustomer:up").then((user) => {
+    cy.task("db:down");
+    cy.task("mock:clear");
+    cy.task("db:createDemoCustomer").then((user) => {
       cy.wrap(user).as("user");
     });
   });
-  it("Ir para página de produto", function () {
+  it("Fluxo de compra: Desde a vitrine a confirmação.", function () {
     cy.visit("http://localhost:3000");
     // Pega o primeiro livro da vitrine
     cy.get(".book-shelf-item").first().as("firstBook");
@@ -69,23 +62,33 @@ describe("fluxo de compra", function () {
       cy.get(".cart-item-price")
         .first()
         .should("contains.text", `Preço Unitário: ${precoVitrine}`);
+      // Replace all not numbers and commas
+      const precoVitrineStr = parseInt(precoVitrine.replace(/[^\d]/g, ""));
 
-      const precoVitrineFloat = parseFloat(precoVitrine.replace("R$ ", ""));
-
-      const precoSubtotal = (precoVitrineFloat * qtdDeLivros).toFixed(2);
+      const precoSubtotal = (
+        (precoVitrineStr * qtdDeLivros) /
+        100
+      ).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
 
       cy.get(".cart-item-subtotal")
         .first()
-        .should("contains.text", `Subtotal: R$ ${precoSubtotal}`);
+        .should("contains.text", `Subtotal: ${precoSubtotal}`);
 
-      cy.get(".total-price").should(
-        "contain.text",
-        `Total: R$ ${precoSubtotal}`,
-      );
+      cy.get(".total-price").should("contain.text", `Total: ${precoSubtotal}`);
     });
 
     // Continua a compra
     cy.get(".continue-btn").click();
+
+    // Loga o cliente
+    cy.get<Customer>("@user").then((user) => {
+      cy.get("input[name='email']").type(user.email);
+      cy.get("input[name='password']").type(user.password);
+      cy.get("button[type='submit']").click();
+    });
 
     // Escolhe um estilo de marca página
     cy.get("#style-bookmark")
@@ -115,20 +118,135 @@ describe("fluxo de compra", function () {
 
     // Continua a compra
     cy.get("button[type='submit']").click();
+    // Escolhe o endereço de  entrega
+    cy.get<Customer>("@user").then((user) => {
+      cy.get("#deliveryAddress")
+        .find(":selected")
+        .should("contain.text", user.addresses[0].nickname);
 
-    // Loga o cliente
-    cy.get<User>("@user").then((user) => {
-      cy.get("input[name='email']").type(user.email);
-      cy.get("input[name='password']").type(user.password);
-      cy.get("button[type='submit']").click();
+      cy.get("#billingAddress")
+        .find(":selected")
+        .should("contain.text", user.addresses[0].nickname);
     });
 
-    // Escolhe o endereço de  entrega
+    cy.get("button[type='submit']").click();
 
-    // Escolhe o endereco de cobrança
-  });
+    // Verifica os dados e faz pagamento
+    cy.get<string>("@nomeVitrine").then((nomeVitrine) => {
+      cy.get(".list-group-item").find("h6").should("have.text", nomeVitrine);
+    });
 
-  afterEach(function () {
-    cy.task("db:createDemoCustomer:down");
+    cy.get<string>("@precoVitrine").then((precoVitrine) => {
+      cy.get(".list-group-item").should(
+        "contains.text",
+        `Preço Unitário: ${precoVitrine}`,
+      );
+
+      const precoVitrineStr = parseInt(precoVitrine.replace(/[^\d]/g, ""));
+
+      const precoSubtotal = (
+        (precoVitrineStr * qtdDeLivros) /
+        100
+      ).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+
+      cy.get(".list-group-item").should(
+        "contains.text",
+        `Subtotal: ${precoSubtotal}`,
+      );
+
+      cy.get(".sumarizer .subtotal").should("contains.text", precoSubtotal);
+    });
+
+    cy.get<Customer>("@user").then((user) => {
+      cy.get(".name").should("contains.text", user.name);
+      cy.get(".email").should("contains.text", user.email);
+      cy.get(".cpf").should("contains.text", maskCPF(user.cpf));
+      cy.get(".deliveryAddressNickname").should(
+        "contains.text",
+        user.addresses[0].nickname,
+      );
+      cy.get(".deliveryAddress").should(
+        "contains.text",
+        user.addresses[0].street,
+      );
+
+      cy.get(".billingAddressNickname").should(
+        "contains.text",
+        user.addresses[0].nickname,
+      );
+
+      cy.get(".billingAddress").should(
+        "contains.text",
+        user.addresses[0].street,
+      );
+
+      cy.get(".cardSelect").select(
+        `${formatCardNumber(user.cards[0].number)} - ${user.cards[0].flag}`,
+      );
+    });
+
+    cy.get("button.pay").click();
+
+    // Verifica novamente os dados
+    cy.get<string>("@nomeVitrine").then((nomeVitrine) => {
+      cy.get(".list-group-item").find("h6").should("have.text", nomeVitrine);
+    });
+
+    cy.get<string>("@precoVitrine").then((precoVitrine) => {
+      cy.get(".list-group-item").should(
+        "contains.text",
+        `Preço Unitário: ${precoVitrine}`,
+      );
+
+      const precoVitrineStr = parseInt(precoVitrine.replace(/[^\d]/g, ""));
+
+      const precoSubtotal = (
+        (precoVitrineStr * qtdDeLivros) /
+        100
+      ).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+
+      cy.get(".list-group-item").should(
+        "contains.text",
+        `Subtotal: ${precoSubtotal}`,
+      );
+
+      cy.get(".sumarizer .subtotal").should("contains.text", precoSubtotal);
+    });
+
+    cy.get<Customer>("@user").then((user) => {
+      cy.get(".name").should("contains.text", user.name);
+      cy.get(".email").should("contains.text", user.email);
+      cy.get(".cpf").should("contains.text", maskCPF(user.cpf));
+      cy.get(".deliveryAddressNickname").should(
+        "contains.text",
+        user.addresses[0].nickname,
+      );
+      cy.get(".deliveryAddress").should(
+        "contains.text",
+        user.addresses[0].street,
+      );
+
+      cy.get(".billingAddressNickname").should(
+        "contains.text",
+        user.addresses[0].nickname,
+      );
+
+      cy.get(".billingAddress").should(
+        "contains.text",
+        user.addresses[0].street,
+      );
+
+      cy.get(".card").should(
+        "contains.text",
+        `${formatCardNumber(user.cards[0].number)} - ${user.cards[0].flag}`,
+      );
+    });
+    cy.get(".status").should("contains.text", "Em processamento");
   });
 });

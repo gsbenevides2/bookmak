@@ -67,21 +67,20 @@
       <div class="mt-3 border p-3">
         <h5>Dados do Cliente:</h5>
         <div class="row">
-          <div class="col-7">Nome: <%= account.name %></div>
-          <div class="col-5">Email: <%= account.email %></div>
-          <div class="col-7">CPF: <%= maskCPF(account.cpf) %></div>
-          <div class="col-5">
+          <div class="col-7 name">Nome: <%= account.name %></div>
+          <div class="col-5 email">Email: <%= account.email %></div>
+          <div class="col-7 cpf">CPF: <%= maskCPF(account.cpf) %></div>
+          <div class="col-5 dateOfBirth">
             Data de Nascimento: <%= maskDate(account.dateOfBirth) %>
           </div>
         </div>
       </div>
       <!--Endereço de Envio-->
       <div class="mt-3 border p-3">
-        <h5>
-          Endereço de Envio:
-          <%- deliveryAddress.nickname %>
+        <h5 class="deliveryAddressNickname">
+          Endereço de Envio: <%- deliveryAddress.nickname %>
         </h5>
-        <p class="mb-0">
+        <p class="mb-0 deliveryAddress">
           <%= maskAddresss(deliveryAddress) %><br />
           Observações:
           <%- deliveryAddress.observations %>
@@ -89,11 +88,10 @@
       </div>
       <!--Endereço de Cobrança-->
       <div class="mt-3 border p-3">
-        <h5>
-          Endereço de Cobrança:
-          <%- billingAddress.nickname %>
+        <h5 class="billingAddressNickname">
+          Endereço de Cobrança: <%- billingAddress.nickname %>
         </h5>
-        <p class="mb-0">
+        <p class="mb-0 billingAddress">
           <%= maskAddresss(billingAddress) %><br />
           Observações:
           <%- billingAddress.observations %>
@@ -133,17 +131,23 @@
         </div>
       </div>
       <!--Resumo-->
-      <div class="mt-3 border p-3">
+      <div class="mt-3 border p-3 sumarizer">
         <h5>Resumo:</h5>
         <div class="row">
           <div class="col-6">Subtotal</div>
-          <div class="col-6 text-end"><%- formatPrice(subTotal) %></div>
+          <div class="col-6 text-end subtotal">
+            <%- formatPrice(subTotal) %>
+          </div>
           <div class="col-6">Frete</div>
-          <div class="col-6 text-end"><%- formatPrice(shippingPrice) %></div>
+          <div class="col-6 text-end shippingPrice">
+            <%- formatPrice(shippingPrice) %>
+          </div>
           <div class="col-6">Desconto</div>
-          <div class="col-6 text-end">R$ 0,00</div>
+          <div class="col-6 text-end discount">R$ 0,00</div>
           <div class="col-6">Total</div>
-          <div class="col-6 text-end"><%- formatPrice(totalPrice) %></div>
+          <div class="col-6 text-end totalPrice">
+            <%- formatPrice(totalPrice) %>
+          </div>
         </div>
       </div>
       <!--Pagamento-->
@@ -153,7 +157,7 @@
         <form method="POST" action="/checkout/payment">
           <div class="mb-3">
             <label for="card" class="form-label">Selecione o Cartão:</label>
-            <select class="form-select" id="card" name="cardId">
+            <select class="form-select cardSelect" id="card" name="cardId">
               <option selected>Selecione o Cartão</option>
               <% cards.forEach((card) => { %>
               <option value="<%= card.id %>">
@@ -176,7 +180,7 @@
               class="btn btn-outline-primary"
               >Adicionar Cartão</a
             >
-            <button type="submit" class="btn btn-primary">Pagar</button>
+            <button type="submit" class="btn btn-primary pay">Pagar</button>
           </div>
         </form>
       </div>

@@ -3,6 +3,7 @@ import { Address } from "../models/Address";
 import { Coupon } from "../models/Coupon";
 import { Card } from "../models/Card";
 import { Customer } from "../models/Customer";
+import ESSerializer from "esserializer";
 
 interface CartItem {
   book: Book;
@@ -99,22 +100,33 @@ for (let i = 0; i < qtdItensInCart; i++) {
 }
 
 export enum OrderStatus {
-  PENDING = "pending",
   PROCESSING = "processing",
-  COMPLETED = "completed",
-  CANCELED = "canceled",
+  PAYMENT_APPROVED = "payment_approved",
+  PAYMENT_REJECTED = "payment_rejected",
+  PREPARING = "preparing",
+  SENDING = "sending",
+  SENDED = "sended",
+  EXCHANGING = "exchanging",
+  EXCHANGED = "exchanged",
+  EXCHANGE_REJECTED = "exchange_rejected",
 }
 
 export const orderStatusText = {
-  [OrderStatus.PENDING]: "Pendente",
-  [OrderStatus.PROCESSING]: "Processando",
-  [OrderStatus.COMPLETED]: "Completado",
-  [OrderStatus.CANCELED]: "Cancelado",
+  [OrderStatus.PROCESSING]: "Em processamento",
+  [OrderStatus.PAYMENT_APPROVED]: "Pagamento aprovado",
+  [OrderStatus.PAYMENT_REJECTED]: "Pagamento recusado",
+  [OrderStatus.PREPARING]: "Em preparação",
+  [OrderStatus.SENDING]: "Em transporte",
+  [OrderStatus.SENDED]: "Entregue",
+  [OrderStatus.EXCHANGING]: "Em troca",
+  [OrderStatus.EXCHANGED]: "Trocado",
+  [OrderStatus.EXCHANGE_REJECTED]: "Troca recusada",
 };
 
 interface Order {
   id: string;
   status?: OrderStatus;
+  statusObservation?: string[];
   addressShipping?: Address;
   addressPayment?: Address;
   bookmarkText?: string;
@@ -126,6 +138,7 @@ interface Order {
   totalDiscount?: number;
   card?: Card;
   customer?: Customer;
+  items: CartItem[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -133,11 +146,11 @@ export class MockResponses {
   public static categories: Category[] = categories;
   public static authors: Author[] = authors;
   public static books: Book[] = books;
-  public static cart: CartItem[] = [];
 
   public static order: Order = {
     id: faker.string.uuid(),
     coupons: [],
+    items: [],
   };
 
   public static makedOrders: Order[] = [];
@@ -148,4 +161,47 @@ export class MockResponses {
     faker.lorem.sentence(),
     faker.lorem.sentence(),
   ];
+
+  public static clearMocks(): void {
+    MockResponses.categories = categories;
+    MockResponses.authors = authors;
+    MockResponses.books = books;
+    MockResponses.order = {
+      id: faker.string.uuid(),
+      coupons: [],
+      items: [],
+    };
+    MockResponses.makedOrders = [];
+    MockResponses.bookmarkStyles = ["Estilo A", "Estilo 2", "Estilo C"];
+    MockResponses.aiBookmarkTexts = [
+      faker.lorem.sentence(),
+      faker.lorem.sentence(),
+      faker.lorem.sentence(),
+      faker.lorem.sentence(),
+    ];
+  }
+
+  public static setMocks(data: any): void {
+    console.log("mockResponses", data);
+    const mockResponses = ESSerializer.deserialize(data, [
+      Card,
+      Customer,
+      Address,
+      Coupon,
+    ]);
+    console.log("mockResponses", mockResponses);
+
+    const keys = Object.keys(mockResponses);
+    for (const key of keys) {
+      const mockKey = key as keyof MockResponses;
+      type MockValue = (typeof MockResponses)[keyof MockResponses];
+      MockResponses[mockKey] = mockResponses[key] as MockValue;
+    }
+  }
+
+  public static getMocks(): any {
+    return ESSerializer.serialize({
+      ...MockResponses,
+    });
+  }
 }

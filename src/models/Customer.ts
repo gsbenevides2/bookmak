@@ -85,6 +85,11 @@ export class Customer {
   @JoinColumn()
   attachedCoupons!: Coupon[];
 
+  @Column({
+    default: false,
+  })
+  isAdmin!: boolean;
+
   public constructor(
     email: string,
     name: string,
