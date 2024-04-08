@@ -47,8 +47,8 @@
           <a href="/admin/order/${id}/rejectPayment" class="btn btn-outline-secondary mt-2 rejectPayment">Recusar Pagamento</a>
           ` : '' %>
           <%- status === OrderStatusEnum.EXCHANGING ? `
-          <a href="/admin/order/${id}/change" class="btn btn-outline-secondary mt-2 change">Trocar Pedido</a>
-          <a href="/admin/order/${id}/cancelChange" class="btn btn-outline-secondary mt-2 cancelChange">Cancelar Troca</a>
+          <a href="/admin/order/${id}/aproveExchange" class="btn btn-outline-secondary mt-2 aproveExchange">Trocar Pedido</a>
+          <a href="/admin/order/${id}/rejectExchange" class="btn btn-outline-secondary mt-2 rejectExchange">Cancelar Troca</a>
           ` : '' %>
           <%- status === OrderStatusEnum.PAYMENT_APPROVED ? `
           <a href="/admin/order/${id}/startPreparing" class="btn btn-outline-secondary mt-2 startPreparing">Iniciar Preparação</a>

@@ -262,3 +262,75 @@ export const finishOrder: Controller = (req, res) => {
 
   res.redirect(`/admin/order/${orderId}`);
 };
+
+export const checkOrderIsExchangeable: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const orderIndex = MockResponses.makedOrders.findIndex(
+    (order) => order.id === orderId,
+  );
+  if (orderIndex === -1) {
+    res.redirect("/admin");
+    return;
+  }
+
+  const order = MockResponses.makedOrders[orderIndex];
+  if (order.status !== OrderStatus.EXCHANGING) {
+    res.redirect("/admin");
+    return;
+  }
+  const view = req.originalUrl.includes("reject")
+    ? "admin/rejectExchange"
+    : "admin/aproveExchange";
+  res.render(view, {
+    orderId: order.id,
+  });
+};
+
+export const aproveExchange: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const orderIndex = MockResponses.makedOrders.findIndex(
+    (order) => order.id === orderId,
+  );
+  if (orderIndex === -1) {
+    res.redirect("/admin");
+    return;
+  }
+
+  const order = MockResponses.makedOrders[orderIndex];
+  if (order.status !== OrderStatus.EXCHANGING) {
+    res.redirect("/admin");
+    return;
+  }
+
+  MockResponses.makedOrders[orderIndex].status = OrderStatus.EXCHANGED;
+  MockResponses.makedOrders[orderIndex].statusObservation?.push(
+    `${new Date().toLocaleString()} - ${orderStatusText[OrderStatus.EXCHANGED]} - Seu pedido de troca foi aprovado`,
+  );
+
+  res.redirect(`/admin/order/${orderId}`);
+};
+
+export const rejectExchange: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const { reason } = req.body;
+  const orderIndex = MockResponses.makedOrders.findIndex(
+    (order) => order.id === orderId,
+  );
+  if (orderIndex === -1) {
+    res.redirect("/admin");
+    return;
+  }
+
+  const order = MockResponses.makedOrders[orderIndex];
+  if (order.status !== OrderStatus.EXCHANGING) {
+    res.redirect("/admin");
+    return;
+  }
+
+  MockResponses.makedOrders[orderIndex].status = OrderStatus.EXCHANGE_REJECTED;
+  MockResponses.makedOrders[orderIndex].statusObservation?.push(
+    `${new Date().toLocaleString()} - ${orderStatusText[OrderStatus.EXCHANGE_REJECTED]} - Seu pedido de troca foi rejeitado, motivo: ${reason}. O produto será reenviado para o endereço de entrega.`,
+  );
+
+  res.redirect(`/admin/order/${orderId}`);
+};

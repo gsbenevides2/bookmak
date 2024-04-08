@@ -29,25 +29,28 @@
     </header>
     <!--Conteudo-->
     <main class="container mb-5">
-      <h1 class="mt-3 text-center">Alterar Status</h1>
+      <h1 class="mt-3 text-center">Rejeitar Troca</h1>
 
       <div class="mt-3 border p-3">
-        <h5>Pedido: 0001</h5>
-        <select class="form-select mt-2">
-          <option selected>Selecione o status do pedido</option>
-          <option value="1">Pagamento em Processamento</option>
-          <option value="2">Pagamento Aprovado</option>
-          <option value="3">Pedido em Separação</option>
-        </select>
-        <textarea
-          class="form-control mt-2"
-          placeholder="Observações"
-          rows="3"
-        ></textarea>
-        <a href="/admin/orders/1.html" class="btn btn-outline-secondary mt-2"
-          >Alterar Status</a
+        <h5>Pedido: <%= orderId %></h5>
+        <p class="mb-0">
+          Escrava o motivo da rejeição para notificar o cliente.
+        </p>
+        <form method="POST">
+          <textarea
+            name="reason"
+            class="form-control mt-2"
+            placeholder="Motivo da Rejeição"
+            required
+          ></textarea>
+          <button type="submit" class="btn btn-outline-secondary mt-2">
+            Rejeitar Troca
+          </button>
+        </form>
+        <a
+          href="/admin/orders/<%= orderId %>"
+          class="btn btn-outline-secondary mt-2"
         >
-        <a href="/admin/orders/1.html" class="btn btn-outline-secondary mt-2">
           Voltar
         </a>
       </div>

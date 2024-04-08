@@ -41,5 +41,21 @@ adminRouter.get(
   adminController.checkOrderIsSended,
 );
 adminRouter.post("/order/:orderId/sendedOrder", adminController.finishOrder);
+adminRouter.get(
+  "/order/:orderId/rejectExchange",
+  adminController.checkOrderIsExchangeable,
+);
+adminRouter.post(
+  "/order/:orderId/rejectExchange",
+  adminController.rejectExchange,
+);
+adminRouter.get(
+  "/order/:orderId/aproveExchange",
+  adminController.checkOrderIsExchangeable,
+);
+adminRouter.post(
+  "/order/:orderId/aproveExchange",
+  adminController.aproveExchange,
+);
 
 export default adminRouter;
