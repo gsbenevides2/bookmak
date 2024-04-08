@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 import { Customer } from "../plugins/db";
 
-describe("fluxo de troca", function () {
+describe("Fluxo de Troca", function () {
   beforeEach(function () {
     cy.task("db:down");
     cy.task("mock:clear");

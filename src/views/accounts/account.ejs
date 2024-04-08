@@ -154,7 +154,7 @@
           <div class="mb-3 col-6">
             <label class="form-label" for="deliveryAddress">Endereço de Entrega:</label>
             <select id="deliveryAddress" name="deliveryAddressId" class="form-select">
-              <option selected disabled>Selecione um Endereço</option>
+              <option disabled>Selecione um Endereço</option>
               <option selected value="<%= account.deliveryAddress.id %>"><%= account.deliveryAddress.nickname %></option>
               <% for( let index = 0; index < account.addresses.length; index++ ) { %>
                 <% const address = account.addresses[index] %>

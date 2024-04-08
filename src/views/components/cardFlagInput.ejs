@@ -1,0 +1,15 @@
+<% const cardFlags = getAvailableCardFlags(); %>
+
+<div class="<%- className %>">
+  <label for="cardBrand" class="form-label">Bandeira</label>
+  <select class="form-select" id="cardBrand" name="cardBrand" required>
+    <option  selected disabled>Escolha...</option>
+
+    <% cardFlags.forEach((cardFlagsListItem) => { %>
+        <option  
+            value="<%= cardFlagsListItem.value %>">
+            <%= cardFlagsListItem.text %>
+        </option>
+    <% }); %>
+  </select>
+</div>

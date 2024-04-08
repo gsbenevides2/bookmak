@@ -37,17 +37,10 @@
             required
           />
         </div>
-        <div class="mb-3 col-4">
-          <label for="cardBrand" class="form-label">Bandeira</label>
-          <select class="form-select" id="cardBrand" name="cardBrand" required>
-            <option selected>Escolha...</option>
-            <option value="Visa">Visa</option>
-            <option value="MasterCard">MasterCard</option>
-            <option value="American Express">American Express</option>
-            <option value="Elo">Elo</option>
-            <option value="Hipercard">Hipercard</option>
-          </select>
-        </div>
+        <%- include('../components/cardFlagInput',{
+          className: "mb-3 col-4"
+        }) %>
+        
         <div class="mb-3 col-4">
           <label for="cardExpiry" class="form-label">Data de Expiração</label>
           <input

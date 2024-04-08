@@ -3,7 +3,7 @@ import { faker } from "@faker-js/faker";
 import { Customer } from "../plugins/db";
 import { formatCardNumber, maskCPF } from "../utils";
 
-describe("fluxo de compra", function () {
+describe("Fluxo de Compra", function () {
   beforeEach(function () {
     cy.task("db:down");
     cy.task("mock:clear");

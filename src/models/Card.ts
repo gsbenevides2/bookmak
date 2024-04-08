@@ -6,6 +6,11 @@ export enum CardFlag {
   Visa = "visa",
 }
 
+export const cardFlagText = {
+  [CardFlag.MasterCard]: "MasterCard",
+  [CardFlag.Visa]: "Visa",
+};
+
 @Entity()
 export class Card {
   @PrimaryGeneratedColumn("uuid")

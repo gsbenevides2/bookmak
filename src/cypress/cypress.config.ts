@@ -14,6 +14,8 @@ export default defineConfig({
       on("task", {
         "db:createDemoCustomer": dbTasks.createDemoCustommer,
         "db:createDemoAdmin": dbTasks.createDemoAdmin,
+        "db:createDemoAddress": dbTasks.createDemoAddress,
+        "db:createDemoCard": dbTasks.createDemoCard,
         "db:down": dbTasks.down,
         "mock:clear": mockTasks.clear,
         "mock:set": mockTasks.set,

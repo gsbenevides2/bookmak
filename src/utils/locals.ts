@@ -6,6 +6,7 @@ import {
   HouseType,
   houseTypesTexts,
 } from "../models/Address";
+import { CardFlag, cardFlagText } from "../models/Card";
 
 export function maskCPF(cpf: string) {
   return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
@@ -57,4 +58,11 @@ export const OrderStatusEnum = OrderStatus;
 
 export function formatOrderStatus(status: OrderStatus) {
   return orderStatusText[status];
+}
+
+export function getAvailableCardFlags() {
+  return Object.values(CardFlag).map((value) => ({
+    value,
+    text: cardFlagText[value],
+  }));
 }
