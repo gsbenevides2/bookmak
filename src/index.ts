@@ -12,6 +12,8 @@ import cookieParser from "cookie-parser";
 import { DatabaseConnection } from "./dbConnection";
 import { MockResponses } from "./mocks/mock";
 import adminRouter from "./routes/admin";
+import { orderProvider } from "./middlewares/orderProvider";
+import { BookmarkGenerator } from "./utils/generateBookmarks";
 
 const server = express();
 const serverPort = process.env.PORT ?? 3000;
@@ -19,8 +21,8 @@ const serverPort = process.env.PORT ?? 3000;
 server.use(express.json());
 server.use(cookieParser());
 server.use(express.urlencoded({ extended: true }));
-server.use(express.static("dist/public"));
-server.set("views", "dist/views");
+server.use(express.static("src/public"));
+server.set("views", "src/views");
 server.set("view engine", "ejs");
 server.locals = {
   ...locals,
@@ -41,6 +43,7 @@ server.use(
   }),
 );
 
+server.use(orderProvider);
 server.use("/books", booksRouter);
 server.use("/accounts", accountsRouter);
 server.use("/login", loginRouter);
@@ -52,6 +55,7 @@ server.use("/status", (_req, res) => {
 });
 
 server.get("/", (_req, res) => {
+  console.log("Redirecting to /books");
   res.redirect("/books");
 });
 
@@ -71,5 +75,6 @@ server.post("/test/setMocks", (req, res) => {
 
 server.listen(serverPort, async () => {
   await DatabaseConnection.connect();
+  await BookmarkGenerator.loadOpenAi();
   console.log(`Server is running at http://localhost:${serverPort}`);
 });

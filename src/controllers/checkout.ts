@@ -7,134 +7,134 @@ import { getCards } from "../useCases/customer/getCards";
 import { getCustomerAddressSettings } from "../useCases/customer/getCustomerAddressSettings";
 import { getCustomerData } from "../useCases/customer/getCustomerData";
 import { shippingSimulator } from "../utils/shippingSimulator";
+import addToCart from "../useCases/checkout/addToCart";
+import { getOrder } from "../useCases/checkout/getOrder";
+import removeFromCart from "../useCases/checkout/removeFromCart";
+import updateQuantity from "../useCases/checkout/updateQuantity";
+import { getAiBookmarks } from "../useCases/checkout/getAiBookmarks";
+import registerBookmark from "../useCases/checkout/saveBookmark";
+import { updateAddress } from "../useCases/checkout/updateAddress";
 
-export const getCart: Controller = (_req, res) => {
-  const cart = MockResponses.order.items;
-  const total = cart.reduce((acc, item) => acc + item.subtotal, 0);
-  if (cart.length === 0) {
-    res.render("checkout/empty-cart");
-  } else
-    res.render("checkout/cart", {
-      cart,
-      total,
+export const getCart: Controller = async (req, res) => {
+  const orderId = req.cookies.orderId as string;
+
+  await getOrder(orderId)
+    .then((order) => {
+      if (order.items.length === 0) {
+        res.render("checkout/empty-cart");
+        return;
+      }
+      res.render("checkout/cart", {
+        order,
+      });
+    })
+    .catch((error) => {
+      res.render("checkout/cart", {
+        error: error.message,
+      });
     });
 };
-export const updateCart: Controller = (req, res) => {
-  const { action, bookId } = req.body;
-  const cart = MockResponses.order.items;
+export const updateCart: Controller = async (req, res) => {
+  const { action } = req.body;
+  const orderId = req.cookies.orderId as string;
+
   if (action === "ADD") {
-    const { quantity } = req.body;
-    const book = MockResponses.books.find((book) => book.id === bookId);
-    const bookInCart = cart.find((item) => item.book.id === bookId);
-
-    if (bookInCart != null) {
-      bookInCart.quantity = bookInCart.quantity + parseInt(quantity as string);
-      bookInCart.subtotal = bookInCart.book.price * bookInCart.quantity;
-    } else if (book != null) {
-      cart.push({
-        book,
-        quantity: parseInt(quantity as string),
-        subtotal: book.price * quantity,
-      });
-    }
+    const { quantity, bookId } = req.body;
+    await addToCart(bookId, orderId, parseInt(quantity as string));
   }
-
   if (action === "REMOVE") {
-    const index = cart.findIndex((item) => item.book.id === bookId);
-    cart.splice(index, 1);
+    const { orderItemId } = req.body;
+    await removeFromCart(orderItemId, orderId);
   }
   if (action === "UPDATE_QUANTITY") {
-    const quantity = req.body.quantity;
-    if (quantity <= 0) {
-      res.redirect("/checkout/cart");
-      return;
-    }
-    const index = cart.findIndex((item) => item.book.id === bookId);
-    cart[index].quantity = quantity;
-    cart[index].subtotal = cart[index].book.price * quantity;
+    const { quantity, orderItemId } = req.body;
+    await updateQuantity(orderItemId, parseInt(quantity as string), orderId);
   }
-
-  MockResponses.order.items = cart;
 
   res.redirect("/checkout/cart");
 };
 
 export const getAvailableBokmarkTexts: Controller = (req, res) => {
-  const {
-    aiBookmarkTexts,
-    bookmarkStyles,
-    order: { items: cart },
-  } = MockResponses;
-  if (cart.length === 0) return res.redirect("/checkout/cart");
-  res.render("checkout/bookmark", {
-    aiBookmarkTexts,
-    bookmarkStyles,
-    error: null,
-  });
+  const orderId = req.cookies.orderId as string;
+  const bookmarkStyles = ["Estilo A", "Estilo 2", "Estilo C"];
+  getAiBookmarks(orderId)
+    .then((bookmarks) => {
+      res.json({
+        aiBookmarkTexts: bookmarks,
+        bookmarkStyles,
+      });
+    })
+    .catch((error) => {
+      res.status(400).json({
+        error: error.message,
+      });
+    });
 };
 export const updateBookmarkTextInOrder: Controller = (req, res) => {
   interface Body {
-    text?: string;
-    customText?: string;
     bookmarkStyle?: string;
+    bookmarkText?: string;
   }
-  const { text, customText, bookmarkStyle } = req.body as Body;
-  const bookmarkText =
-    customText != null ? (customText.length > 0 ? customText : text) : text;
-
+  const { bookmarkText, bookmarkStyle } = req.body as Body;
+  const orderId = req.cookies.orderId as string;
   if (bookmarkText == null || bookmarkText.trim() === "") {
-    res.render("checkout/bookmark", {
-      aiBookmarkTexts: MockResponses.aiBookmarkTexts,
-      bookmarkStyles: MockResponses.bookmarkStyles,
-      error: "Selecione um texto ou insira um texto personalizado.",
+    res.status(400).json({
+      error: "O texto do marcador não pode ser vazio.",
     });
     return;
   }
   if (bookmarkText.length > 200) {
-    res.render("checkout/bookmark", {
-      aiBookmarkTexts: MockResponses.aiBookmarkTexts,
-      bookmarkStyles: MockResponses.bookmarkStyles,
+    res.status(400).json({
       error: "O texto do marcador não pode ter mais de 200 caracteres.",
     });
     return;
   }
 
   if (bookmarkStyle == null) {
-    res.render("checkout/bookmark", {
-      aiBookmarkTexts: MockResponses.aiBookmarkTexts,
-      bookmarkStyles: MockResponses.bookmarkStyles,
+    res.send(400).json({
       error: "Selecione um estilo de marcador.",
     });
     return;
   }
 
-  MockResponses.order = {
-    ...MockResponses.order,
-    bookmarkText,
+  registerBookmark({
     bookmarkStyle,
-  };
-  res.redirect("/checkout/addresses");
+    bookmarkText,
+    orderId,
+  })
+    .then(() => {
+      res.status(200).send("OK");
+    })
+    .catch((error) => {
+      res.status(400).json({
+        error: error.message,
+      });
+    });
 };
 
 export const getAddressSettigsForCurrentOrder: Controller = (req, res) => {
   const customerId = req.cookies?.accountId as string;
-  if (MockResponses.order.items.length === 0) {
-    res.redirect("/checkout/cart");
-    return;
-  }
+  const orderId = req.cookies?.orderId as string;
+  getOrder(orderId)
+    .then((order) => {
+      if (order.items.length === 0) {
+        res.redirect("/checkout/cart");
+        return;
+      }
 
-  if (
-    MockResponses.order.bookmarkText == null ||
-    MockResponses.order.bookmarkStyle == null
-  ) {
-    res.redirect("/checkout/bookmark");
-    return;
-  }
-  Promise.all([
-    getAddresses(customerId),
-    getCustomerAddressSettings(customerId),
-  ])
-    .then(([addresses, addressSettings]) => {
+      if (order.bookmarkText == null || order.bookmarkStyle == null) {
+        res.redirect("/checkout/bookmark");
+        return;
+      }
+
+      return Promise.all([
+        getAddresses(customerId),
+        getCustomerAddressSettings(customerId),
+      ]);
+    })
+    .then((promiseReturn) => {
+      if (promiseReturn == null) return;
+      const [addresses, addressSettings] = promiseReturn;
       res.render("checkout/selectAddresses", {
         error: null,
         addresses,
@@ -148,24 +148,15 @@ export const getAddressSettigsForCurrentOrder: Controller = (req, res) => {
 export const updateAddressSettingsForCurrentOrder: Controller = (req, res) => {
   const { billingAddress, deliveryAddress } = req.body;
   const customerId = req.cookies?.accountId as string;
-  getAddresses(customerId)
-    .then((addresses) => {
-      const addressPayment = addresses.find(
-        (address) => address.id === billingAddress,
-      ) as Address | undefined;
+  const orderId = req.cookies?.orderId as string;
 
-      const addressShipping = addresses.find(
-        (address) => address.id === deliveryAddress,
-      ) as Address | undefined;
-
-      if (addressPayment != null && addressShipping != null) {
-        MockResponses.order = {
-          ...MockResponses.order,
-          addressPayment,
-          addressShipping,
-          shippingPrice: shippingSimulator(),
-        };
-      }
+  updateAddress({
+    billingAddressId: billingAddress,
+    customerId,
+    orderId,
+    shippingAddressId: deliveryAddress,
+  })
+    .then(() => {
       res.redirect("/checkout/payment");
     })
     .catch(() => {
@@ -174,56 +165,30 @@ export const updateAddressSettingsForCurrentOrder: Controller = (req, res) => {
 };
 
 export const getAllDataForCheckout: Controller = (req, res) => {
-  const accountId = req.cookies.accountId;
+  const orderId = req.cookies.orderId as string;
+  const accountId = req.cookies.accountId as string;
   const error = req.query.error;
-  Promise.all([getCustomerData(accountId), getCards(accountId)])
-    .then(([customer, cards]) => {
-      if (MockResponses.order.items.length === 0) {
+  Promise.all([getOrder(orderId), getCards(accountId)])
+    .then(([order, cards]) => {
+      if (order.items.length === 0) {
         res.redirect("/checkout/cart");
         return;
       }
 
-      if (
-        MockResponses.order.bookmarkText == null ||
-        MockResponses.order.bookmarkStyle == null
-      ) {
+      if (order.bookmarkText == null || order.bookmarkStyle == null) {
         res.redirect("/checkout/bookmark");
         return;
       }
 
-      if (
-        MockResponses.order.addressPayment == null ||
-        MockResponses.order.addressShipping == null
-      ) {
+      if (order.shippingAddress == null || order.billingAddress == null) {
         res.redirect("/checkout/addresses");
         return;
       }
 
-      const subTotal = MockResponses.order.items.reduce(
-        (acc, item) => acc + item.subtotal,
-        0,
-      );
-
-      const shippingPrice = shippingSimulator();
-
-      const discouts = MockResponses.order.coupons.reduce(
-        (acc, coupon) => coupon.value + acc,
-        0,
-      );
-
-      const totalPrice = subTotal + shippingPrice - discouts;
-
       res.render("checkout/payment", {
-        account: customer,
         cards: cards,
-        billingAddress: MockResponses.order.addressPayment,
-        deliveryAddress: MockResponses.order.addressShipping,
-        cartItens: MockResponses.order.items,
-        shippingPrice,
-        subTotal,
-        totalPrice,
-        discouts,
-        coupons: MockResponses.order.coupons,
+        order,
+        coupons: [],
         error,
       });
     })

@@ -6,6 +6,7 @@ import {
   HouseType,
   houseTypesTexts,
 } from "../models/Address";
+import { Author } from "../models/Author";
 import { CardFlag, cardFlagText } from "../models/Card";
 
 export function maskCPF(cpf: string) {
@@ -65,4 +66,14 @@ export function getAvailableCardFlags() {
     value,
     text: cardFlagText[value],
   }));
+}
+
+export function maxWords(text: string, max: number) {
+  const words = text.split(" ");
+  if (words.length <= max) return text;
+  return words.slice(0, max).join(" ") + "...";
+}
+
+export function formatAuthors(authors: Author[]) {
+  return authors.map((author) => author.name).join(", ");
 }

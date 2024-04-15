@@ -1,40 +1,39 @@
 import { type Controller } from "../types/controller";
 import { MockResponses } from "../mocks/mock";
+import getBooks from "../useCases/books/getBooks";
+import getCategories from "../useCases/books/getCategories";
+import getAuthors from "../useCases/books/getAuthors";
+import getBookById from "../useCases/books/getBook";
 
 export const getBooksController: Controller = (req, res) => {
   const filters = req.query;
-
-  let books = MockResponses.books;
-  const categories = MockResponses.categories;
-  const authors = MockResponses.authors;
-
-  if (filters.category != null) {
-    const catId = parseInt(filters.category as string);
-    const category = categories.find((cat) => cat.id === catId);
-    if (category == null) return res.status(404).send("Category not found");
-    books = books.filter((book) => book.category === category.name);
-  }
-  if (filters.author != null) {
-    const authorId = parseInt(filters.author as string);
-    const author = authors.find((auth) => auth.id === authorId);
-    if (author == null) return res.status(404).send("Author not found");
-    books = books.filter((book) => book.author === author.name);
-  }
-  if (filters.searchQuery != null) {
-    const search = filters.searchQuery as string;
-
-    books = books.filter(
-      (book) =>
-        book.title.toLowerCase().includes(search.toLowerCase()) ||
-        book.description.toLowerCase().includes(search.toLowerCase()),
-    );
-  }
-  res.render("books", { books, filters, categories, authors });
+  console.log("Request received");
+  Promise.all([
+    getBooks({
+      categoryId: filters.category as string,
+      authorId: filters.author as string,
+      searchQuery: filters.searchQuery as string,
+      minPrice:
+        typeof filters.minPrice === "string"
+          ? parseInt(filters.minPrice) * 100
+          : undefined,
+      maxPrice:
+        typeof filters.maxPrice === "string"
+          ? parseInt(filters.maxPrice) * 100
+          : undefined,
+    }),
+    getCategories(),
+    getAuthors(),
+  ]).then(([books, categories, authors]) => {
+    console.log("request processed");
+    res.render("books", { books, filters, categories, authors });
+  });
 };
 
 export const getBookByIdController: Controller = (req, res) => {
   const { id } = req.params;
-  const book = MockResponses.books.find((book) => book.id === id);
-  if (book == null) return res.status(404).send("Book not found");
-  res.render("book", { book });
+  getBookById(id).then((book) => {
+    if (book == null) return res.status(404).send("Book not found");
+    res.render("book", { book });
+  });
 };

@@ -11,6 +11,7 @@ import {
 import { Address } from "./Address";
 import { Card } from "./Card";
 import { Coupon } from "./Coupon";
+import { Order } from "./Order";
 
 export enum Gender {
   Male = "male",
@@ -89,6 +90,9 @@ export class Customer {
     default: false,
   })
   isAdmin!: boolean;
+
+  @OneToMany(() => Order, (order) => order.customer)
+  orders!: Order[];
 
   public constructor(
     email: string,

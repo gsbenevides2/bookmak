@@ -64,7 +64,7 @@
               <% categories.forEach(category => { %>
               <option
                 value="<%= category.id %>"
-                <%= parseInt(filters.category) === category.id ? 'selected' : '' %>
+                <%= filters.category === category.id ? 'selected' : '' %>
               >
                 <%= category.name %>
               </option>
@@ -134,15 +134,15 @@
           <% books.forEach(book => { %>
           <div class="card book-shelf-item mb-5">
             <img
-              src="<%= book.cover %>"
+              src="<%= book.cover %>.512.jpg"
               class="card-img-top"
               alt="Capa do Livro"
               loading="lazy"
             />
             <div class="card-body d-flex flex-column">
               <h5 class="card-title book-shelf-item-title"><%= book.title %></h5>
-              <p class="card-text fst-italic">Autor: <%= book.author %></p>
-              <p class="card-text"><%= book.description %></p>
+              <p class="card-text fst-italic">Autor: <%= formatAuthors(book.authors) %></p>
+              <p class="card-text"><%= maxWords(book.description,50) %></p>
               <p class="card-text fw-bold mt-auto book-shelf-item-price"><%= formatPrice(book.price) %></p>
               <a href="/books/<%= book.id %>" class="btn btn-dark">Comprar</a>
             </div>
