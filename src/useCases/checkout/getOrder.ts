@@ -11,17 +11,21 @@ export async function getOrder(orderId: string): Promise<Order> {
   const order = await orderRepository
     .findOne({
       where: { id: orderId },
-      relations: [
-        "customer",
-        "items",
-        "items.sku",
-        "items.sku.book",
-        "items.sku.book.authors",
-        "billingAddress",
-        "shippingAddress",
-      ],
+      relations: {
+        customer: true,
+        items: {
+          sku: {
+            book: {
+              authors: true,
+            },
+          },
+        },
+        billingAddress: true,
+        shippingAddress: true,
+      },
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error("OrderDbRequestError", error);
       throw new Error(
         "Ocorreu um erro interno ao buscar o pedido. Code: OrderDbRequestError",
       );

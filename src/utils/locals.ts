@@ -8,6 +8,7 @@ import {
 } from "../models/Address";
 import { Author } from "../models/Author";
 import { CardFlag, cardFlagText } from "../models/Card";
+import { OrderUpdate } from "../models/OrderUpdate";
 
 export function maskCPF(cpf: string) {
   return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
@@ -76,4 +77,10 @@ export function maxWords(text: string, max: number) {
 
 export function formatAuthors(authors: Author[]) {
   return authors.map((author) => author.name).join(", ");
+}
+
+export function orderUpdates(updates: OrderUpdate[]) {
+  return updates.sort((a, b) => {
+    return a.timestamp.getTime() - b.timestamp.getTime();
+  });
 }

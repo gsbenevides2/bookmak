@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -36,10 +37,10 @@ export class Order {
   @ManyToOne(() => Customer, (customer) => customer.orders)
   @JoinColumn()
   customer?: Customer;
-  @OneToOne(() => Address)
+  @ManyToOne(() => Address)
   @JoinColumn()
   billingAddress?: Address;
-  @OneToOne(() => Address)
+  @ManyToOne(() => Address)
   @JoinColumn()
   shippingAddress?: Address;
 

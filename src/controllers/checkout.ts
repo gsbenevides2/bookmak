@@ -14,6 +14,8 @@ import updateQuantity from "../useCases/checkout/updateQuantity";
 import { getAiBookmarks } from "../useCases/checkout/getAiBookmarks";
 import registerBookmark from "../useCases/checkout/saveBookmark";
 import { updateAddress } from "../useCases/checkout/updateAddress";
+import { recalculateOrderTotal } from "../useCases/checkout/recalculateOrderTotal";
+import { executeOrder } from "../useCases/checkout/executeOrder";
 
 export const getCart: Controller = async (req, res) => {
   const orderId = req.cookies.orderId as string;
@@ -29,9 +31,7 @@ export const getCart: Controller = async (req, res) => {
       });
     })
     .catch((error) => {
-      res.render("checkout/cart", {
-        error: error.message,
-      });
+      res.redirect("/login?error=" + error.message);
     });
 };
 export const updateCart: Controller = async (req, res) => {
@@ -159,8 +159,8 @@ export const updateAddressSettingsForCurrentOrder: Controller = (req, res) => {
     .then(() => {
       res.redirect("/checkout/payment");
     })
-    .catch(() => {
-      res.redirect("/login?error=Erro ao buscar endereços");
+    .catch((error) => {
+      res.redirect("/login?error=" + error.message);
     });
 };
 
@@ -168,7 +168,8 @@ export const getAllDataForCheckout: Controller = (req, res) => {
   const orderId = req.cookies.orderId as string;
   const accountId = req.cookies.accountId as string;
   const error = req.query.error;
-  Promise.all([getOrder(orderId), getCards(accountId)])
+  recalculateOrderTotal(orderId)
+    .then(() => Promise.all([getOrder(orderId), getCards(accountId)]))
     .then(([order, cards]) => {
       if (order.items.length === 0) {
         res.redirect("/checkout/cart");
@@ -198,60 +199,14 @@ export const getAllDataForCheckout: Controller = (req, res) => {
 };
 export const finishCheckout: Controller = (req, res) => {
   const { cardId } = req.body;
-  const accountId = req.cookies.accountId;
-  Promise.all([getCustomerData(accountId), getCards(accountId)]).then(
-    ([customer, cards]) => {
-      const card = cards.find((card) => card.id === cardId);
-      if (card == null) {
-        res.redirect(
-          "/checkout/payment?error=Cartão não encontrado ou inválido",
-        );
-        return;
-      }
-      if (customer == null) {
-        res.redirect("/login?error=Erro ao buscar dados");
-        return;
-      }
-
-      const subTotal = MockResponses.order.items.reduce(
-        (acc, item) => acc + item.subtotal,
-        0,
-      );
-
-      const shippingPrice = shippingSimulator();
-
-      const discouts = MockResponses.order.coupons.reduce(
-        (acc, coupon) => coupon.value + acc,
-        0,
-      );
-
-      const totalPrice = subTotal + shippingPrice - discouts;
-      const statusText = [
-        `${new Date().toLocaleString()} - ${orderStatusText[OrderStatus.PROCESSING]} - Estamos recebendo seu pagamento. Aguarde!`,
-      ];
-      MockResponses.order = {
-        ...MockResponses.order,
-        card,
-        customer,
-        status: OrderStatus.PROCESSING,
-        statusObservation: statusText,
-        subTotal,
-        shippingPrice,
-        totalPrice,
-      };
-      const orderId = MockResponses.order.id;
-
-      MockResponses.makedOrders.push({
-        ...MockResponses.order,
-      });
-
-      MockResponses.order.items = [];
-      MockResponses.order = {
-        id: faker.string.uuid(),
-        coupons: [],
-        items: [],
-      };
-      res.redirect("/accounts/me/orders/" + orderId);
-    },
-  );
+  const customerId = req.cookies.accountId;
+  const orderId = req.cookies.orderId;
+  executeOrder({
+    cardId,
+    customerId,
+    orderId,
+  }).then(() => {
+    res.clearCookie("orderId");
+    res.redirect("/accounts/me/orders/" + orderId);
+  });
 };

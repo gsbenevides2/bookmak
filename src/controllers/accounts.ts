@@ -13,6 +13,7 @@ import deleteCard from "../useCases/customer/deleteCard";
 import changePassword from "../useCases/customer/changePassword";
 import { MockResponses, OrderStatus } from "../mocks/mock";
 import { formatOrderStatus } from "../utils/locals";
+import { getOrders } from "../useCases/customer/getOrders";
 
 export const getMyAccountController: Controller = (req, res) => {
   const accountIdCookie = req.cookies?.accountId as string;
@@ -245,13 +246,15 @@ export const getMyCuponsController: Controller = (req, res) => {
 export const getMyOrdersController: Controller = (req, res) => {
   const accountId = req.cookies?.accountId as string;
 
-  const orders = MockResponses.makedOrders.filter(
-    (order) => order.customer?.id === accountId,
-  );
-
-  res.render("accounts/orders", {
-    orders,
-  });
+  getOrders(accountId)
+    .then((orders) => {
+      res.render("accounts/orders", {
+        orders,
+      });
+    })
+    .catch(() => {
+      res.redirect("/accounts/me?error=Erro ao buscar pedidos");
+    });
 };
 export const getDataFromOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;

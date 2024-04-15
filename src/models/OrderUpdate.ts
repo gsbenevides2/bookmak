@@ -46,7 +46,9 @@ export class OrderUpdate {
   @Column()
   observations!: string;
 
-  @Column()
+  @Column({
+    default: () => "CURRENT_TIMESTAMP",
+  })
   timestamp!: Date;
 
   @ManyToOne(() => Order, (order) => order.updates)
