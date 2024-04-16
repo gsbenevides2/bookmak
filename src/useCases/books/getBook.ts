@@ -1,7 +1,7 @@
 import { DatabaseConnection } from "../../dbConnection";
-import { Author } from "../../models/Author";
+import { type Author } from "../../models/Author";
 import { BookSku } from "../../models/BookSku";
-import { Category } from "../../models/Category";
+import { type Category } from "../../models/Category";
 
 export interface ReturnGetBook {
   cover: string;

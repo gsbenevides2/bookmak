@@ -5,7 +5,7 @@ import { Order } from "../../models/Order";
 export default async function getOrder(orderId: string) {
   const dataSource = await DatabaseConnection.getDataSource();
   const orderRepository = await dataSource.getRepository(Order);
-  return orderRepository.findOne({
+  return await orderRepository.findOne({
     where: {
       id: orderId,
       updates: {

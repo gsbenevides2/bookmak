@@ -20,16 +20,27 @@ export const getBooks: Controller = (req, res) => {
     }),
     booksUseCases.getCategories(),
     booksUseCases.getAuthors(),
-  ]).then(([books, categories, authors]) => {
-    console.log("request processed");
-    res.render("books", { books, filters, categories, authors });
-  });
+  ])
+    .then(([books, categories, authors]) => {
+      console.log("request processed");
+      res.render("books", { books, filters, categories, authors });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Internal server error");
+    });
 };
 
 export const getBookById: Controller = (req, res) => {
   const { id } = req.params;
-  booksUseCases.getBookById(id).then((book) => {
-    if (book == null) return res.status(404).send("Book not found");
-    res.render("book", { book });
-  });
+  booksUseCases
+    .getBookById(id)
+    .then((book) => {
+      if (book == null) return res.status(404).send("Book not found");
+      res.render("book", { book });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Internal server error");
+    });
 };

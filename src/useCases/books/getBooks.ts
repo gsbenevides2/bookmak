@@ -1,5 +1,5 @@
 import { DatabaseConnection } from "../../dbConnection";
-import { Author } from "../../models/Author";
+import { type Author } from "../../models/Author";
 import { BookSku } from "../../models/BookSku";
 
 export interface ReturnGetBooks {

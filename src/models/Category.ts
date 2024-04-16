@@ -11,6 +11,7 @@ import { Book } from "./Book";
 export class Category {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
+
   @Column()
   name!: string;
 

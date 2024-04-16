@@ -1,5 +1,5 @@
 import { MockResponses, OrderStatus, orderStatusText } from "../mocks/mock";
-import { Controller } from "../types/controller";
+import { type Controller } from "../types/controller";
 import { checkOrderIsPayable } from "../useCases/admin/checkOrderIsPayable";
 import { getAllOrders } from "../useCases/admin/getAllOrders";
 import { getOrder } from "../useCases/admin/getOrder";
@@ -33,8 +33,9 @@ export const checkOrderIsPayableController: Controller = (req, res) => {
   const orderId = req.params.orderId;
   checkOrderIsPayable(orderId)
     .then((isPayable) => {
-      if (isPayable === false) {
-        return res.redirect("/admin");
+      if (!isPayable) {
+        res.redirect("/admin");
+        return;
       }
       const view = req.originalUrl.includes("reject")
         ? "admin/rejectPayment"
@@ -119,7 +120,6 @@ export const checkOrderIsPayed: Controller = (req, res) => {
 
 export const registerOrderPreparing: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const { transport } = req.body;
   const orderIndex = MockResponses.makedOrders.findIndex(
     (order) => order.id === orderId,
   );

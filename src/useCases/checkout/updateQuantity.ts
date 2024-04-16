@@ -12,7 +12,7 @@ export default async function updateQuantity(
     throw new Error("Quantity must be greater than 0");
   }
   if (quantity === 0) {
-    return removeFromCart(orderItemId, orderId);
+    await removeFromCart(orderItemId, orderId); return;
   }
   const datasource = await DatabaseConnection.getDataSource();
   const orderItemRepository = await datasource.getRepository(OrderItem);

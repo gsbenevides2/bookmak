@@ -20,7 +20,8 @@
     "scripts:downDb": "dotenvx run --env-file=.env.test -- ts-node --transpileOnly src/scripts/downDb.ts",
     "scripts:runMock": "dotenvx run --env-file=.env.test -- ts-node --transpileOnly src/scripts/runMock.ts",
     "scripts:saveMock": "dotenvx run --env-file=.env.test -- ts-node --transpileOnly src/scripts/saveMock.ts",
-    "scripts:clearMock": "dotenvx run --env-file=.env.test -- ts-node --transpileOnly src/scripts/clearMock.ts"
+    "scripts:clearMock": "dotenvx run --env-file=.env.test -- ts-node --transpileOnly src/scripts/clearMock.ts",
+    "lint": "eslint --ext .ts src"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

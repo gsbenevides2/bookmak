@@ -7,12 +7,16 @@ import { Order } from "./Order";
 export class OrderPaymentMethod {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
+
   @Column()
   value!: number;
+
   @ManyToOne(() => Card)
   card?: Card;
+
   @ManyToOne(() => Coupon)
   coupon?: Coupon;
+
   @ManyToOne(() => Order, (order) => order.usedPaymentMethods)
   order!: Order;
 }

@@ -18,28 +18,39 @@ import { OrderPaymentMethod } from "./OrderPaymentMethod";
 export class Order {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
+
   @Column({ default: 0 })
   subtotal!: number;
+
   @Column({ default: 0 })
   totalPrice!: number;
+
   @Column({ default: 0 })
   discounts!: number;
+
   @Column({ default: 0 })
   shippingPrice!: number;
+
   @Column({ nullable: true })
   bookmarkStyle?: string;
+
   @Column({ nullable: true })
   bookmarkText?: string;
+
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   items!: OrderItem[];
+
   @OneToMany(() => OrderUpdate, (orderUpdate) => orderUpdate.order)
   updates!: OrderUpdate[];
+
   @ManyToOne(() => Customer, (customer) => customer.orders)
   @JoinColumn()
   customer?: Customer;
+
   @ManyToOne(() => Address)
   @JoinColumn()
   billingAddress?: Address;
+
   @ManyToOne(() => Address)
   @JoinColumn()
   shippingAddress?: Address;

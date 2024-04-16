@@ -160,10 +160,10 @@ export default async function registerCustomer(
       return customer.id;
     })
     .catch((error) => {
-      if (error["constraint"] === "unique_email") {
+      if (error.constraint === "unique_email") {
         throw new Error("Email já cadastrado");
       }
-      if (error["constraint"] === "unique_cpf") {
+      if (error.constraint === "unique_cpf") {
         throw new Error("CPF já cadastrado");
       }
       throw new Error("Erro ao salvar cliente");

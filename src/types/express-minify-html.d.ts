@@ -1,5 +1,5 @@
 declare module "express-minify-html-2" {
-  import { RequestHandler } from "express";
+  import { type RequestHandler } from "express";
 
   interface MinifyHTMLOptions {
     override?: boolean;

@@ -35,7 +35,7 @@ export default async function addToCart(
   }
 
   const existingOrderItem = await orderItemRepository.findOne({
-    where: { sku: sku, order },
+    where: { sku, order },
   });
 
   if (existingOrderItem != null) {

@@ -12,10 +12,10 @@ function transformMarkdownOrderedListToArrayAndRemoveNumbers(
     .filter(Boolean);
 }
 
-type Books = {
+type Books = Array<{
   name: string;
   description: string;
-}[];
+}>;
 
 function makeBooksText(books: Books): string {
   return books
@@ -34,8 +34,9 @@ export class BookmarkGenerator {
     });
     this.assistantId = assistant.id;
   }
+
   static async generateBookmarks(books: Books): Promise<string[]> {
-    return new Promise<string[]>(async (resolve, reject) => {
+    return await new Promise<string[]>(async (resolve, reject) => {
       const thread = await this.openai.beta.threads.create();
       await this.openai.beta.threads.messages.create(thread.id, {
         role: "user",

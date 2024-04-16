@@ -1,4 +1,4 @@
-import { Controller } from "../types/controller";
+import { type Controller } from "../types/controller";
 import getAddresses from "../useCases/customer/getAddresses";
 import getCards from "../useCases/customer/getCards";
 import getCustomerAddressSettings from "../useCases/customer/getCustomerAddressSettings";
@@ -115,7 +115,7 @@ export const getAddressSettigsForCurrentOrder: Controller = (req, res) => {
   const orderId = req.cookies?.orderId as string;
   checkoutUseCases
     .getOrder(orderId)
-    .then((order) => {
+    .then(async (order) => {
       if (order.items.length === 0) {
         res.redirect("/checkout/cart");
         return;
@@ -126,7 +126,7 @@ export const getAddressSettigsForCurrentOrder: Controller = (req, res) => {
         return;
       }
 
-      return Promise.all([
+      return await Promise.all([
         getAddresses(customerId),
         getCustomerAddressSettings(customerId),
       ]);
@@ -170,8 +170,12 @@ export const getAllDataForCheckout: Controller = (req, res) => {
   const error = req.query.error;
   checkoutUseCases
     .recalculateOrderTotal(orderId)
-    .then(() =>
-      Promise.all([checkoutUseCases.getOrder(orderId), getCards(accountId)]),
+    .then(
+      async () =>
+        await Promise.all([
+          checkoutUseCases.getOrder(orderId),
+          getCards(accountId),
+        ]),
     )
     .then(([order, cards]) => {
       if (order.items.length === 0) {
@@ -190,7 +194,7 @@ export const getAllDataForCheckout: Controller = (req, res) => {
       }
 
       res.render("checkout/payment", {
-        cards: cards,
+        cards,
         order,
         coupons: [],
         error,

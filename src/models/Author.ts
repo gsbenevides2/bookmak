@@ -12,6 +12,7 @@ import { Book } from "./Book";
 export class Author {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
+
   @Column()
   name!: string;
 
