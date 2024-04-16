@@ -37,7 +37,7 @@ export default async function getOrder(orderId: string): Promise<Order> {
         "Ocorreu um erro interno ao buscar o pedido. Code: OrderDbRequestError",
       );
     });
-  if (!order) {
+  if (order == null) {
     throw new Error("Pedido não encontrado.");
   }
   return order;

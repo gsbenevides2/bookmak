@@ -7,15 +7,16 @@ export default async function updateQuantity(
   orderItemId: string,
   quantity: number,
   orderId: string,
-) {
+): Promise<void> {
   if (quantity < 0) {
     throw new Error("Quantity must be greater than 0");
   }
   if (quantity === 0) {
-    await removeFromCart(orderItemId, orderId); return;
+    await removeFromCart(orderItemId, orderId);
+    return;
   }
   const datasource = await DatabaseConnection.getDataSource();
-  const orderItemRepository = await datasource.getRepository(OrderItem);
+  const orderItemRepository = datasource.getRepository(OrderItem);
   await orderItemRepository.update(
     {
       id: orderItemId,

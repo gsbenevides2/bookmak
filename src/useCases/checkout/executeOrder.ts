@@ -9,14 +9,14 @@ interface Params {
   orderId: string;
   customerId: string;
 }
-export default async function executeOrder(params: Params) {
+export default async function executeOrder(params: Params): Promise<void> {
   const { cardId, orderId, customerId } = params;
   const datasource = await DatabaseConnection.getDataSource();
-  const orderRepository = await datasource.getRepository(Order);
-  const cardsRepository = await datasource.getRepository(Card);
+  const orderRepository = datasource.getRepository(Order);
+  const cardsRepository = datasource.getRepository(Card);
   const orderPaymentMethodRepository =
-    await datasource.getRepository(OrderPaymentMethod);
-  const orderUpdateRepository = await datasource.getRepository(OrderUpdate);
+    datasource.getRepository(OrderPaymentMethod);
+  const orderUpdateRepository = datasource.getRepository(OrderUpdate);
   const order = await orderRepository.findOne({
     where: { id: orderId, customer: { id: customerId } },
     relations: ["customer"],

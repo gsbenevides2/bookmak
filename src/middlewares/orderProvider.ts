@@ -14,7 +14,7 @@ export const orderProvider = (
     const orderRepository = dataSource.getRepository(Order);
     if (orderId == null) {
       console.log("Creating new order");
-      const order = await orderRepository.create();
+      const order = orderRepository.create();
       await orderRepository.save(order);
       res.cookie("orderId", order.id);
       next();
@@ -28,7 +28,7 @@ export const orderProvider = (
     });
     if (order == null) {
       console.log("Order does not exist, creating new order");
-      const order = await orderRepository.create();
+      const order = orderRepository.create();
       await orderRepository.save(order);
       res.cookie("orderId", order.id);
       next();

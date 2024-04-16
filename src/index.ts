@@ -73,6 +73,7 @@ server.post("/test/setMocks", (req, res) => {
   res.status(200).send("Mocks set");
 });
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 server.listen(serverPort, async () => {
   await DatabaseConnection.connect();
   await BookmarkGenerator.loadOpenAi();

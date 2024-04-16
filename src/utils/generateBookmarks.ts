@@ -23,10 +23,11 @@ function makeBooksText(books: Books): string {
     .join("\n");
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class BookmarkGenerator {
   static openai = new OpenAI();
   static assistantId: string;
-  static async loadOpenAi() {
+  static async loadOpenAi(): Promise<void> {
     const assistant = await this.openai.beta.assistants.create({
       name: "Bookmak",
       model: "gpt-4-turbo",
@@ -36,6 +37,7 @@ export class BookmarkGenerator {
   }
 
   static async generateBookmarks(books: Books): Promise<string[]> {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
     return await new Promise<string[]>(async (resolve, reject) => {
       const thread = await this.openai.beta.threads.create();
       await this.openai.beta.threads.messages.create(thread.id, {

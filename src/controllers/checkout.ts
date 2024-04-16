@@ -4,6 +4,7 @@ import getCards from "../useCases/customer/getCards";
 import getCustomerAddressSettings from "../useCases/customer/getCustomerAddressSettings";
 
 import checkoutUseCases from "../useCases/checkout";
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 export const getCart: Controller = async (req, res) => {
   const orderId = req.cookies.orderId as string;
 
@@ -22,27 +23,35 @@ export const getCart: Controller = async (req, res) => {
       res.redirect("/login?error=" + error.message);
     });
 };
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 export const updateCart: Controller = async (req, res) => {
   const { action } = req.body;
   const orderId = req.cookies.orderId as string;
 
   if (action === "ADD") {
-    const { quantity, bookId } = req.body;
-    await checkoutUseCases.addToCart(
-      bookId,
-      orderId,
-      parseInt(quantity as string),
-    );
+    interface Body {
+      quantity: string;
+      bookId: string;
+    }
+    const { quantity, bookId } = req.body as Body;
+    await checkoutUseCases.addToCart(bookId, orderId, parseInt(quantity));
   }
   if (action === "REMOVE") {
-    const { orderItemId } = req.body;
+    interface Body {
+      orderItemId: string;
+    }
+    const { orderItemId } = req.body as Body;
     await checkoutUseCases.removeFromCart(orderItemId, orderId);
   }
   if (action === "UPDATE_QUANTITY") {
-    const { quantity, orderItemId } = req.body;
+    interface Body {
+      quantity: string;
+      orderItemId: string;
+    }
+    const { quantity, orderItemId } = req.body as Body;
     await checkoutUseCases.updateQuantity(
       orderItemId,
-      parseInt(quantity as string),
+      parseInt(quantity),
       orderId,
     );
   }
@@ -217,5 +226,8 @@ export const finishCheckout: Controller = (req, res) => {
     .then(() => {
       res.clearCookie("orderId");
       res.redirect("/accounts/me/orders/" + orderId);
+    })
+    .catch((error) => {
+      res.redirect("/checkout/payment?error=" + error.message);
     });
 };

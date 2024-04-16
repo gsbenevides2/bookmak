@@ -11,12 +11,12 @@ interface Params {
   shippingAddressId: string;
   billingAddressId: string;
 }
-export default async function updateAddress(params: Params) {
+export default async function updateAddress(params: Params): Promise<void> {
   const { shippingAddressId, orderId, billingAddressId, customerId } = params;
   const dataSource = await DatabaseConnection.getDataSource();
-  const orderRepository = await dataSource.getRepository(Order);
-  const addressRepository = await dataSource.getRepository(Address);
-  const customerRespository = await dataSource.getRepository(Customer);
+  const orderRepository = dataSource.getRepository(Order);
+  const addressRepository = dataSource.getRepository(Address);
+  const customerRespository = dataSource.getRepository(Customer);
 
   const order = await orderRepository.findOne({ where: { id: orderId } });
   if (order == null) {

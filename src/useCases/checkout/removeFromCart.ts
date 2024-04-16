@@ -6,10 +6,10 @@ import recalculateOrderTotal from "./recalculateOrderTotal";
 export default async function removeFromCart(
   orderItemId: string,
   orderId: string,
-) {
+): Promise<void> {
   const datasource = await DatabaseConnection.getDataSource();
-  const orderItemRepository = await datasource.getRepository(OrderItem);
-  const orderRepositroy = await datasource.getRepository(Order);
+  const orderItemRepository = datasource.getRepository(OrderItem);
+  const orderRepositroy = datasource.getRepository(Order);
   await orderItemRepository.delete({
     id: orderItemId,
   });

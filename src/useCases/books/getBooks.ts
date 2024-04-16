@@ -25,21 +25,21 @@ export default async function getBooks(
   console.log(params);
   const dataSource = await DatabaseConnection.getDataSource();
   const skuRepository = dataSource.getRepository(BookSku);
-  const skuQuery = await skuRepository.createQueryBuilder("sku");
+  const skuQuery = skuRepository.createQueryBuilder("sku");
   skuQuery.leftJoinAndSelect("sku.book", "book");
   skuQuery.leftJoinAndSelect("book.authors", "authors");
   skuQuery.leftJoinAndSelect("book.categories", "categories");
 
-  if (params.categoryId) {
+  if (params.categoryId != null) {
     skuQuery.andWhere("categories.id = :categoryId", {
       categoryId: params.categoryId,
     });
   }
-  if (params.authorId) {
+  if (params.authorId != null) {
     skuQuery.andWhere("authors.id = :authorId", { authorId: params.authorId });
   }
 
-  if (params.searchQuery) {
+  if (params.searchQuery != null) {
     skuQuery.andWhere(
       "(sku.title ILIKE :searchQuery OR sku.description ILIKE :searchQuery)",
       {
@@ -48,10 +48,10 @@ export default async function getBooks(
     );
   }
 
-  if (params.minPrice) {
+  if (params.minPrice != null) {
     skuQuery.andWhere("sku.price >= :minPrice", { minPrice: params.minPrice });
   }
-  if (params.maxPrice) {
+  if (params.maxPrice != null) {
     skuQuery.andWhere("sku.price <= :maxPrice", { maxPrice: params.maxPrice });
   }
 

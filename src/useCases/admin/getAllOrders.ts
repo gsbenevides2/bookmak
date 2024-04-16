@@ -1,4 +1,4 @@
-import { Not, Raw } from "typeorm";
+import { Raw } from "typeorm";
 import { DatabaseConnection } from "../../dbConnection";
 import { Order } from "../../models/Order";
 

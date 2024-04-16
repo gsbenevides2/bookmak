@@ -1,10 +1,12 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Order } from "../../models/Order";
 
-export default async function recalculateOrderTotal(orderId: string) {
+export default async function recalculateOrderTotal(
+  orderId: string,
+): Promise<void> {
   const datasource = await DatabaseConnection.getDataSource();
 
-  const orderRepository = await datasource.getRepository(Order);
+  const orderRepository = datasource.getRepository(Order);
 
   const order = await orderRepository.findOne({
     where: { id: orderId },

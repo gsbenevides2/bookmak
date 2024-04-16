@@ -183,6 +183,7 @@ export class MockResponses {
 
   public static setMocks(data: any): void {
     console.log("mockResponses", data);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const mockResponses = ESSerializer.deserialize(data, [
       Card,
       Customer,
@@ -191,6 +192,7 @@ export class MockResponses {
     ]);
     console.log("mockResponses", mockResponses);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const keys = Object.keys(mockResponses);
     for (const key of keys) {
       const mockKey = key as keyof MockResponses;

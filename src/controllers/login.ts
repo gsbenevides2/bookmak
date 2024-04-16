@@ -1,9 +1,9 @@
 import { DatabaseConnection } from "../dbConnection";
-import { MockResponses } from "../mocks/mock";
 import { Customer } from "../models/Customer";
 import { type Controller } from "../types/controller";
 import registerCustomer from "../useCases/customer/registerCustomer";
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 export const getLogInPageController: Controller = async (req, res) => {
   const { redirectTo, error } = req.query;
   if (req.cookies.accountId == null) {

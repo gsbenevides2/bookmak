@@ -13,14 +13,6 @@ export interface ReturnGetBook {
   id: string;
 }
 
-interface Params {
-  categoryId?: string;
-  authorId?: string;
-  searchQuery?: string;
-  minPrice?: number;
-  maxPrice?: number;
-}
-
 export default async function getBookById(
   bookId: string,
 ): Promise<ReturnGetBook | null> {

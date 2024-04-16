@@ -2,7 +2,9 @@ import { DatabaseConnection } from "../../dbConnection";
 import { Order } from "../../models/Order";
 import { BookmarkGenerator } from "../../utils/generateBookmarks";
 
-export default async function getAiBookmarks(orderId: string) {
+export default async function getAiBookmarks(
+  orderId: string,
+): Promise<string[]> {
   const dataSouce = await DatabaseConnection.getDataSource().catch(() => {
     throw new Error("Ocorreu um erro interno ao buscar o pedido.");
   });

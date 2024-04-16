@@ -2,9 +2,9 @@ import { Raw } from "typeorm";
 import { DatabaseConnection } from "../../dbConnection";
 import { Order } from "../../models/Order";
 
-export async function getOrder(orderId: string) {
+export async function getOrder(orderId: string): Promise<Order | null> {
   const dataSource = await DatabaseConnection.getDataSource();
-  const orderRepository = await dataSource.getRepository(Order);
+  const orderRepository = dataSource.getRepository(Order);
   return await orderRepository.findOne({
     where: {
       id: orderId,

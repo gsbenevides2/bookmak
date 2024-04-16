@@ -18,7 +18,6 @@ import { srtIsNumberOnly } from "../../utils/number";
 import { validatePasswordSecurity } from "../../utils/password";
 import { validateDDD, validatePhone } from "../../utils/phone";
 import { stringIsNotEmpty } from "../../utils/string";
-import registerNewAddress from "./registerNewAddress";
 
 interface CustomerDataToRegister {
   name: string;

@@ -6,7 +6,7 @@ interface Params {
   bookmarkText: string;
   bookmarkStyle: string;
 }
-export default async function saveBookmark(params: Params) {
+export default async function saveBookmark(params: Params): Promise<void> {
   const { orderId, bookmarkText, bookmarkStyle } = params;
   const dataSource = await DatabaseConnection.getDataSource();
   const orderRepository = dataSource.getRepository(Order);
