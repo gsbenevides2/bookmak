@@ -9,11 +9,13 @@ function getEnviromentVariable(variable: string): string {
   return value;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class DatabaseConnection {
-  private static dataSource: DataSource;
+  private dataSource: DataSource | null = null;
 
-  public static async connect(): Promise<void> {
+  private static readonly instance: DatabaseConnection =
+    new DatabaseConnection();
+
+  public async connect(): Promise<void> {
     if (this.dataSource == null) {
       this.dataSource = new DataSource({
         type: getEnviromentVariable("DB_TYPE") as any,
@@ -32,9 +34,11 @@ export class DatabaseConnection {
   }
 
   public static async getDataSource(): Promise<DataSource> {
-    if (this.dataSource == null) {
-      await this.connect();
+    if (this.instance.dataSource == null) {
+      await this.instance.connect();
+      return await this.getDataSource();
+    } else {
+      return this.instance.dataSource;
     }
-    return this.dataSource;
   }
 }

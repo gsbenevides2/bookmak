@@ -3,33 +3,38 @@ import { Customer } from "../models/Customer";
 import { type Controller } from "../types/controller";
 import registerCustomer from "../useCases/customer/registerCustomer";
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-export const getLogInPageController: Controller = async (req, res) => {
-  const { redirectTo, error } = req.query;
-  if (req.cookies.accountId == null) {
-    res.render("login/login", { error, redirectTo });
-  } else {
-    const dataSource = await DatabaseConnection.getDataSource();
-    const customerRepository = dataSource.getRepository(Customer);
-    const account = await customerRepository.findOne({
-      where: { id: req.cookies.accountId },
-    });
-    if (account == null || error != null) {
-      res.cookie("accountId", "", { maxAge: 0 });
-      res.render("login/login", {
-        error: error ?? "Sua sessão expirou",
-        redirectTo,
+export const getLogInPageController: Controller = (req, res) => {
+  const handles = async (): Promise<void> => {
+    const { redirectTo, error } = req.query;
+    if (req.cookies.accountId == null) {
+      res.render("login/login", { error, redirectTo });
+    } else {
+      const dataSource = await DatabaseConnection.getDataSource();
+      const customerRepository = dataSource.getRepository(Customer);
+      const account = await customerRepository.findOne({
+        where: { id: req.cookies.accountId },
       });
-      return;
-    }
+      if (account == null || error != null) {
+        res.cookie("accountId", "", { maxAge: 0 });
+        res.render("login/login", {
+          error: error ?? "Sua sessão expirou",
+          redirectTo,
+        });
+        return;
+      }
 
-    if (redirectTo?.length != null) {
-      res.redirect(redirectTo as string);
-      return;
-    }
+      if (redirectTo?.length != null) {
+        res.redirect(redirectTo as string);
+        return;
+      }
 
-    res.redirect("/accounts/me");
-  }
+      res.redirect("/accounts/me");
+    }
+  };
+  handles().catch((error) => {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  });
 };
 
 export const logInController: Controller = (req, res) => {

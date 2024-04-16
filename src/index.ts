@@ -73,9 +73,16 @@ server.post("/test/setMocks", (req, res) => {
   res.status(200).send("Mocks set");
 });
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-server.listen(serverPort, async () => {
-  await DatabaseConnection.connect();
-  await BookmarkGenerator.loadOpenAi();
-  console.log(`Server is running at http://localhost:${serverPort}`);
+server.listen(serverPort, () => {
+  DatabaseConnection.getDataSource()
+    .then(async () => {
+      await BookmarkGenerator.loadOpenAi().then(() => {
+        console.log(`Server is running at http://localhost:${serverPort}`);
+      });
+    })
+    .catch((error) => {
+      console.error(
+        `Error connecting to database or initialize OpenAI API: ${error.message}`,
+      );
+    });
 });
