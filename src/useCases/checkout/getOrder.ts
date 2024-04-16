@@ -1,7 +1,8 @@
+import { Raw } from "typeorm";
 import { DatabaseConnection } from "../../dbConnection";
 import { Order } from "../../models/Order";
 
-export async function getOrder(orderId: string): Promise<Order> {
+export default async function getOrder(orderId: string): Promise<Order> {
   const datasource = await DatabaseConnection.getDataSource().catch(() => {
     throw new Error(
       "Ocorreu um erro interno ao buscar o pedido. Code: DataConnectionError",
@@ -10,7 +11,12 @@ export async function getOrder(orderId: string): Promise<Order> {
   const orderRepository = datasource.getRepository(Order);
   const order = await orderRepository
     .findOne({
-      where: { id: orderId },
+      where: {
+        id: orderId,
+        updates: {
+          id: Raw((alias) => `${alias} IS NULL`),
+        },
+      },
       relations: {
         customer: true,
         items: {
@@ -20,6 +26,7 @@ export async function getOrder(orderId: string): Promise<Order> {
             },
           },
         },
+        updates: true,
         billingAddress: true,
         shippingAddress: true,
       },

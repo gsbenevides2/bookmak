@@ -3,7 +3,7 @@ import { Address } from "../../models/Address";
 import { Customer } from "../../models/Customer";
 import { Order } from "../../models/Order";
 import { shippingSimulator } from "../../utils/shippingSimulator";
-import { recalculateOrderTotal } from "./recalculateOrderTotal";
+import recalculateOrderTotal from "./recalculateOrderTotal";
 
 interface Params {
   orderId: string;
@@ -11,7 +11,7 @@ interface Params {
   shippingAddressId: string;
   billingAddressId: string;
 }
-export async function updateAddress(params: Params) {
+export default async function updateAddress(params: Params) {
   const { shippingAddressId, orderId, billingAddressId, customerId } = params;
   const dataSource = await DatabaseConnection.getDataSource();
   const orderRepository = await dataSource.getRepository(Order);

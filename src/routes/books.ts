@@ -3,7 +3,7 @@ import * as booksController from "../controllers/books";
 
 const booksRouter = Router();
 
-booksRouter.get("/", booksController.getBooksController);
-booksRouter.get("/:id", booksController.getBookByIdController);
+booksRouter.get("/", booksController.getBooks);
+booksRouter.get("/:id", booksController.getBookById);
 
 export default booksRouter;

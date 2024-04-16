@@ -1,60 +1,51 @@
 import { MockResponses, OrderStatus, orderStatusText } from "../mocks/mock";
 import { Controller } from "../types/controller";
+import { checkOrderIsPayable } from "../useCases/admin/checkOrderIsPayable";
+import { getAllOrders } from "../useCases/admin/getAllOrders";
+import { getOrder } from "../useCases/admin/getOrder";
 
 export const getOrders: Controller = (_req, res) => {
-  res.render("admin/orders", {
-    orders: MockResponses.makedOrders.map((order) => ({
-      ...order,
-    })),
-  });
+  getAllOrders()
+    .then((orders) => {
+      res.render("admin/orders", {
+        orders,
+      });
+    })
+    .catch((err) => {
+      res.redirect(`/login?error=${err.message}`);
+    });
 };
 
 export const getDataFromOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const order = MockResponses.makedOrders.find((order) => order.id === orderId);
-  if (order == null) {
-    res.redirect("/admin");
-    return;
-  }
-
-  res.render("admin/order", {
-    id: order.id,
-    account: order.customer,
-    card: order.card,
-    deliveryAddress: order.addressShipping,
-    billingAddress: order.addressPayment,
-    cartItens: order.items,
-    shippingPrice: order.shippingPrice,
-    subTotal: order.subTotal,
-    totalPrice: order.totalPrice,
-    totalDiscount: order.totalDiscount,
-    coupons: order.coupons,
-    status: order.status,
-    statusObservation: order.statusObservation,
-  });
+  getOrder(orderId)
+    .then((order) => {
+      res.render("admin/order", {
+        order,
+      });
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
-export const checkOrderIsPayable: Controller = (req, res) => {
+export const checkOrderIsPayableController: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.PROCESSING) {
-    res.redirect("/admin");
-    return;
-  }
-  const view = req.originalUrl.includes("reject")
-    ? "admin/rejectPayment"
-    : "admin/aprovePayment";
-  res.render(view, {
-    orderId: order.id,
-  });
+  checkOrderIsPayable(orderId)
+    .then((isPayable) => {
+      if (isPayable === false) {
+        return res.redirect("/admin");
+      }
+      const view = req.originalUrl.includes("reject")
+        ? "admin/rejectPayment"
+        : "admin/aprovePayment";
+      res.render(view, {
+        orderId,
+      });
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
 export const aprovePayment: Controller = (req, res) => {

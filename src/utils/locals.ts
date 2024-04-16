@@ -81,7 +81,7 @@ export function formatAuthors(authors: Author[]) {
 
 export function orderUpdates(updates: OrderUpdate[]) {
   return updates.sort((a, b) => {
-    return a.timestamp.getTime() - b.timestamp.getTime();
+    return b.timestamp.getTime() - a.timestamp.getTime();
   });
 }
 

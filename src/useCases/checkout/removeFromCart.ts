@@ -1,7 +1,7 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Order } from "../../models/Order";
 import { OrderItem } from "../../models/OrderItem";
-import { recalculateOrderTotal } from "./recalculateOrderTotal";
+import recalculateOrderTotal from "./recalculateOrderTotal";
 
 export default async function removeFromCart(
   orderItemId: string,

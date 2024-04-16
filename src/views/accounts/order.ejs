@@ -44,7 +44,7 @@
           <% ordenatedStatus.forEach((status) => { %>
           <%- formatTimestamp(status.timestamp) %> -
           <%- formatOrderStatus(status.status) %> - 
-          <%- status.observations %>
+          <%- status.observations %><br/>
           <% }) %>
         </p>
         <%- ordenatedStatus[0].status === OrderStatusEnum.SENDED ? `

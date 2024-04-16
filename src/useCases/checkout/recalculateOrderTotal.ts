@@ -1,7 +1,7 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Order } from "../../models/Order";
 
-export async function recalculateOrderTotal(orderId: string) {
+export default async function recalculateOrderTotal(orderId: string) {
   const datasource = await DatabaseConnection.getDataSource();
 
   const orderRepository = await datasource.getRepository(Order);

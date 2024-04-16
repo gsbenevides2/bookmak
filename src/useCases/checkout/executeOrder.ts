@@ -9,7 +9,7 @@ interface Params {
   orderId: string;
   customerId: string;
 }
-export async function executeOrder(params: Params) {
+export default async function executeOrder(params: Params) {
   const { cardId, orderId, customerId } = params;
   const datasource = await DatabaseConnection.getDataSource();
   const orderRepository = await datasource.getRepository(Order);

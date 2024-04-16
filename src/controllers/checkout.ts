@@ -1,26 +1,14 @@
-import { faker } from "@faker-js/faker";
-import { MockResponses, OrderStatus, orderStatusText } from "../mocks/mock";
-import { Address } from "../models/Address";
 import { Controller } from "../types/controller";
 import getAddresses from "../useCases/customer/getAddresses";
 import { getCards } from "../useCases/customer/getCards";
 import { getCustomerAddressSettings } from "../useCases/customer/getCustomerAddressSettings";
-import { getCustomerData } from "../useCases/customer/getCustomerData";
-import { shippingSimulator } from "../utils/shippingSimulator";
-import addToCart from "../useCases/checkout/addToCart";
-import { getOrder } from "../useCases/checkout/getOrder";
-import removeFromCart from "../useCases/checkout/removeFromCart";
-import updateQuantity from "../useCases/checkout/updateQuantity";
-import { getAiBookmarks } from "../useCases/checkout/getAiBookmarks";
-import registerBookmark from "../useCases/checkout/saveBookmark";
-import { updateAddress } from "../useCases/checkout/updateAddress";
-import { recalculateOrderTotal } from "../useCases/checkout/recalculateOrderTotal";
-import { executeOrder } from "../useCases/checkout/executeOrder";
 
+import checkoutUseCases from "../useCases/checkout";
 export const getCart: Controller = async (req, res) => {
   const orderId = req.cookies.orderId as string;
 
-  await getOrder(orderId)
+  await checkoutUseCases
+    .getOrder(orderId)
     .then((order) => {
       if (order.items.length === 0) {
         res.render("checkout/empty-cart");
@@ -40,15 +28,23 @@ export const updateCart: Controller = async (req, res) => {
 
   if (action === "ADD") {
     const { quantity, bookId } = req.body;
-    await addToCart(bookId, orderId, parseInt(quantity as string));
+    await checkoutUseCases.addToCart(
+      bookId,
+      orderId,
+      parseInt(quantity as string),
+    );
   }
   if (action === "REMOVE") {
     const { orderItemId } = req.body;
-    await removeFromCart(orderItemId, orderId);
+    await checkoutUseCases.removeFromCart(orderItemId, orderId);
   }
   if (action === "UPDATE_QUANTITY") {
     const { quantity, orderItemId } = req.body;
-    await updateQuantity(orderItemId, parseInt(quantity as string), orderId);
+    await checkoutUseCases.updateQuantity(
+      orderItemId,
+      parseInt(quantity as string),
+      orderId,
+    );
   }
 
   res.redirect("/checkout/cart");
@@ -57,7 +53,8 @@ export const updateCart: Controller = async (req, res) => {
 export const getAvailableBokmarkTexts: Controller = (req, res) => {
   const orderId = req.cookies.orderId as string;
   const bookmarkStyles = ["Estilo A", "Estilo 2", "Estilo C"];
-  getAiBookmarks(orderId)
+  checkoutUseCases
+    .getAiBookmarks(orderId)
     .then((bookmarks) => {
       res.json({
         aiBookmarkTexts: bookmarks,
@@ -97,11 +94,12 @@ export const updateBookmarkTextInOrder: Controller = (req, res) => {
     return;
   }
 
-  registerBookmark({
-    bookmarkStyle,
-    bookmarkText,
-    orderId,
-  })
+  checkoutUseCases
+    .saveBookmark({
+      bookmarkStyle,
+      bookmarkText,
+      orderId,
+    })
     .then(() => {
       res.status(200).send("OK");
     })
@@ -115,7 +113,8 @@ export const updateBookmarkTextInOrder: Controller = (req, res) => {
 export const getAddressSettigsForCurrentOrder: Controller = (req, res) => {
   const customerId = req.cookies?.accountId as string;
   const orderId = req.cookies?.orderId as string;
-  getOrder(orderId)
+  checkoutUseCases
+    .getOrder(orderId)
     .then((order) => {
       if (order.items.length === 0) {
         res.redirect("/checkout/cart");
@@ -150,12 +149,13 @@ export const updateAddressSettingsForCurrentOrder: Controller = (req, res) => {
   const customerId = req.cookies?.accountId as string;
   const orderId = req.cookies?.orderId as string;
 
-  updateAddress({
-    billingAddressId: billingAddress,
-    customerId,
-    orderId,
-    shippingAddressId: deliveryAddress,
-  })
+  checkoutUseCases
+    .updateAddress({
+      billingAddressId: billingAddress,
+      customerId,
+      orderId,
+      shippingAddressId: deliveryAddress,
+    })
     .then(() => {
       res.redirect("/checkout/payment");
     })
@@ -168,8 +168,11 @@ export const getAllDataForCheckout: Controller = (req, res) => {
   const orderId = req.cookies.orderId as string;
   const accountId = req.cookies.accountId as string;
   const error = req.query.error;
-  recalculateOrderTotal(orderId)
-    .then(() => Promise.all([getOrder(orderId), getCards(accountId)]))
+  checkoutUseCases
+    .recalculateOrderTotal(orderId)
+    .then(() =>
+      Promise.all([checkoutUseCases.getOrder(orderId), getCards(accountId)]),
+    )
     .then(([order, cards]) => {
       if (order.items.length === 0) {
         res.redirect("/checkout/cart");
@@ -201,12 +204,14 @@ export const finishCheckout: Controller = (req, res) => {
   const { cardId } = req.body;
   const customerId = req.cookies.accountId;
   const orderId = req.cookies.orderId;
-  executeOrder({
-    cardId,
-    customerId,
-    orderId,
-  }).then(() => {
-    res.clearCookie("orderId");
-    res.redirect("/accounts/me/orders/" + orderId);
-  });
+  checkoutUseCases
+    .executeOrder({
+      cardId,
+      customerId,
+      orderId,
+    })
+    .then(() => {
+      res.clearCookie("orderId");
+      res.redirect("/accounts/me/orders/" + orderId);
+    });
 };

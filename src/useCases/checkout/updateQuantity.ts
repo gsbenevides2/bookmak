@@ -1,6 +1,6 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { OrderItem } from "../../models/OrderItem";
-import { recalculateOrderTotal } from "./recalculateOrderTotal";
+import recalculateOrderTotal from "./recalculateOrderTotal";
 import removeFromCart from "./removeFromCart";
 
 export default async function updateQuantity(

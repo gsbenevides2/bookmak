@@ -43,7 +43,7 @@
               </div>
               <div class="col-6">
                 <strong>Status:</strong>
-                <%-formatOrderStatus(order.status) %>
+                <%- formatOrderStatus(orderUpdates(order.updates)[0].status) %>
               </div>
   
               <a
