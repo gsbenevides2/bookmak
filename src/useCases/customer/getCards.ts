@@ -6,7 +6,7 @@ function formatCardNumber(cardNumber: string): string {
   return `****.****.****.${lastFourDigits}`;
 }
 
-export async function getCards(accountId: string): Promise<Card[]> {
+export default async function getCards(accountId: string): Promise<Card[]> {
   const datasource = await DatabaseConnection.getDataSource().catch(() => {
     throw new Error("Erro ao conectar com o banco de dados");
   });

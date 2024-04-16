@@ -1,7 +1,7 @@
 import { Controller } from "../types/controller";
 import getAddresses from "../useCases/customer/getAddresses";
-import { getCards } from "../useCases/customer/getCards";
-import { getCustomerAddressSettings } from "../useCases/customer/getCustomerAddressSettings";
+import getCards from "../useCases/customer/getCards";
+import getCustomerAddressSettings from "../useCases/customer/getCustomerAddressSettings";
 
 import checkoutUseCases from "../useCases/checkout";
 export const getCart: Controller = async (req, res) => {

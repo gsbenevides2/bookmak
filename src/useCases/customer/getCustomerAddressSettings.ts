@@ -21,7 +21,7 @@ interface AddressSettings {
   deliveryAddress: GetAddressesResponse;
 }
 
-export async function getCustomerAddressSettings(
+export default async function getCustomerAddressSettings(
   customerId: string,
 ): Promise<AddressSettings> {
   const dataSource = await DatabaseConnection.getDataSource();

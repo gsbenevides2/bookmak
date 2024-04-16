@@ -7,53 +7,35 @@ const accountsRouter = Router();
 accountsRouter.use(authMiddleware);
 
 // Personal data
-accountsRouter.get("/me", AccountsController.getMyAccountController);
-accountsRouter.post("/me", AccountsController.changeMyAccountDataController);
-accountsRouter.get(
-  "/me/deactivate",
-  AccountsController.deactivateMyAccountController,
-);
+accountsRouter.get("/me", AccountsController.getMyAccount);
+accountsRouter.post("/me", AccountsController.changeMyAccountData);
+accountsRouter.get("/me/deactivate", AccountsController.deactivateMyAccount);
 accountsRouter.get("/me/changePassword", (_req, res) => {
   res.render("accounts/changePassword", { error: null, success: null });
 });
-accountsRouter.post(
-  "/me/changePassword",
-  AccountsController.changeMyPasswordController,
-);
+accountsRouter.post("/me/changePassword", AccountsController.changeMyPassword);
 // Addresses
-accountsRouter.get("/me/addresses", AccountsController.getAddressesController);
+accountsRouter.get("/me/addresses", AccountsController.getAddresses);
 accountsRouter.get("/me/addresses/new", (req, res) => {
   res.render("accounts/address", {});
 });
-accountsRouter.get(
-  "/me/addresses/edit/:id",
-  AccountsController.getAddressController,
-);
-accountsRouter.post(
-  "/me/addresses/edit/:id",
-  AccountsController.editAddressController,
-);
+accountsRouter.get("/me/addresses/edit/:id", AccountsController.getAddress);
+accountsRouter.post("/me/addresses/edit/:id", AccountsController.editAddress);
 accountsRouter.post(
   "/me/addresses/:id/delete",
-  AccountsController.deleteAddressController,
+  AccountsController.deleteAddress,
 );
-accountsRouter.post(
-  "/me/addresses/new",
-  AccountsController.newAddressController,
-);
+accountsRouter.post("/me/addresses/new", AccountsController.newAddress);
 // Cards
-accountsRouter.get("/me/cards", AccountsController.getCardsController);
+accountsRouter.get("/me/cards", AccountsController.getCards);
 accountsRouter.get("/me/cards/new", (_req, res) => {
   res.render("accounts/newCard", { error: null, success: null });
 });
-accountsRouter.post(
-  "/me/cards/:id/delete",
-  AccountsController.deleteCardController,
-);
-accountsRouter.post("/me/cards/new", AccountsController.newCardController);
+accountsRouter.post("/me/cards/:id/delete", AccountsController.deleteCard);
+accountsRouter.post("/me/cards/new", AccountsController.newCard);
 
 // Orders
-accountsRouter.get("/me/orders", AccountsController.getMyOrdersController);
+accountsRouter.get("/me/orders", AccountsController.getMyOrders);
 
 accountsRouter.get("/me/orders/:orderId", AccountsController.getDataFromOrder);
 
@@ -67,9 +49,9 @@ accountsRouter.get("/me/orders/1/cancel", (_req, res) => {
 });
 accountsRouter.post(
   "/me/orders/:orderId/change",
-  AccountsController.exchangeOrderController,
+  AccountsController.exchangeOrder,
 );
 
-accountsRouter.get("/me/cupons", AccountsController.getMyCuponsController);
+accountsRouter.get("/me/cupons", AccountsController.getMyCupons);
 
 export default accountsRouter;

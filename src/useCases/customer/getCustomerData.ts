@@ -1,7 +1,7 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Customer } from "../../models/Customer";
 
-export async function getCustomerData(
+export default async function getCustomerData(
   customerId: string,
 ): Promise<Customer | null> {
   const dataSource = await DatabaseConnection.getDataSource();

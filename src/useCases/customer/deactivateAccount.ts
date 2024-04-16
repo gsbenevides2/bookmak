@@ -1,7 +1,9 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Customer } from "../../models/Customer";
 
-export async function deactivateAccount(accountId: string): Promise<void> {
+export default async function deactivateAccount(
+  accountId: string,
+): Promise<void> {
   const dataSource = await DatabaseConnection.getDataSource();
   await dataSource.getRepository(Customer).update(
     {
