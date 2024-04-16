@@ -12,6 +12,5 @@ export async function getOrders(customerId: string) {
       updates: true,
     },
   });
-  console.log(orders);
   return orders;
 }

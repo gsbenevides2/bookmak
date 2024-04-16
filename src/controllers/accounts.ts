@@ -14,6 +14,7 @@ import changePassword from "../useCases/customer/changePassword";
 import { MockResponses, OrderStatus } from "../mocks/mock";
 import { formatOrderStatus } from "../utils/locals";
 import { getOrders } from "../useCases/customer/getOrders";
+import { getOrder } from "../useCases/customer/getOrder";
 
 export const getMyAccountController: Controller = (req, res) => {
   const accountIdCookie = req.cookies?.accountId as string;
@@ -258,32 +259,19 @@ export const getMyOrdersController: Controller = (req, res) => {
 };
 export const getDataFromOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const order = MockResponses.makedOrders.find((order) => order.id === orderId);
-  if (order == null) {
-    res.redirect("/accounts/me/orders");
-    return;
-  }
-
-  if (order.customer?.id !== req.cookies?.accountId) {
-    res.redirect("/accounts/me/orders");
-    return;
-  }
-
-  res.render("accounts/order", {
-    id: order.id,
-    account: order.customer,
-    card: order.card,
-    deliveryAddress: order.addressShipping,
-    billingAddress: order.addressPayment,
-    cartItens: order.items,
-    shippingPrice: order.shippingPrice,
-    subTotal: order.subTotal,
-    totalPrice: order.totalPrice,
-    totalDiscount: order.totalDiscount,
-    coupons: order.coupons,
-    status: order.status,
-    statusObservation: order.statusObservation,
-  });
+  getOrder(orderId)
+    .then((order) => {
+      if(order == null) {
+        res.redirect("/accounts/me/orders");
+        return;
+      }
+      res.render("accounts/order", {
+        order,
+      });
+    })
+    .catch(() => {
+      res.redirect("/accounts/me/orders");
+    });
 };
 export const checkOrderIsExchangeable: Controller = (req, res) => {
   const orderId = req.params.orderId;

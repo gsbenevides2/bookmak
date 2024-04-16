@@ -169,7 +169,7 @@
               <option selected>Selecione o Cartão</option>
               <% cards.forEach((card) => { %>
               <option value="<%= card.id %>">
-                <%= card.number %> - <%= card.flag %>
+                <%= formatCardNumber(card.number) %> - <%= formatCardFlag(card.flag) %>
               </option>
               <% }) %>
             </select>

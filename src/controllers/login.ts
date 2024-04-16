@@ -74,6 +74,7 @@ export const registerController: Controller = (req, res) => {
     name: string;
     email: string;
     password: string;
+    passwordConfirm: string;
     cpf: string;
     dateOfBirth: string;
     gender: string;

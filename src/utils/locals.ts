@@ -84,3 +84,22 @@ export function orderUpdates(updates: OrderUpdate[]) {
     return a.timestamp.getTime() - b.timestamp.getTime();
   });
 }
+
+export function formatCardNumber(cardNumber: string) {
+  return `**** **** **** ${cardNumber.slice(-4)}`;
+}
+export function formatCardFlag(cardFlag: CardFlag) {
+  return cardFlagText[cardFlag];
+}
+
+export function formatTimestamp(timestamp: Date) {
+  return timestamp.toLocaleString("pt-BR");
+}
+
+export function maskPhone(phone: string) {
+  return phone
+    .replace(/\D/g, "")
+    .slice(0, 9)
+    .replace(/(\d{5})(\d{4})/, "$1-$2")
+    .replace(/(\d{4})(\d{4})/, "$1-$2");
+}

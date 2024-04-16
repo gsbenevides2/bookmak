@@ -34,36 +34,43 @@
       <div class="mt-3 border p-3">
         <h5>
           ID:
-          <%= id %>
+          <%= order.id %>
         </h5>
         <h5>Status:</h5>
-        <p class="mt-0 status"><%= formatOrderStatus(status) %></p>
+        <% const ordenatedStatus = orderUpdates(order.updates) %>
+        <p class="mt-0 status"><%= formatOrderStatus(ordenatedStatus[0].status) %></p>
         <h5>Histórico</h5>
-        <p class="mt-0 statusObs"><%- statusObservation.join("<br>") %></p>
-        <%- status === OrderStatusEnum.SENDED ? `
+        <p class="mt-0 statusObs">
+          <% ordenatedStatus.forEach((status) => { %>
+          <%- formatTimestamp(status.timestamp) %> -
+          <%- formatOrderStatus(status.status) %> - 
+          <%- status.observations %>
+          <% }) %>
+        </p>
+        <%- ordenatedStatus[0].status === OrderStatusEnum.SENDED ? `
         <a href="/accounts/me/orders/${id}/change" class="btn btn-outline-secondary mt-2 change">Trocar Pedido</a>
         ` : '' %>
       </div>
       <!--Lista de Produtos-->
       <ul class="list-group mt-3 border p-3">
         <h5>Lista de Produtos:</h5>
-        <% cartItens.forEach((cartItem) => { %>
+        <% order.items.forEach((item) => { %>
         <li class="list-group-item d-flex align-items-center border-0">
           <img
-            src="<%= cartItem.book.cover %>"
-            alt="<%= cartItem.book.title %>"
+            src="<%= item.sku.cover %>"
+            alt="<%= item.sku.title %>"
             class="me-3 book-cover cursor-pointer"
             role="button"
           />
           <div class="d-flex flex-column">
-            <h6 class="fw-bold"><%- cartItem.book.title %></h6>
-            <p>Autor: <%- cartItem.book.author %></p>
+            <h6 class="fw-bold"><%- item.sku.title %></h6>
+            <p>Autor: <%- formatAuthors(item.sku.book.authors) %></p>
             <p>
-              Preço Unitário: <%= formatPrice(cartItem.book.price) %>
+              Preço Unitário: <%= formatPrice(item.unitSellPrice) %>
               <br />Quantidade:
-              <%- cartItem.quantity %>
+              <%- item.quantity %>
               <br />Subtotal:
-              <%= formatPrice(cartItem.subtotal) %>
+              <%= formatPrice(item.unitSellPrice * item.quantity) %>
             </p>
           </div>
         </li>
@@ -73,34 +80,34 @@
       <div class="mt-3 border p-3">
         <h5>Dados do Cliente:</h5>
         <div class="row">
-          <div class="col-7 name">Nome: <%= account.name %></div>
-          <div class="col-5 email">Email: <%= account.email %></div>
-          <div class="col-7 cpf">CPF: <%= maskCPF(account.cpf) %></div>
+          <div class="col-7 name">Nome: <%= order.customer.name %></div>
+          <div class="col-5 email">Email: <%= order.customer.email %></div>
+          <div class="col-7 cpf">CPF: <%= maskCPF(order.customer.cpf) %></div>
           <div class="col-5 dateOfBirth">
-            Data de Nascimento: <%= maskDate(account.dateOfBirth) %>
+            Data de Nascimento: <%= maskDate(order.customer.dateOfBirth) %>
           </div>
         </div>
       </div>
       <!--Endereço de Envio-->
       <div class="mt-3 border p-3">
         <h5 class="deliveryAddressNickname">
-          Endereço de Envio: <%- deliveryAddress.nickname %>
+          Endereço de Envio: <%- order.shippingAddress.nickname %>
         </h5>
         <p class="mb-0 deliveryAddress">
-          <%= maskAddresss(deliveryAddress) %><br />
+          <%= maskAddresss(order.shippingAddress) %><br />
           Observações:
-          <%- deliveryAddress.observations %>
+          <%- order.shippingAddress.observations %>
         </p>
       </div>
       <!--Endereço de Cobrança-->
       <div class="mt-3 border p-3">
         <h5 class="billingAddressNickname">
-          Endereço de Cobrança: <%- billingAddress.nickname %>
+          Endereço de Cobrança: <%- order.billingAddress.nickname %>
         </h5>
         <p class="mb-0 billingAddress">
-          <%= maskAddresss(billingAddress) %><br />
+          <%= maskAddresss(order.billingAddress) %><br />
           Observações:
-          <%- billingAddress.observations %>
+          <%- order.billingAddress.observations %>
         </p>
       </div>
       <!--Cupom-->
@@ -119,17 +126,19 @@
         <div class="row">
           <div class="col-6">Subtotal</div>
           <div class="col-6 text-end subtotal">
-            <%- formatPrice(subTotal) %>
+            <%- formatPrice(order.subtotal) %>
           </div>
           <div class="col-6">Frete</div>
           <div class="col-6 text-end shippingPrice">
-            <%- formatPrice(shippingPrice) %>
+            <%- formatPrice(order.shippingPrice) %>
           </div>
           <div class="col-6">Desconto</div>
-          <div class="col-6 text-end discount">R$ 0,00</div>
+          <div class="col-6 text-end discount">
+            <%- formatPrice(order.discounts) %>
+          </div>
           <div class="col-6">Total</div>
           <div class="col-6 text-end totalPrice">
-            <%- formatPrice(totalPrice) %>
+            <%- formatPrice(order.totalPrice) %>
           </div>
         </div>
         </div>
@@ -137,7 +146,7 @@
       <!--Pagamento-->
       <div class="mt-3 border p-3">
         <h5>Pagamento:</h5>
-        <p class="mb-0 card"><%= card.number %> - <%= card.flag %></p>
+        <p class="mb-0 card"><%= formatCardNumber(order.usedPaymentMethods[0].card.number) %> - <%= formatCardFlag(order.usedPaymentMethods[0].card.flag) %></p>
       </div>
     </main>
     <!--Bootstrap JS-->

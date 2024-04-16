@@ -7,8 +7,15 @@ import {
 } from "../../models/Customer";
 import { validateCPF } from "../../utils/cpf";
 import { validateBirthDate } from "../../utils/date";
-import { secure, throwErrorIfFalse } from "../../utils/errors";
+import {
+  secure,
+  throwErrorIfFalse,
+  throwErrorIfNull,
+} from "../../utils/errors";
 import { Address } from "../../models/Address";
+import { validateEmail } from "../../utils/email";
+import { validateDDD, validatePhone } from "../../utils/phone";
+import { stringIsNotEmpty } from "../../utils/string";
 
 interface CustomerDataToUpdate {
   name: string;
@@ -27,30 +34,35 @@ export default async function updateCustomerData(
   customerId: string,
   updateData: CustomerDataToUpdate,
 ): Promise<void> {
-  const phoneTypeEnumKey = getEnumKeyByEnumValue(
-    PhoneTypeEnum,
-    updateData.phoneType,
-  );
-  if (phoneTypeEnumKey == null) {
-    throw new Error("Tipo de telefone inválido");
-  }
+  throwErrorIfFalse(stringIsNotEmpty(updateData.name), "Nome inválido");
 
-  const genderEnumKey = getEnumKeyByEnumValue(GenderEnum, updateData.gender);
-  if (genderEnumKey == null) {
-    throw new Error("Gênero inválido");
-  }
+  throwErrorIfFalse(validateEmail(updateData.email), "Email inválido");
+
+  const parsedCPF = updateData.cpf.replace(/\D/g, "");
+  throwErrorIfFalse(validateCPF(parsedCPF), "CPF inválido");
 
   const dateOfBirth = secure(
     () => new Date(updateData.dateOfBirth),
     "Data inválida",
   );
-
   throwErrorIfFalse(
     validateBirthDate(dateOfBirth),
     "Data de nascimento inválida",
   );
 
-  throwErrorIfFalse(validateCPF(updateData.cpf), "CPF inválido");
+  throwErrorIfFalse(validateDDD(updateData.phoneAreaCode), "DDD inválido");
+
+  const phoneTypeEnumKey = throwErrorIfNull(
+    getEnumKeyByEnumValue(PhoneTypeEnum, updateData.phoneType),
+    "Tipo de telefone inválido",
+  );
+  const parsedPhone = updateData.phoneNumber.replace(/\D/g, "");
+  throwErrorIfFalse(validatePhone(parsedPhone), "Telefone inválido");
+
+  const genderEnumKey = throwErrorIfNull(
+    getEnumKeyByEnumValue(GenderEnum, updateData.gender),
+    "Gênero inválido",
+  );
 
   const dataSource = await DatabaseConnection.getDataSource().catch(() => {
     throw new Error("Erro ao conectar com o banco de dados");
@@ -109,15 +121,15 @@ export default async function updateCustomerData(
 
   customer.name = updateData.name;
   customer.email = updateData.email;
-  customer.cpf = updateData.cpf;
+  customer.cpf = parsedCPF;
   customer.dateOfBirth = dateOfBirth;
   customer.gender = GenderEnum[genderEnumKey];
   customer.phoneType = PhoneTypeEnum[phoneTypeEnumKey];
   customer.phoneAreaCode = updateData.phoneAreaCode;
-  customer.phoneNumber = updateData.phoneNumber;
+  customer.phoneNumber = parsedPhone;
   customer.billingAddress = billingAddress;
   customer.deliveryAddress = deliveryAddress;
-  
+
   await customerRepository
     .update(
       {

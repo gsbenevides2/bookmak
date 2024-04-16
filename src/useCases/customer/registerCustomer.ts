@@ -7,15 +7,17 @@ import {
 } from "../../models/Customer";
 import { validateCPF } from "../../utils/cpf";
 import { validateBirthDate } from "../../utils/date";
-import {
-  getEnumKeyByEnumValue,
-  transformEnumKeyToEnumValue,
-} from "../../utils/enums";
+import { validateEmail } from "../../utils/email";
+import { getEnumKeyByEnumValue } from "../../utils/enums";
 import {
   secure,
   throwErrorIfFalse,
   throwErrorIfNull,
 } from "../../utils/errors";
+import { srtIsNumberOnly } from "../../utils/number";
+import { validatePasswordSecurity } from "../../utils/password";
+import { validateDDD, validatePhone } from "../../utils/phone";
+import { stringIsNotEmpty } from "../../utils/string";
 import registerNewAddress from "./registerNewAddress";
 
 interface CustomerDataToRegister {
@@ -24,6 +26,7 @@ interface CustomerDataToRegister {
   cpf: string;
   dateOfBirth: string;
   password: string;
+  passwordConfirm: string;
   gender: string;
   phoneType: string;
   phoneAreaCode: string;
@@ -45,6 +48,51 @@ interface CustomerDataToRegister {
 export default async function registerCustomer(
   registerData: CustomerDataToRegister,
 ): Promise<string> {
+  throwErrorIfFalse(stringIsNotEmpty(registerData.name), "Nome inválido");
+
+  throwErrorIfFalse(validateEmail(registerData.email), "Email inválido");
+
+  const parsedCPF = registerData.cpf.replace(/\D/g, "");
+  throwErrorIfFalse(validateCPF(parsedCPF), "CPF inválido");
+
+  const dateOfBirth = secure(
+    () => new Date(registerData.dateOfBirth),
+    "Data inválida",
+  );
+  throwErrorIfFalse(
+    validateBirthDate(dateOfBirth),
+    "Data de nascimento inválida",
+  );
+
+  throwErrorIfFalse(validateDDD(registerData.phoneAreaCode), "DDD inválido");
+
+  const phoneTypeEnumKey = throwErrorIfNull(
+    getEnumKeyByEnumValue(PhoneTypeEnum, registerData.phoneType),
+    "Tipo de telefone inválido",
+  );
+  const parsedPhone = registerData.phoneNumber.replace(/\D/g, "");
+  throwErrorIfFalse(validatePhone(parsedPhone), "Telefone inválido");
+
+  const genderEnumKey = throwErrorIfNull(
+    getEnumKeyByEnumValue(GenderEnum, registerData.gender),
+    "Gênero inválido",
+  );
+
+  throwErrorIfFalse(
+    validatePasswordSecurity(registerData.password),
+    "Senha insegura, deve conter ao menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial",
+  );
+
+  throwErrorIfFalse(
+    registerData.password === registerData.passwordConfirm,
+    "Senhas não coincidem",
+  );
+
+  throwErrorIfFalse(
+    stringIsNotEmpty(registerData.nickname),
+    "Apelido inválido",
+  );
+
   const houseTypeEnum = throwErrorIfNull(
     getEnumKeyByEnumValue(HouseType, registerData.houseType),
     "Tipo de endereço inválido",
@@ -55,27 +103,20 @@ export default async function registerCustomer(
     "Tipo de rua inválido",
   );
 
-  const phoneTypeEnumKey = throwErrorIfNull(
-    getEnumKeyByEnumValue(PhoneTypeEnum, registerData.phoneType),
-    "Tipo de telefone inválido",
-  );
+  throwErrorIfFalse(stringIsNotEmpty(registerData.street), "Rua inválida");
 
-  const genderEnumKey = throwErrorIfNull(
-    getEnumKeyByEnumValue(GenderEnum, registerData.gender),
-    "Gênero inválido",
-  );
+  throwErrorIfFalse(srtIsNumberOnly(registerData.number), "Número inválido");
 
-  const dateOfBirth = secure(
-    () => new Date(registerData.dateOfBirth),
-    "Data inválida",
-  );
+  throwErrorIfFalse(stringIsNotEmpty(registerData.district), "Bairro inválido");
 
-  throwErrorIfFalse(
-    validateBirthDate(dateOfBirth),
-    "Data de nascimento inválida",
-  );
+  const parsedZipCode = registerData.zipCode.replace(/\D/g, "");
+  throwErrorIfFalse(stringIsNotEmpty(parsedZipCode), "CEP inválido");
 
-  throwErrorIfFalse(validateCPF(registerData.cpf), "CPF inválido");
+  throwErrorIfFalse(stringIsNotEmpty(registerData.city), "Cidade inválida");
+
+  throwErrorIfFalse(stringIsNotEmpty(registerData.state), "Estado inválido");
+
+  throwErrorIfFalse(stringIsNotEmpty(registerData.country), "País inválido");
 
   const dataSource = await DatabaseConnection.getDataSource().catch(() => {
     throw new Error("Erro ao conectar com o banco de dados");
@@ -92,7 +133,7 @@ export default async function registerCustomer(
         street: registerData.street,
         number: registerData.number,
         district: registerData.district,
-        zipCode: registerData.zipCode,
+        zipCode: parsedZipCode,
         city: registerData.city,
         state: registerData.state,
         country: registerData.country,
@@ -101,7 +142,7 @@ export default async function registerCustomer(
       const customer = await customerRepository.save({
         name: registerData.name,
         email: registerData.email,
-        cpf: registerData.cpf,
+        cpf: parsedCPF,
         dateOfBirth,
         gender: GenderEnum[genderEnumKey],
         phoneType: PhoneTypeEnum[phoneTypeEnumKey],
@@ -109,7 +150,7 @@ export default async function registerCustomer(
         billingAddress: address,
         deliveryAddress: address,
         phoneAreaCode: registerData.phoneAreaCode,
-        phoneNumber: registerData.phoneNumber,
+        phoneNumber: parsedPhone,
         password: registerData.password,
         isActive: true,
         cards: [],

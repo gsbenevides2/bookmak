@@ -48,6 +48,7 @@ export class OrderUpdate {
 
   @Column({
     default: () => "CURRENT_TIMESTAMP",
+    type: "timestamp with time zone",
   })
   timestamp!: Date;
 

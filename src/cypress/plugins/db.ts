@@ -241,11 +241,19 @@ export async function createDemoCard(userId: string) {
 }
 
 export async function down() {
-  const downAddressRelation = `UPDATE "address" SET "customerId"=NULL`;
-
   const dbConnection = getDbConn();
   await dbConnection.connect();
-  await dbConnection.query(downAddressRelation);
+  await dbConnection.query('UPDATE "address" set "customerId" = NULL');
+  await dbConnection.query('DELETE FROM "order_update"');
+  await dbConnection.query('DELETE FROM "book_authors"');
+  await dbConnection.query('DELETE FROM "book_categories"');
+  await dbConnection.query('DELETE FROM "order_item"');
+  await dbConnection.query('DELETE FROM "book_sku"');
+  await dbConnection.query('DELETE FROM "order_payment_method');
+  await dbConnection.query('DELETE FROM "author"');
+  await dbConnection.query('DELETE FROM "category"');
+  await dbConnection.query('DELETE FROM "book"');
+  await dbConnection.query('DELETE FROM "order"');
   await dbConnection.query('DELETE FROM "card"');
   await dbConnection.query('DELETE FROM "customer"');
   await dbConnection.query('DELETE FROM "address"');

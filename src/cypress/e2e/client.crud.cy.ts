@@ -24,7 +24,8 @@ describe("CRUD de Cliente", function () {
     cy.get("input[name='phoneAreaCode']").type("11");
     cy.get("input[name='phoneNumber']").type("987654321");
     cy.get("select[name='gender']").select("Masculino");
-    cy.get("input[name='password']").type("UmaSenhaBoa123");
+    cy.get("input[name='password']").type("UmaSenhaBoa123#");
+    cy.get("input[name='passwordConfirm']").type("UmaSenhaBoa123#");
     cy.get("input[name='nickname']").type("Casa de Campo");
     cy.get("select[name='houseType']").select("Casa");
     cy.get("select[name='streetType']").select("Rua");
