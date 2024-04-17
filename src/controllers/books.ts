@@ -4,17 +4,28 @@ import booksUseCases from "../useCases/books";
 export const getBooks: Controller = (req, res) => {
   const filters = req.query;
   console.log("Request received");
+  console.log(filters);
   Promise.all([
     booksUseCases.getBooks({
-      categoryId: filters.category as string,
-      authorId: filters.author as string,
-      searchQuery: filters.searchQuery as string,
+      categoryId:
+        typeof filters.category === "string" && filters.category.trim() !== ""
+          ? filters.category
+          : undefined,
+      authorId:
+        typeof filters.author === "string" && filters.author.trim() !== ""
+          ? filters.author
+          : undefined,
+      searchQuery:
+        typeof filters.searchQuery === "string" &&
+        filters.searchQuery.trim() !== ""
+          ? filters.searchQuery
+          : undefined,
       minPrice:
-        typeof filters.minPrice === "string"
+        typeof filters.minPrice === "string" && filters.minPrice.trim() !== ""
           ? parseInt(filters.minPrice) * 100
           : undefined,
       maxPrice:
-        typeof filters.maxPrice === "string"
+        typeof filters.maxPrice === "string" && filters.maxPrice.trim() !== ""
           ? parseInt(filters.maxPrice) * 100
           : undefined,
     }),

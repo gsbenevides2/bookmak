@@ -9,11 +9,11 @@ adminRouter.get("/", adminController.getOrders);
 adminRouter.get("/order/:orderId", adminController.getDataFromOrder);
 adminRouter.get(
   "/order/:orderId/aprovePayment",
-  adminController.checkOrderIsPayableController,
+  adminController.checkOrderIsPayable,
 );
 adminRouter.get(
   "/order/:orderId/rejectPayment",
-  adminController.checkOrderIsPayableController,
+  adminController.checkOrderIsPayable,
 );
 adminRouter.post(
   "/order/:orderId/aprovePayment",
