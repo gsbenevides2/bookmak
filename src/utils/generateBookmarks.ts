@@ -23,11 +23,11 @@ function makeBooksText(books: Books): string {
     .join("\n");
 }
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class BookmarkGenerator {
-  static openai = new OpenAI();
-  static assistantId: string;
-  static async loadOpenAi(): Promise<void> {
+  openai = new OpenAI();
+  assistantId?: string;
+
+  async loadOpenAi(): Promise<void> {
     const assistant = await this.openai.beta.assistants.create({
       name: "Bookmak",
       model: "gpt-4-turbo",
@@ -36,16 +36,22 @@ export class BookmarkGenerator {
     this.assistantId = assistant.id;
   }
 
-  static async generateBookmarks(books: Books): Promise<string[]> {
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-    return await new Promise<string[]>(async (resolve, reject) => {
+  async generateBookmarks(books: Books): Promise<string[]> {
+    const assistantId = this.assistantId;
+    if (assistantId == null) {
+      throw new Error("Assistant not loaded");
+    }
+    const callback = async (
+      resolve: (value: string[]) => void,
+      reject: (reason: any) => void,
+    ): Promise<void> => {
       const thread = await this.openai.beta.threads.create();
       await this.openai.beta.threads.messages.create(thread.id, {
         role: "user",
         content: makeBooksText(books),
       });
       const run = await this.openai.beta.threads.runs.createAndPoll(thread.id, {
-        assistant_id: this.assistantId,
+        assistant_id: assistantId,
       });
 
       if (run.status === "completed") {
@@ -64,6 +70,15 @@ export class BookmarkGenerator {
       } else {
         console.log(run.status);
       }
+    };
+
+    return await new Promise((resolve, reject) => {
+      callback(resolve, reject).catch(reject);
     });
+  }
+
+  static instance = new BookmarkGenerator();
+  static getInstance(): BookmarkGenerator {
+    return this.instance;
   }
 }

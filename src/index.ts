@@ -76,9 +76,11 @@ server.post("/test/setMocks", (req, res) => {
 server.listen(serverPort, () => {
   DatabaseConnection.getDataSource()
     .then(async () => {
-      await BookmarkGenerator.loadOpenAi().then(() => {
-        console.log(`Server is running at http://localhost:${serverPort}`);
-      });
+      await BookmarkGenerator.getInstance()
+        .loadOpenAi()
+        .then(() => {
+          console.log(`Server is running at http://localhost:${serverPort}`);
+        });
     })
     .catch((error) => {
       console.error(

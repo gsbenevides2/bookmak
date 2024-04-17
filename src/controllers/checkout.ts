@@ -4,11 +4,11 @@ import getCards from "../useCases/customer/getCards";
 import getCustomerAddressSettings from "../useCases/customer/getCustomerAddressSettings";
 
 import checkoutUseCases from "../useCases/checkout";
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-export const getCart: Controller = async (req, res) => {
+
+export const getCart: Controller = (req, res) => {
   const orderId = req.cookies.orderId as string;
 
-  await checkoutUseCases
+  checkoutUseCases
     .getOrder(orderId)
     .then((order) => {
       if (order.items.length === 0) {
@@ -23,10 +23,16 @@ export const getCart: Controller = async (req, res) => {
       res.redirect("/login?error=" + error.message);
     });
 };
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-export const updateCart: Controller = async (req, res) => {
+export const updateCart: Controller = (req, res) => {
   const { action } = req.body;
   const orderId = req.cookies.orderId as string;
+
+  const sucessRedirect = () => {
+    res.redirect("/checkout/cart");
+  };
+  const errorRedirect = (error: Error) => {
+    res.redirect("/checkout/cart?error=" + error.message);
+  };
 
   if (action === "ADD") {
     interface Body {
@@ -34,14 +40,18 @@ export const updateCart: Controller = async (req, res) => {
       bookId: string;
     }
     const { quantity, bookId } = req.body as Body;
-    await checkoutUseCases.addToCart(bookId, orderId, parseInt(quantity));
+    checkoutUseCases
+      .addToCart(bookId, orderId, parseInt(quantity))
+      .then(sucessRedirect, errorRedirect);
   }
   if (action === "REMOVE") {
     interface Body {
       orderItemId: string;
     }
     const { orderItemId } = req.body as Body;
-    await checkoutUseCases.removeFromCart(orderItemId, orderId);
+    checkoutUseCases
+      .removeFromCart(orderItemId, orderId)
+      .then(sucessRedirect, errorRedirect);
   }
   if (action === "UPDATE_QUANTITY") {
     interface Body {
@@ -49,14 +59,10 @@ export const updateCart: Controller = async (req, res) => {
       orderItemId: string;
     }
     const { quantity, orderItemId } = req.body as Body;
-    await checkoutUseCases.updateQuantity(
-      orderItemId,
-      parseInt(quantity),
-      orderId,
-    );
+    checkoutUseCases
+      .updateQuantity(orderItemId, parseInt(quantity), orderId)
+      .then(sucessRedirect, errorRedirect);
   }
-
-  res.redirect("/checkout/cart");
 };
 
 export const getAvailableBokmarkTexts: Controller = (req, res) => {

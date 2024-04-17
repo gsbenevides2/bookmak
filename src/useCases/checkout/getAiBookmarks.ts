@@ -26,7 +26,8 @@ export default async function getAiBookmarks(
       name: item.sku.title,
       description: item.sku.description,
     }));
-    const bookmarks = await BookmarkGenerator.generateBookmarks(books);
+    const bookmarks =
+      await BookmarkGenerator.getInstance().generateBookmarks(books);
     order.generatedBookmarks = bookmarks;
     await orderRepository.save(order);
   }
