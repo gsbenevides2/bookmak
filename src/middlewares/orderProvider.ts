@@ -13,7 +13,6 @@ export const orderProvider = (
     const dataSource = await DatabaseConnection.getDataSource();
     const orderRepository = dataSource.getRepository(Order);
     if (orderId == null) {
-      console.log("Creating new order");
       const order = orderRepository.create();
       await orderRepository.save(order);
       res.cookie("orderId", order.id);
@@ -27,7 +26,6 @@ export const orderProvider = (
       relations: ["customer"],
     });
     if (order == null) {
-      console.log("Order does not exist, creating new order");
       const order = orderRepository.create();
       await orderRepository.save(order);
       res.cookie("orderId", order.id);
@@ -39,7 +37,6 @@ export const orderProvider = (
       res.redirect("/");
       return;
     }
-    console.log("Order exists");
     next();
   };
 

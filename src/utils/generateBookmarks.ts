@@ -68,7 +68,7 @@ export class BookmarkGenerator {
           }
         }
       } else {
-        console.log(run.status);
+        reject(new Error("OpenAI request failed the run is not completed"));
       }
     };
 

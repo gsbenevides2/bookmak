@@ -22,7 +22,6 @@ interface Params {
 export default async function getBooks(
   params: Params,
 ): Promise<ReturnGetBooks[]> {
-  console.log(params);
   const dataSource = await DatabaseConnection.getDataSource();
   const skuRepository = dataSource.getRepository(BookSku);
   const skuQuery = skuRepository.createQueryBuilder("sku");
@@ -56,7 +55,6 @@ export default async function getBooks(
   }
 
   const skus = await skuQuery.getMany();
-  console.log("Books retrived");
   return skus.map((sku) => {
     return {
       id: sku.id,

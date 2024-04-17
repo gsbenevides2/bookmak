@@ -58,7 +58,6 @@ window.addEventListener("load", async () => {
   const data = await fetchData();
   const aiBookmarksTexts = data.aiBookmarkTexts;
   for (const aiBookmarksText of aiBookmarksTexts) {
-    console.log(aiBookmarksText);
     const div = document.createElement("div");
     const input = document.createElement("input");
     div.classList.add("form-check");

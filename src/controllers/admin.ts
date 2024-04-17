@@ -81,47 +81,31 @@ export const rejectPayment: Controller = (req, res) => {
 
 export const checkOrderIsPayed: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.PAYMENT_APPROVED) {
-    res.redirect("/admin");
-    return;
-  }
-
-  res.render("admin/prepareOrder", {
-    orderId: order.id,
-  });
+  adminUseCases
+    .checkOrderIsPayed(orderId)
+    .then((isPayed) => {
+      if (!isPayed) {
+        res.redirect("/admin");
+        return;
+      }
+      res.render("admin/startPreparing", {
+        orderId,
+      });
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
 export const registerOrderPreparing: Controller = (req, res) => {
-  const orderId = req.params.orderId;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.PAYMENT_APPROVED) {
-    res.redirect("/admin");
-    return;
-  }
-
-  MockResponses.makedOrders[orderIndex].status = OrderStatus.PREPARING;
-  MockResponses.makedOrders[orderIndex].statusObservation?.push(
-    `${new Date().toLocaleString()} - ${orderStatusText[OrderStatus.PREPARING]} - Seu pedido está sendo preparado para envio, logo você receberá o código de rastreio.`,
-  );
-
-  res.redirect(`/admin/order/${orderId}`);
+  adminUseCases
+    .startPreparing(req.params.orderId)
+    .then(() => {
+      res.redirect(`/admin/order/${req.params.orderId}`);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
 export const checkOrderIsPreparable: Controller = (req, res) => {

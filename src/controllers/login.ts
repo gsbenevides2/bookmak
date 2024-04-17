@@ -32,7 +32,7 @@ export const getLogInPageController: Controller = (req, res) => {
     }
   };
   handles().catch((error) => {
-    console.error(error);
+    console.error("Error getting login page", error);
     res.status(500).send("Internal server error");
   });
 };

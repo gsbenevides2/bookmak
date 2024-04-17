@@ -25,7 +25,7 @@ adminRouter.post(
 );
 adminRouter.get(
   "/order/:orderId/startPreparing",
-  adminController.checkOrderIsPreparable,
+  adminController.checkOrderIsPayed,
 );
 adminRouter.post(
   "/order/:orderId/startPreparing",

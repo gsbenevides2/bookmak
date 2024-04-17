@@ -5,6 +5,5 @@ export default async function getAuthors(): Promise<Author[]> {
   const dataSource = await DatabaseConnection.getDataSource();
   const authorRepository = dataSource.getRepository(Author);
   const authors = await authorRepository.find();
-  console.log("Authors retrive");
   return authors;
 }

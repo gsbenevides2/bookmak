@@ -55,7 +55,6 @@ server.use("/status", (_req, res) => {
 });
 
 server.get("/", (_req, res) => {
-  console.log("Redirecting to /books");
   res.redirect("/books");
 });
 
@@ -79,12 +78,13 @@ server.listen(serverPort, () => {
       await BookmarkGenerator.getInstance()
         .loadOpenAi()
         .then(() => {
-          console.log(`Server is running at http://localhost:${serverPort}`);
+          console.debug(`Server is running at http://localhost:${serverPort}`);
         });
     })
     .catch((error) => {
       console.error(
-        `Error connecting to database or initialize OpenAI API: ${error.message}`,
+        `Error connecting to database or initialize OpenAI API:`,
+        error,
       );
     });
 });

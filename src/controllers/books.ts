@@ -3,8 +3,6 @@ import booksUseCases from "../useCases/books";
 
 export const getBooks: Controller = (req, res) => {
   const filters = req.query;
-  console.log("Request received");
-  console.log(filters);
   Promise.all([
     booksUseCases.getBooks({
       categoryId:
@@ -33,11 +31,10 @@ export const getBooks: Controller = (req, res) => {
     booksUseCases.getAuthors(),
   ])
     .then(([books, categories, authors]) => {
-      console.log("request processed");
       res.render("books", { books, filters, categories, authors });
     })
     .catch((err) => {
-      console.log(err);
+      console.error("Error getting books", err);
       res.status(500).send("Internal server error");
     });
 };
@@ -51,7 +48,7 @@ export const getBookById: Controller = (req, res) => {
       res.render("book", { book });
     })
     .catch((err) => {
-      console.log(err);
+      console.error("Error getting book by id", err);
       res.status(500).send("Internal server error");
     });
 };
