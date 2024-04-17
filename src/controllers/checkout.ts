@@ -27,10 +27,10 @@ export const updateCart: Controller = (req, res) => {
   const { action } = req.body;
   const orderId = req.cookies.orderId as string;
 
-  const sucessRedirect = () => {
+  const sucessRedirect = (): void => {
     res.redirect("/checkout/cart");
   };
-  const errorRedirect = (error: Error) => {
+  const errorRedirect = (error: Error): void => {
     res.redirect("/checkout/cart?error=" + error.message);
   };
 
