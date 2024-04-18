@@ -1,0 +1,11 @@
+{
+  "isAdmin": true,
+  "name": "Pedro Samuel Davi do Santos",
+  "email": "pedro@teste.com.br",
+  "cpf": "06318061053",
+  "password": "UmaSenha123#",
+  "phoneType": "landline",
+  "phoneAreaCode": "12",
+  "phoneNumber": "934723495",
+  "dateOfBirth": "2001-07-10T00:00:00.000Z"
+}

@@ -1,0 +1,21 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "plugins": ["ejs"],
+  "extends": ["standard-with-typescript", "prettier"],
+
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {},
+  "overrides": [
+    {
+      "files": ["*.ejs", "*.html", "*.ts"],
+      "excludedFiles": ["src/views/**/*", "src/public/**/*"]
+    }
+  ]
+}
