@@ -1,4 +1,3 @@
-import { MockResponses, OrderStatus, orderStatusText } from "../mocks/mock";
 import { type Controller } from "../types/controller";
 
 import adminUseCases from "../useCases/admin";
@@ -108,186 +107,118 @@ export const registerOrderPreparing: Controller = (req, res) => {
     });
 };
 
-export const checkOrderIsPreparable: Controller = (req, res) => {
-  const orderId = req.params.orderId;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.PAYMENT_APPROVED) {
-    res.redirect("/admin");
-    return;
-  }
-
-  res.render("admin/startPreparing", {
-    orderId: order.id,
-  });
-};
-
 export const checkOrderIsInPreparableState: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.PREPARING) {
-    res.redirect("/admin");
-    return;
-  }
-
-  res.render("admin/sendOrder", {
-    orderId: order.id,
-  });
+  adminUseCases
+    .checkOrderIsPreparing(orderId)
+    .then((isPreparing) => {
+      if (isPreparing) {
+        res.render("admin/sendOrder", {
+          orderId,
+        });
+      } else {
+        res.redirect("/admin");
+      }
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
 export const sendOrder: Controller = (req, res) => {
+  interface Body {
+    transporter: string;
+    trackingCode: string;
+  }
   const orderId = req.params.orderId;
-  const { transporter, trackingCode } = req.body;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
+  const { transporter, trackingCode } = req.body as Body;
 
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.PREPARING) {
-    res.redirect("/admin");
-    return;
-  }
-
-  MockResponses.makedOrders[orderIndex].status = OrderStatus.SENDING;
-  MockResponses.makedOrders[orderIndex].statusObservation?.push(
-    `${new Date().toLocaleString()} - ${orderStatusText[OrderStatus.SENDING]} - Seu pedido está com a transportadora ${transporter}, o código de rastreio é: ${trackingCode}.`,
-  );
-
-  res.redirect(`/admin/order/${orderId}`);
+  adminUseCases
+    .sendOrder(orderId, transporter, trackingCode)
+    .then(() => {
+      res.redirect(`/admin/order/${orderId}`);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
 export const checkOrderIsSended: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.SENDING) {
-    res.redirect("/admin");
-    return;
-  }
-
-  res.render("admin/sendedOrder", {
-    orderId: order.id,
-  });
+  adminUseCases
+    .checkOrderIsSended(orderId)
+    .then((isSended) => {
+      if (isSended) {
+        res.render("admin/sendedOrder", {
+          orderId,
+        });
+      } else {
+        res.redirect("/admin");
+      }
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
 export const finishOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.SENDING) {
-    res.redirect("/admin");
-    return;
-  }
-
-  MockResponses.makedOrders[orderIndex].status = OrderStatus.SENDED;
-  MockResponses.makedOrders[orderIndex].statusObservation?.push(
-    `${new Date().toLocaleString()} - ${orderStatusText[OrderStatus.SENDED]} - Seu pedido foi entregue com sucesso.`,
-  );
-
-  res.redirect(`/admin/order/${orderId}`);
+  adminUseCases
+    .finishOrder(orderId)
+    .then(() => {
+      res.redirect(`/admin/order/${orderId}`);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
 export const checkOrderIsExchangeable: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.EXCHANGING) {
-    res.redirect("/admin");
-    return;
-  }
-  const view = req.originalUrl.includes("reject")
-    ? "admin/rejectExchange"
-    : "admin/aproveExchange";
-  res.render(view, {
-    orderId: order.id,
-  });
+  adminUseCases
+    .checkOrderIsExchangeable(orderId)
+    .then((isExchangeable) => {
+      if (isExchangeable) {
+        const view = req.originalUrl.includes("reject")
+          ? "admin/rejectExchange"
+          : "admin/aproveExchange";
+        res.render(view, {
+          orderId,
+        });
+      } else {
+        res.redirect("/admin");
+      }
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
 export const aproveExchange: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.EXCHANGING) {
-    res.redirect("/admin");
-    return;
-  }
-
-  MockResponses.makedOrders[orderIndex].status = OrderStatus.EXCHANGED;
-  MockResponses.makedOrders[orderIndex].statusObservation?.push(
-    `${new Date().toLocaleString()} - ${orderStatusText[OrderStatus.EXCHANGED]} - Seu pedido de troca foi aprovado`,
-  );
-
-  res.redirect(`/admin/order/${orderId}`);
+  adminUseCases
+    .aproveExchange(orderId)
+    .then(() => {
+      res.redirect(`/admin/order/${orderId}`);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };
 
 export const rejectExchange: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const { reason } = req.body;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/admin");
-    return;
+  interface Body {
+    reason: string;
   }
+  const { reason } = req.body as Body;
 
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.status !== OrderStatus.EXCHANGING) {
-    res.redirect("/admin");
-    return;
-  }
-
-  MockResponses.makedOrders[orderIndex].status = OrderStatus.EXCHANGE_REJECTED;
-  MockResponses.makedOrders[orderIndex].statusObservation?.push(
-    `${new Date().toLocaleString()} - ${orderStatusText[OrderStatus.EXCHANGE_REJECTED]} - Seu pedido de troca foi rejeitado, motivo: ${reason}. O produto será reenviado para o endereço de entrega.`,
-  );
-
-  res.redirect(`/admin/order/${orderId}`);
+  adminUseCases
+    .rejectExchange(orderId, reason)
+    .then(() => {
+      res.redirect(`/admin/order/${orderId}`);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
 };

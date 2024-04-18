@@ -48,7 +48,7 @@
           <% }) %>
         </p>
         <%- ordenatedStatus[0].status === OrderStatusEnum.SENDED ? `
-        <a href="/accounts/me/orders/${id}/change" class="btn btn-outline-secondary mt-2 change">Trocar Pedido</a>
+        <a href="/accounts/me/orders/${order.id}/change" class="btn btn-outline-secondary mt-2 change">Trocar Pedido</a>
         ` : '' %>
       </div>
       <!--Lista de Produtos-->

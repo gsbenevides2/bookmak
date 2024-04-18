@@ -4,7 +4,7 @@
     "es2021": true,
     "node": true
   },
-  "plugins": ["ejs"],
+  "plugins": [],
   "extends": ["standard-with-typescript", "prettier"],
 
   "parserOptions": {
@@ -15,12 +15,7 @@
   "overrides": [
     {
       "files": ["*.ejs", "*.html", "*.ts"],
-      "excludedFiles": [
-        "src/cypress/**/*",
-        "src/views/**/*",
-        "src/scripts/**/*",
-        "src/public/**/*"
-      ]
+      "excludedFiles": ["src/views/**/*", "src/public/**/*"]
     }
   ]
 }

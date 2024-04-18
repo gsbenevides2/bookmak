@@ -1,4 +1,4 @@
-import { OrderStatus, orderStatusText } from "../mocks/mock";
+
 import {
   type Address,
   StreetType,
@@ -8,7 +8,7 @@ import {
 } from "../models/Address";
 import { type Author } from "../models/Author";
 import { CardFlag, cardFlagText } from "../models/Card";
-import { type OrderUpdate } from "../models/OrderUpdate";
+import { OrderStatus, orderStatusText, type OrderUpdate } from "../models/OrderUpdate";
 
 export function maskCPF(cpf: string): string {
   return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");

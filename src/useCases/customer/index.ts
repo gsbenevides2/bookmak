@@ -1,4 +1,6 @@
+import changeOrder from "./changeOrder";
 import changePassword from "./changePassword";
+import checkOrderIsExchangeable from "./checkOrderIsExchangeable";
 import deactivateAccount from "./deactivateAccount";
 import deleteCard from "./deleteCard";
 import getAdddress from "./getAddress";
@@ -16,7 +18,9 @@ import updateAddress from "./updateAddress";
 import updateCustomerData from "./updateCustomerData";
 
 export default {
+  changeOrder,
   changePassword,
+  checkOrderIsExchangeable,
   deactivateAccount,
   deleteCard,
   getAdddress,

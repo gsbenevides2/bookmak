@@ -1,6 +1,4 @@
 import { type Controller } from "../types/controller";
-import { MockResponses, OrderStatus } from "../mocks/mock";
-import { formatOrderStatus } from "../utils/locals";
 import customerUseCase from "../useCases/customer";
 
 export const getMyAccount: Controller = (req, res) => {
@@ -259,8 +257,9 @@ export const getMyOrders: Controller = (req, res) => {
 };
 export const getDataFromOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
+  const accountId = req.cookies?.accountId as string;
   customerUseCase
-    .getOrder(orderId)
+    .getOrder(orderId, accountId)
     .then((order) => {
       if (order == null) {
         res.redirect("/accounts/me/orders");
@@ -277,54 +276,30 @@ export const getDataFromOrder: Controller = (req, res) => {
 export const checkOrderIsExchangeable: Controller = (req, res) => {
   const orderId = req.params.orderId;
   const accountId = req.cookies?.accountId as string;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/accounts/me/orders");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.customer?.id !== accountId) {
-    res.redirect("/accounts/me/orders");
-    return;
-  }
-
-  if (order.status !== OrderStatus.SENDED) {
-    res.redirect(`/accounts/me/orders/${orderId}`);
-    return;
-  }
-
-  res.render("accounts/exchangeOrder", {
-    orderId,
-  });
+  customerUseCase
+    .checkOrderIsExchangeable(orderId, accountId)
+    .then((isExchangeable) => {
+      if (isExchangeable) {
+        res.render("accounts/changeOrder", {
+          orderId,
+        });
+      } else {
+        res.redirect(`/accounts/me/orders/${orderId}`);
+      }
+    })
+    .catch(() => {
+      res.redirect("/accounts/me/orders");
+    });
 };
 export const exchangeOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
   const accountId = req.cookies?.accountId as string;
-  const orderIndex = MockResponses.makedOrders.findIndex(
-    (order) => order.id === orderId,
-  );
-  if (orderIndex === -1) {
-    res.redirect("/accounts/me/orders");
-    return;
-  }
-
-  const order = MockResponses.makedOrders[orderIndex];
-  if (order.customer?.id !== accountId) {
-    res.redirect("/accounts/me/orders");
-    return;
-  }
-
-  if (order.status !== OrderStatus.SENDED) {
-    res.redirect(`/accounts/me/orders/${orderId}`);
-    return;
-  }
-
-  MockResponses.makedOrders[orderIndex].status = OrderStatus.EXCHANGING;
-  MockResponses.makedOrders[orderIndex].statusObservation?.push(
-    `${new Date().toLocaleString()} - ${formatOrderStatus(OrderStatus.EXCHANGING)} - Estamos processando a troca. Aguarde!`,
-  );
-  res.redirect(`/accounts/me/orders/${orderId}`);
+  customerUseCase
+    .changeOrder(orderId, accountId)
+    .then(() => {
+      res.redirect(`/accounts/me/orders/${orderId}`);
+    })
+    .catch(() => {
+      res.redirect(`/accounts/me/orders/${orderId}`);
+    });
 };
