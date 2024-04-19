@@ -85,3 +85,10 @@ export function parseStreetType(streetType: string): string {
 export function maskZipCode(zipCode: string): string {
   return zipCode.replace(/(\d{5})(\d{3})/, "$1-$2");
 }
+
+export function parseCardFlag(cardFlag: string): string {
+  const cardFlagMap: Record<string, string> = {
+    visa: "Visa",
+  };
+  return cardFlagMap[cardFlag];
+}

@@ -1,13 +1,13 @@
 import { type BookSkuTable } from "../../typings/databaseTables";
-import { type BookSkuFixureData } from "../../typings/fixures";
+import { type BookSkuFixtureData } from "../../typings/fixtures";
 import { getConnection } from "./getConnnection";
 
 export async function createBookSku(
-  fixure: BookSkuFixureData,
+  fixture: BookSkuFixtureData,
 ): Promise<string> {
   const knex = getConnection();
   const [{ id }] = await knex<BookSkuTable>("book_sku")
-    .insert(fixure)
+    .insert(fixture)
     .returning("id");
   await knex.destroy();
   return id;

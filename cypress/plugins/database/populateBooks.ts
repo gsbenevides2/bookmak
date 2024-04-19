@@ -1,20 +1,20 @@
 import {
-  type AuthorFixureData,
-  type BookAuthorFixureData,
-  type BookCategoryFixureData,
-  type BookFixureData,
-  type BookSkuFixureData,
-  type CategoryFixureData,
-} from "../../typings/fixures";
+  type AuthorFixtureData,
+  type BookAuthorFixtureData,
+  type BookCategoryFixtureData,
+  type BookFixtureData,
+  type BookSkuFixtureData,
+  type CategoryFixtureData,
+} from "../../typings/fixtures";
 import { getConnection } from "./getConnnection";
 
 interface Params {
-  authors: AuthorFixureData[];
-  categories: CategoryFixureData[];
-  books: BookFixureData[];
-  bookAuthors: BookAuthorFixureData[];
-  bookCategories: BookCategoryFixureData[];
-  bookSkus: BookSkuFixureData[];
+  authors: AuthorFixtureData[];
+  categories: CategoryFixtureData[];
+  books: BookFixtureData[];
+  bookAuthors: BookAuthorFixtureData[];
+  bookCategories: BookCategoryFixtureData[];
+  bookSkus: BookSkuFixtureData[];
 }
 
 export async function populateBooks(params: Params): Promise<null> {

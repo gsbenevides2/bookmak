@@ -12,19 +12,19 @@ export interface AddressFixtureData {
   observations: string;
   active: boolean;
 }
-export interface AuthorFixureData {
+export interface AuthorFixtureData {
   id: string;
   name: string;
 }
-export interface BookAuthorFixureData {
+export interface BookAuthorFixtureData {
   authorId: string;
   bookId: string;
 }
-export interface BookCategoryFixureData {
+export interface BookCategoryFixtureData {
   categoryId: string;
   bookId: string;
 }
-export interface BookSkuFixureData {
+export interface BookSkuFixtureData {
   id: string;
   title: string;
   cover: string;
@@ -33,13 +33,13 @@ export interface BookSkuFixureData {
   stockQuantity: number;
   bookId: string;
 }
-export interface BookFixureData {
+export interface BookFixtureData {
   id: string;
   title: string;
   cover: string;
   description: string;
 }
-export interface CardFixureData {
+export interface CardFixtureData {
   number: string;
   holderName: string;
   flag: string;
@@ -48,11 +48,11 @@ export interface CardFixureData {
   yearOfValidity: string;
   active: boolean;
 }
-export interface CategoryFixureData {
+export interface CategoryFixtureData {
   id: string;
   name: string;
 }
-export interface UserFixureData {
+export interface UserFixtureData {
   isAdmin: boolean;
   name: string;
   email: string;
@@ -64,4 +64,31 @@ export interface UserFixureData {
   phoneAreaCode: string;
   dateOfBirth: string;
   active: boolean;
+}
+
+export interface OrderFixtureData {
+  id: string;
+  subtotal: number;
+  totalPrice: number;
+  discounts: number;
+  shippingPrice: number;
+  bookmarkStyle: string;
+  bookmarkText: string;
+  generatedBoookmarks: string;
+  customerId: string;
+  billingAddressId: string;
+  shippingAddressId: string;
+}
+
+export interface OrderItemFixtureData {
+  id: string;
+  quantity: number;
+  unitSellPrice: number;
+  skuId: string;
+  orderId: string;
+}
+
+export interface BookmarkResponseFixtureData {
+  aiBookmarkTexts: string[];
+  bookmarkStyles: string[];
 }

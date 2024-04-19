@@ -1,5 +1,5 @@
 import { type AddressTable } from "../../typings/databaseTables";
-import { type AddressFixtureData } from "../../typings/fixures";
+import { type AddressFixtureData } from "../../typings/fixtures";
 import { getConnection } from "./getConnnection";
 
 interface CreateDatabaseAddressData {

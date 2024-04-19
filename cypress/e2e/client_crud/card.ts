@@ -1,30 +1,13 @@
-import { type CreateUserResponse } from "../../plugins/database/createUser";
-import {
-  type UserFixureData,
-  type AddressFixtureData,
-  type CardFixureData,
-} from "../../typings/fixures";
+import { type CardFixtureData } from "../../typings/fixtures";
 
 export default function clientCardTests(): void {
   beforeEach(function () {
     cy.task("db:down");
-    cy.fixture<UserFixureData>("users/01").then((user) => {
-      cy.fixture<AddressFixtureData>("addresses/01").then((address) => {
-        cy.task<CreateUserResponse>("db:createUser", {
-          userData: user,
-          addressData: address,
-        }).then((data) => {
-          cy.setCookie("accountId", data.userId);
-          cy.wrap(data.userId).as("accountId");
-          cy.wrap(user).as("user");
-          cy.wrap(address).as("address");
-        });
-      });
-    });
+    cy.createDemoCustomer();
   });
 
   it("Cadastrar Cartão", function () {
-    cy.fixture<CardFixureData>("cards/01").then((card) => {
+    cy.fixture<CardFixtureData>("cards/01").then((card) => {
       cy.visit("http://localhost:3000");
       cy.get("a:contains('Minha Conta')").click();
       cy.get("a:contains('Meus Cartões')").click();
@@ -65,13 +48,13 @@ export default function clientCardTests(): void {
   });
 
   it("Ver Cartão", function () {
-    cy.fixture<CardFixureData>("cards/01").then((card) => {
+    cy.fixture<CardFixtureData>("cards/01").then((card) => {
       cy.get<string>("@accountId").then((customerId) => {
         cy.task("db:createCard", { cardData: card, customerId });
         cy.wrap(card).as("card");
       });
     });
-    cy.get<CardFixureData>("@card").then((card) => {
+    cy.get<CardFixtureData>("@card").then((card) => {
       cy.visit("http://localhost:3000");
       cy.get("a:contains('Minha Conta')").click();
       cy.get("a:contains('Meus Cartões')").click();
@@ -102,7 +85,7 @@ export default function clientCardTests(): void {
   });
 
   it("Remover Cartão", function () {
-    cy.fixture<CardFixureData>("cards/01").then((card) => {
+    cy.fixture<CardFixtureData>("cards/01").then((card) => {
       cy.get<string>("@accountId").then((customerId) => {
         cy.task("db:createCard", { cardData: card, customerId });
         cy.wrap(card).as("card");

@@ -1,26 +1,10 @@
 import * as utils from "../../utils";
-import { type CreateUserResponse } from "../../plugins/database/createUser";
-import {
-  type UserFixureData,
-  type AddressFixtureData,
-} from "../../typings/fixures";
+import { type AddressFixtureData } from "../../typings/fixtures";
 
 export default function clientAddressTests(): void {
   beforeEach(function () {
     cy.task("db:down");
-    cy.fixture<UserFixureData>("users/01").then((user) => {
-      cy.fixture<AddressFixtureData>("addresses/01").then((address) => {
-        cy.task<CreateUserResponse>("db:createUser", {
-          userData: user,
-          addressData: address,
-        }).then((data) => {
-          cy.setCookie("accountId", data.userId);
-          cy.wrap(data.userId).as("accountId");
-          cy.wrap(user).as("user");
-          cy.wrap(address).as("address");
-        });
-      });
-    });
+    cy.createDemoCustomer();
   });
 
   it("Cadastrar Endereço", function () {

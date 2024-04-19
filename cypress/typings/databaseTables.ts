@@ -72,3 +72,17 @@ export interface CustomerTable {
   billingAddressId: string;
   isActive: boolean;
 }
+
+export interface OrderTable {
+  id: string;
+  subtotal: number;
+  totalPrice: number;
+  discounts: number;
+  shippingPrice: number;
+  bookmarkStyle: string;
+  bookmarkText: string;
+  generatedBoookmarks: string;
+  customerId: string;
+  billingAddressId: string;
+  shippingAddressId: string;
+}

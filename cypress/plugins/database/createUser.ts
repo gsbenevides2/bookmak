@@ -4,12 +4,12 @@ import {
 } from "../../typings/databaseTables";
 import {
   type AddressFixtureData,
-  type UserFixureData,
-} from "../../typings/fixures";
+  type UserFixtureData,
+} from "../../typings/fixtures";
 import { getConnection } from "./getConnnection";
 
 export interface CreateDatabaseUserData {
-  userData: UserFixureData;
+  userData: UserFixtureData;
   addressData: AddressFixtureData;
 }
 

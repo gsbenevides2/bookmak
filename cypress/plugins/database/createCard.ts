@@ -1,9 +1,9 @@
 import { type CardTable } from "../../typings/databaseTables";
-import { type CardFixureData } from "../../typings/fixures";
+import { type CardFixtureData } from "../../typings/fixtures";
 import { getConnection } from "./getConnnection";
 
 interface CreateDatabaseCardData {
-  cardData: CardFixureData;
+  cardData: CardFixtureData;
   customerId: string;
 }
 

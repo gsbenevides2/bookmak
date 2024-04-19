@@ -1,13 +1,13 @@
 import { type CategoryTable } from "../../typings/databaseTables";
-import { type CategoryFixureData } from "../../typings/fixures";
+import { type CategoryFixtureData } from "../../typings/fixtures";
 import { getConnection } from "./getConnnection";
 
 export async function createCategory(
-  categoryFixure: CategoryFixureData,
+  categoryFixture: CategoryFixtureData,
 ): Promise<string> {
   const knex = getConnection();
   const [{ id }] = await knex<CategoryTable>("category")
-    .insert(categoryFixure)
+    .insert(categoryFixture)
     .returning("id");
   await knex.destroy();
   return id;

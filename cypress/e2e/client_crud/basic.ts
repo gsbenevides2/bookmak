@@ -1,9 +1,9 @@
 import * as utils from "../../utils";
 import { type CreateUserResponse } from "../../plugins/database/createUser";
 import {
-  type UserFixureData,
+  type UserFixtureData,
   type AddressFixtureData,
-} from "../../typings/fixures";
+} from "../../typings/fixtures";
 
 export default function clientBasicTests(): void {
   beforeEach(function () {
@@ -11,7 +11,7 @@ export default function clientBasicTests(): void {
   });
 
   it("Cadastrar Cliente", function () {
-    cy.fixture<UserFixureData>("users/01").then((user) => {
+    cy.fixture<UserFixtureData>("users/01").then((user) => {
       cy.visit("http://localhost:3000");
       cy.get("a:contains('Minha Conta')").click();
       cy.get("a:contains('Cadastre-se')").click();
@@ -45,7 +45,7 @@ export default function clientBasicTests(): void {
       cy.get("button:contains('Salvar')").click();
       cy.wrap(address).as("address");
     });
-    cy.get<UserFixureData>("@user").then((user) => {
+    cy.get<UserFixtureData>("@user").then((user) => {
       cy.get("input[name='name']").should("have.value", user.name);
       cy.get("input[name='email']").should("have.value", user.email);
       cy.get("input[name='cpf']").should("have.value", utils.maskCPF(user.cpf));
@@ -108,7 +108,7 @@ export default function clientBasicTests(): void {
   });
 
   it("Ver dados cadastrais do cliente", function () {
-    cy.fixture<UserFixureData>("users/01").then((user) => {
+    cy.fixture<UserFixtureData>("users/01").then((user) => {
       cy.fixture<AddressFixtureData>("addresses/01").then((address) => {
         cy.task<CreateUserResponse>("db:createUser", {
           userData: user,
@@ -120,7 +120,7 @@ export default function clientBasicTests(): void {
         });
       });
     });
-    cy.get<UserFixureData>("@user").then((user) => {
+    cy.get<UserFixtureData>("@user").then((user) => {
       cy.visit("http://localhost:3000");
       cy.get("a:contains('Minha Conta')").click();
       cy.get("input[name='name']").should("have.value", user.name);
@@ -185,7 +185,7 @@ export default function clientBasicTests(): void {
   });
 
   it("Editar dados cadastrais do cliente", function () {
-    cy.fixture<UserFixureData>("users/01").then((user) => {
+    cy.fixture<UserFixtureData>("users/01").then((user) => {
       cy.fixture<AddressFixtureData>("addresses/01").then((address) => {
         cy.task<CreateUserResponse>("db:createUser", {
           userData: user,
@@ -198,7 +198,7 @@ export default function clientBasicTests(): void {
       });
     });
 
-    cy.fixture<UserFixureData>("users/02").then((user) => {
+    cy.fixture<UserFixtureData>("users/02").then((user) => {
       cy.visit("http://localhost:3000");
       cy.get("a:contains('Minha Conta')").click();
       cy.get("input[name='name']").clear().type(user.name);
@@ -233,7 +233,7 @@ export default function clientBasicTests(): void {
   });
 
   it("Excluir usuário / Inativação", function () {
-    cy.fixture<UserFixureData>("users/01").then((user) => {
+    cy.fixture<UserFixtureData>("users/01").then((user) => {
       cy.fixture<AddressFixtureData>("addresses/01").then((address) => {
         cy.task<CreateUserResponse>("db:createUser", {
           userData: user,
@@ -246,7 +246,7 @@ export default function clientBasicTests(): void {
       });
     });
 
-    cy.get<UserFixureData>("@user").then((user) => {
+    cy.get<UserFixtureData>("@user").then((user) => {
       cy.visit("http://localhost:3000");
       cy.get("a:contains('Minha Conta')").click();
       cy.get("button:contains('Desativar Conta')").click();
