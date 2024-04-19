@@ -16,10 +16,12 @@ export default defineConfig({
         "db:createBook": dbTasks.createBook,
         "db:createBookAuthor": dbTasks.createBookAuthor,
         "db:createBookCategory": dbTasks.createBookCategory,
+        "db:createBookSku": dbTasks.createBookSku,
         "db:createCard": dbTasks.createCard,
         "db:createCategory": dbTasks.createCategory,
         "db:createUser": dbTasks.createUser,
         "db:down": dbTasks.downDatabase,
+        "db:populateBooks": dbTasks.populateBooks,
       });
     },
   },

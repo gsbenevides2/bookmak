@@ -1,38 +1,34 @@
 /// <reference types="cypress" />
 
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+import {
+  type AuthorFixureData,
+  type CategoryFixureData,
+  type BookFixureData,
+  type BookAuthorFixureData,
+  type BookCategoryFixureData,
+  type BookSkuFixureData,
+} from "../typings/fixures";
+
+Cypress.Commands.add("populateBooks", () => {
+  Promise.all([
+    cy.fixture<AuthorFixureData[]>("authors/authors"),
+    cy.fixture<CategoryFixureData[]>("categories/categories"),
+    cy.fixture<BookFixureData[]>("books/books"),
+    cy.fixture<BookAuthorFixureData[]>("book_authors/book_authors"),
+    cy.fixture<BookCategoryFixureData[]>("book_categories/book_categories"),
+    cy.fixture<BookSkuFixureData[]>("book_skus/book_skus"),
+  ])
+    .then(
+      ([authors, categories, books, bookAuthors, bookCategories, bookSkus]) => {
+        cy.task("db:populateBooks", {
+          authors,
+          categories,
+          books,
+          bookAuthors,
+          bookCategories,
+          bookSkus,
+        });
+      },
+    )
+    .catch(() => {});
+});

@@ -4,8 +4,11 @@ import { getConnection } from "./getConnnection";
 
 export async function createCategory(
   categoryFixure: CategoryFixureData,
-): Promise<void> {
+): Promise<string> {
   const knex = getConnection();
-  await knex<CategoryTable>("category").insert(categoryFixure);
+  const [{ id }] = await knex<CategoryTable>("category")
+    .insert(categoryFixure)
+    .returning("id");
   await knex.destroy();
+  return id;
 }

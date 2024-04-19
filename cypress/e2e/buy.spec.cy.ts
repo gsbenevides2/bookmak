@@ -5,6 +5,7 @@
 describe("Fluxo de Compra", function () {
   beforeEach(function () {
     cy.task("db:down");
+    cy.populateBooks();
   });
   it("Fluxo de compra: Desde a vitrine a confirmação.", function () {
     cy.visit("http://localhost:3000");

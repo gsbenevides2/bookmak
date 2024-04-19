@@ -4,8 +4,9 @@ import { getConnection } from "./getConnnection";
 
 export async function createBookCategory(
   fixure: BookCategoryFixureData,
-): Promise<void> {
+): Promise<null> {
   const knex = getConnection();
-  await knex<BookCategoryTable>("book_category").insert(fixure);
+  await knex<BookCategoryTable>("book_categories").insert(fixure);
   await knex.destroy();
+  return null;
 }
