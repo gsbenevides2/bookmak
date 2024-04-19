@@ -4,5 +4,6 @@
   "flag": "visa",
   "cvv": "762",
   "monthOfValidity": "10",
-  "yearOfValidity": "2025"
+  "yearOfValidity": "2025",
+  "active": true
 }

@@ -59,3 +59,29 @@ export function generateCPF(mascara: boolean): string {
     return `${n1}${n2}${n3}.${n4}${n5}${n6}.${n7}${n8}${n9}-${d1}${d2}`;
   else return `${n1}${n2}${n3}${n4}${n5}${n6}${n7}${n8}${n9}${d1}${d2}`;
 }
+
+export function parseDateStr(dateStr: string): Date {
+  return new Date(dateStr);
+}
+
+export function formatDate(date: Date): string {
+  return date.toISOString().split("T")[0];
+}
+
+export function parseHouseType(houseType: string): string {
+  const houseTypeMap: Record<string, string> = {
+    house: "Casa",
+  };
+  return houseTypeMap[houseType];
+}
+
+export function parseStreetType(streetType: string): string {
+  const streetTypeMap: Record<string, string> = {
+    street: "Rua",
+  };
+  return streetTypeMap[streetType];
+}
+
+export function maskZipCode(zipCode: string): string {
+  return zipCode.replace(/(\d{5})(\d{3})/, "$1-$2");
+}

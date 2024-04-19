@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import { Customer } from "../plugins/db";
+import { type Customer } from "../plugins/database/downDatabase";
 
 describe("Fluxo de Troca", function () {
   beforeEach(function () {

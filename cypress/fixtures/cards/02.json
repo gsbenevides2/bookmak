@@ -4,5 +4,6 @@
   "flag": "mastercard",
   "cvv": "610",
   "monthOfValidity": "02",
-  "yearOfValidity": "2026"
+  "yearOfValidity": "2026",
+  "active": true
 }

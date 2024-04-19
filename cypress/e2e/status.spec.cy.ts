@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { Customer } from "../plugins/db";
+import { type Customer } from "../plugins/database/downDatabase";
 
 describe("Alteração de Status", function () {
   beforeEach(function () {

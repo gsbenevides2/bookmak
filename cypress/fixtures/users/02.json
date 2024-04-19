@@ -7,5 +7,7 @@
   "phoneType": "landline",
   "phoneAreaCode": "12",
   "phoneNumber": "934723495",
-  "dateOfBirth": "2001-07-10T00:00:00.000Z"
+  "dateOfBirth": "2001-07-10T00:00:00.000Z",
+  "gender": "male",
+  "active": true
 }

@@ -4,18 +4,14 @@
     "es2021": true,
     "node": true
   },
-  "plugins": ["ejs"],
+  "plugins": [],
   "extends": ["standard-with-typescript", "prettier"],
 
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "rules": {},
-  "overrides": [
-    {
-      "files": ["*.ejs", "*.html", "*.ts"],
-      "excludedFiles": ["src/views/**/*", "src/public/**/*"]
-    }
-  ]
+  "rules": {
+    "@typescript-eslint/triple-slash-reference": "off"
+  }
 }

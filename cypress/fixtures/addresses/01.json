@@ -9,5 +9,6 @@
   "city": "Suzano",
   "state": "São Paulo",
   "country": "Brasil",
-  "observations": ""
+  "observations": "",
+  "active": true
 }
