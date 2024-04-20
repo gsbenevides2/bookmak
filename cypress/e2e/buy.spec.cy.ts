@@ -199,6 +199,16 @@ describe("Fluxo de Compra", function () {
       `${utils.formatCardNumber(card.number)} - ${utils.parseCardFlag(card.flag)}`,
     );
 
+    cy.get(".totalPrice")
+      .invoke("text")
+      .then((totalPrice) => {
+        const totalPriceParsed = totalPrice.replace(/[^\d]/g, "");
+        cy.get("#value").then((input) => {
+          input.val((parseInt(totalPriceParsed) / 100).toFixed(2));
+        });
+      });
+    cy.get("#addCard").click();
+
     cy.get("button.pay").click();
 
     // Verifica novamente os dados
