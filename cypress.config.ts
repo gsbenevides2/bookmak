@@ -1,6 +1,13 @@
 import { defineConfig } from "cypress";
 import dbTasks from "./cypress/plugins/database";
 
+const tasks: Cypress.Tasks = Object.keys(dbTasks).reduce((acc, key) => {
+  const dbKey = "db:" + key;
+  const taskKey = key as keyof typeof dbTasks;
+
+  return { ...acc, [dbKey]: dbTasks[taskKey] };
+}, {});
+
 export default defineConfig({
   projectId: "rwjpu4",
   viewportWidth: 1280,
@@ -11,17 +18,7 @@ export default defineConfig({
     specPattern: "cypress/e2e/**/*.cy.ts",
     setupNodeEvents(on) {
       on("task", {
-        "db:createAddress": dbTasks.createAddress,
-        "db:createAuthor": dbTasks.createAuthor,
-        "db:createBook": dbTasks.createBook,
-        "db:createBookAuthor": dbTasks.createBookAuthor,
-        "db:createBookCategory": dbTasks.createBookCategory,
-        "db:createBookSku": dbTasks.createBookSku,
-        "db:createCard": dbTasks.createCard,
-        "db:createCategory": dbTasks.createCategory,
-        "db:createUser": dbTasks.createUser,
-        "db:down": dbTasks.downDatabase,
-        "db:populateBooks": dbTasks.populateBooks,
+        ...tasks,
       });
     },
   },

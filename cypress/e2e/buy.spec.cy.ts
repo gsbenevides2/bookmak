@@ -1,21 +1,35 @@
 /// <reference types="cypress" />
 import { faker } from "@faker-js/faker";
-import {
-  type BookmarkResponseFixtureData,
-  type AddressFixtureData,
-  type UserFixtureData,
-  type CardFixtureData,
-} from "../typings/fixtures";
 import * as utils from "../utils";
+import { customersFixtures } from "../fixtures/customer";
+import { addressesFixtures } from "../fixtures/address";
+import { cardsFixtures } from "../fixtures/card";
+import { booksFixtures } from "../fixtures/books";
+import { bookmarkFixtures } from "../fixtures/bookmark";
 // import { formatCardNumber, maskCPF } from "../utils";
 
 describe("Fluxo de Compra", function () {
+  const [customer] = customersFixtures;
+  const [address] = addressesFixtures;
+  const [card] = cardsFixtures;
   beforeEach(function () {
-    cy.task("db:down");
-    cy.populateBooks();
-    cy.createDemoCustomer(false);
-    cy.addCardToDemoCustomer();
+    const [books] = booksFixtures;
+    cy.downDatabase();
+    cy.createCustomer([
+      {
+        customer,
+        address,
+      },
+    ]);
+    cy.createCard([
+      {
+        card,
+        customerId: customer.id,
+      },
+    ]);
+    cy.createBook(books);
   });
+
   it("Fluxo de compra: Desde a vitrine a confirmação.", function () {
     cy.visit("http://localhost:3000");
     // Pega o primeiro livro da vitrine
@@ -89,16 +103,14 @@ describe("Fluxo de Compra", function () {
     cy.get(".continue-btn").click();
 
     // Loga o cliente
-    cy.get<UserFixtureData>("@user").then((user) => {
-      cy.get("input[name='email']").type(user.email);
-      cy.get("input[name='password']").type(user.password);
-      cy.fixture<BookmarkResponseFixtureData>("bookmarks/bookmarks").then(
-        (bookmarks) => {
-          cy.intercept("/checkout/bookmark/getInfo", bookmarks);
-        },
-      );
-      cy.get("button[type='submit']").click();
-    });
+
+    cy.get("input[name='email']").type(customer.email);
+    cy.get("input[name='password']").type(customer.password);
+    const [bookmarks] = bookmarkFixtures;
+
+    cy.intercept("/checkout/bookmark/getInfo", bookmarks);
+
+    cy.get("button[type='submit']").click();
 
     // Aguarda o termino da request
     cy.wait(1000);
@@ -133,15 +145,13 @@ describe("Fluxo de Compra", function () {
     // Continua a compra
     cy.get("button[type='submit']").click();
     // Escolhe o endereço de  entrega
-    cy.get<AddressFixtureData>("@address").then((address) => {
-      cy.get("#deliveryAddress")
-        .find(":selected")
-        .should("contain.text", address.nickname);
+    cy.get("#deliveryAddress")
+      .find(":selected")
+      .should("contain.text", address.nickname);
 
-      cy.get("#billingAddress")
-        .find(":selected")
-        .should("contain.text", address.nickname);
-    });
+    cy.get("#billingAddress")
+      .find(":selected")
+      .should("contain.text", address.nickname);
 
     cy.get("button[type='submit']").click();
 
@@ -171,30 +181,23 @@ describe("Fluxo de Compra", function () {
       cy.get(".sumarizer .subtotal").should("contains.text", precoSubtotal);
     });
 
-    cy.get<UserFixtureData>("@user").then((user) => {
-      cy.get(".name").should("contains.text", user.name);
-      cy.get(".email").should("contains.text", user.email);
-      cy.get(".cpf").should("contains.text", utils.maskCPF(user.cpf));
-    });
-    cy.get<AddressFixtureData>("@address").then((address) => {
-      cy.get(".deliveryAddressNickname").should(
-        "contains.text",
-        address.nickname,
-      );
-      cy.get(".deliveryAddress").should("contains.text", address.street);
+    cy.get(".name").should("contains.text", customer.name);
+    cy.get(".email").should("contains.text", customer.email);
+    cy.get(".cpf").should("contains.text", utils.maskCPF(customer.cpf));
 
-      cy.get(".billingAddressNickname").should(
-        "contains.text",
-        address.nickname,
-      );
+    cy.get(".deliveryAddressNickname").should(
+      "contains.text",
+      address.nickname,
+    );
+    cy.get(".deliveryAddress").should("contains.text", address.street);
 
-      cy.get(".billingAddress").should("contains.text", address.street);
-    });
-    cy.get<CardFixtureData>("@card").then((card) => {
-      cy.get(".cardSelect").select(
-        `${utils.formatCardNumber(card.number)} - ${utils.parseCardFlag(card.flag)}`,
-      );
-    });
+    cy.get(".billingAddressNickname").should("contains.text", address.nickname);
+
+    cy.get(".billingAddress").should("contains.text", address.street);
+
+    cy.get(".cardSelect").select(
+      `${utils.formatCardNumber(card.number)} - ${utils.parseCardFlag(card.flag)}`,
+    );
 
     cy.get("button.pay").click();
 
@@ -227,32 +230,24 @@ describe("Fluxo de Compra", function () {
       cy.get(".sumarizer .subtotal").should("contains.text", precoSubtotal);
     });
 
-    cy.get<UserFixtureData>("@user").then((user) => {
-      cy.get(".name").should("contains.text", user.name);
-      cy.get(".email").should("contains.text", user.email);
-      cy.get(".cpf").should("contains.text", utils.maskCPF(user.cpf));
-    });
-    cy.get<AddressFixtureData>("@address").then((address) => {
-      cy.get(".deliveryAddressNickname").should(
-        "contains.text",
-        address.nickname,
-      );
-      cy.get(".deliveryAddress").should("contains.text", address.street);
+    cy.get(".name").should("contains.text", customer.name);
+    cy.get(".email").should("contains.text", customer.email);
+    cy.get(".cpf").should("contains.text", utils.maskCPF(customer.cpf));
 
-      cy.get(".billingAddressNickname").should(
-        "contains.text",
-        address.nickname,
-      );
+    cy.get(".deliveryAddressNickname").should(
+      "contains.text",
+      address.nickname,
+    );
+    cy.get(".deliveryAddress").should("contains.text", address.street);
 
-      cy.get(".billingAddress").should("contains.text", address.street);
-    });
-    cy.get<CardFixtureData>("@card").then((card) => {
-      cy.get(".card").should(
-        "contains.text",
-        `${utils.formatCardNumber(card.number)} - ${utils.parseCardFlag(card.flag)}`,
-      );
-    });
+    cy.get(".billingAddressNickname").should("contains.text", address.nickname);
 
+    cy.get(".billingAddress").should("contains.text", address.street);
+
+    cy.get(".card").should(
+      "contains.text",
+      `${utils.formatCardNumber(card.number)} - ${utils.parseCardFlag(card.flag)}`,
+    );
     cy.get(".status").should("contains.text", "Em processamento");
   });
 });

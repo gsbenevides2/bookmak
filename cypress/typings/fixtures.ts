@@ -13,12 +13,7 @@ export interface AddressFixtureData {
   active: boolean;
 }
 export interface AuthorFixtureData {
-  id: string;
   name: string;
-}
-export interface BookAuthorFixtureData {
-  authorId: string;
-  bookId: string;
 }
 export interface BookCategoryFixtureData {
   categoryId: string;
@@ -53,6 +48,7 @@ export interface CategoryFixtureData {
   name: string;
 }
 export interface UserFixtureData {
+  id: string;
   isAdmin: boolean;
   name: string;
   email: string;
@@ -86,6 +82,10 @@ export interface OrderItemFixtureData {
   unitSellPrice: number;
   skuId: string;
   orderId: string;
+}
+
+export interface AddressResponseFixtureData {
+  addresses: AddressFixtureData[];
 }
 
 export interface BookmarkResponseFixtureData {
