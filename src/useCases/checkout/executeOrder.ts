@@ -110,7 +110,8 @@ function checkCardsByPassOrder(
   cards: Array<{ value: number }>,
   orderTotalPrice: number,
 ): boolean {
-  return cards.reduce((acc, card) => acc + card.value, 0) !== orderTotalPrice;
+  console.log(cards, orderTotalPrice);
+  return cards.reduce((acc, card) => acc + card.value, 0) === orderTotalPrice;
 }
 
 function checkHasNoRepeatedCards(cards: Array<{ id: string }>): boolean {
