@@ -11,7 +11,7 @@ function hasNumber(password: string): boolean {
 }
 
 function hasSpecialCharacter(password: string): boolean {
-  return /[^A-Za-z0-9]/.test(password);
+  return /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/.test(password);
 }
 
 export function validatePasswordSecurity(password: string): boolean {

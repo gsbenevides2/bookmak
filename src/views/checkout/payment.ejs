@@ -153,7 +153,7 @@
             <%- formatPrice(order.discounts) %>
           </div>
           <div class="col-6">Total</div>
-          <div class="col-6 text-end totalPrice">
+          <div class="col-6 text-end totalPrice" data-totalPrice="<%-order.totalPrice %>">
             <%- formatPrice(order.totalPrice) %>
           </div>
         </div>
@@ -161,9 +161,8 @@
       <!--Pagamento-->
       <div class="mt-3 border p-3">
         <h5>Pagamento:</h5>
-
-        <form method="POST" action="/checkout/payment">
-          <div class="mb-3">
+        <div class="mb-3 row">
+          <div class="col-4">
             <label for="card" class="form-label">Selecione o Cartão:</label>
             <select class="form-select cardSelect" id="card" name="cardId">
               <option selected>Selecione o Cartão</option>
@@ -174,6 +173,17 @@
               <% }) %>
             </select>
           </div>
+          <div class="col-4">
+            <label for="card" class="form-label">Digite o valor a ser pago com esse cartão:</label>
+            <input type="number"  min="0.00" step="0.01" class="form-control" id="value" name="value" />
+          </div>
+          <button type="button" class="btn btn-primary col-4" id="addCard">Usar mais um cartão.</button>
+        </div>
+        <p>Cartões usados:</p>
+        <ul class="usedCardsList" id="usedCardsList">
+        </ul>
+        <form method="POST" action="/checkout/payment" id="sendForm">
+          <input type="hidden" name="cards" id="cards" value="[]" />
           <div class="d-flex gap-3">
             <button
               type="button"
@@ -195,5 +205,6 @@
     </main>
     <!--Bootstrap JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/checkout.js"></script>
   </body>
 </html>

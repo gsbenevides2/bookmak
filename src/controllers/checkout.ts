@@ -220,20 +220,30 @@ export const getAllDataForCheckout: Controller = (req, res) => {
     });
 };
 export const finishCheckout: Controller = (req, res) => {
-  const { cardId } = req.body;
+  interface Body {
+    cards: string;
+  }
+  const { cards } = req.body as Body;
+
   const customerId = req.cookies.accountId;
   const orderId = req.cookies.orderId;
-  checkoutUseCases
-    .executeOrder({
-      cardId,
-      customerId,
-      orderId,
-    })
-    .then(() => {
-      res.clearCookie("orderId");
-      res.redirect("/accounts/me/orders/" + orderId);
-    })
-    .catch((error) => {
-      res.redirect("/checkout/payment?error=" + error.message);
-    });
+  try {
+    const cardsParsed = JSON.parse(cards);
+
+    checkoutUseCases
+      .executeOrder({
+        cards: cardsParsed,
+        customerId,
+        orderId,
+      })
+      .then(() => {
+        res.clearCookie("orderId");
+        res.redirect("/accounts/me/orders/" + orderId);
+      })
+      .catch((error) => {
+        res.redirect("/checkout/payment?error=" + error.message);
+      });
+  } catch (_error) {
+    res.redirect("/checkout/payment?error=Erro de dados inválidos");
+  }
 };

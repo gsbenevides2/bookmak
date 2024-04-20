@@ -3,43 +3,95 @@ import { Card } from "../../models/Card";
 import { Order } from "../../models/Order";
 import { OrderPaymentMethod } from "../../models/OrderPaymentMethod";
 import { OrderStatus, OrderUpdate } from "../../models/OrderUpdate";
+import { throwErrorIfFalse } from "../../utils/errors";
 
 interface Params {
-  cardId: string;
+  cards: Array<{
+    id: string;
+    value: number;
+  }>;
   orderId: string;
   customerId: string;
 }
+
 export default async function executeOrder(params: Params): Promise<void> {
-  const { cardId, orderId, customerId } = params;
+  const { cards, orderId, customerId } = params;
+
+  throwErrorIfFalse(
+    checkCardsStructure(cards),
+    "Estrutura de cartões inválida",
+  );
+
+  throwErrorIfFalse(
+    checkAllCardsMinCardAmount(cards),
+    "Valor de cartão minimo não atingido. Para cada cartão, o valor mínimo é de R$ 10,00",
+  );
+
   const datasource = await DatabaseConnection.getDataSource();
   const orderRepository = datasource.getRepository(Order);
   const cardsRepository = datasource.getRepository(Card);
-  const orderPaymentMethodRepository =
-    datasource.getRepository(OrderPaymentMethod);
-  const orderUpdateRepository = datasource.getRepository(OrderUpdate);
+
   const order = await orderRepository.findOne({
     where: { id: orderId, customer: { id: customerId } },
     relations: ["customer"],
   });
+
   if (order == null) {
     throw new Error("Pedido não encontrado");
   }
-  const card = await cardsRepository.findOne({
-    where: { id: cardId, customer: { id: customerId } },
-    relations: ["customer"],
-  });
+  throwErrorIfFalse(
+    checkCardsPaysAllOrder(cards, order.totalPrice),
+    "O valor dos cartões não é suficiente para pagar o pedido",
+  );
 
-  if (card === null) {
-    throw new Error("Cartão não encontrado");
+  await datasource.transaction(async (manager) => {
+    const orderPaymentMethodRepository =
+      manager.getRepository(OrderPaymentMethod);
+    const orderUpdateRepository = manager.getRepository(OrderUpdate);
+
+    for (const card of cards) {
+      const dbCard = await cardsRepository.findOne({
+        where: { id: card.id, customer: { id: customerId } },
+        relations: ["customer"],
+      });
+      if (dbCard === null) {
+        throw new Error("Cartão não encontrado");
+      }
+
+      await orderPaymentMethodRepository.save({
+        card: dbCard,
+        value: card.value,
+        order,
+      });
+    }
+    await orderUpdateRepository.save({
+      status: OrderStatus.PROCESSING,
+      observations: `Estamos recebendo seu pagamento. Aguarde!`,
+      order,
+    });
+  });
+}
+
+function checkCardsStructure(cards: any): boolean {
+  if (!Array.isArray(cards)) {
+    return false;
   }
-  const orderPaymentMethod = new OrderPaymentMethod();
-  orderPaymentMethod.card = card;
-  orderPaymentMethod.value = order.totalPrice;
-  orderPaymentMethod.order = order;
-  const orderUpdate = new OrderUpdate();
-  orderUpdate.status = OrderStatus.PROCESSING;
-  orderUpdate.observations = `Estamos recebendo seu pagamento. Aguarde!`;
-  orderUpdate.order = order;
-  await orderUpdateRepository.save(orderUpdate);
-  await orderPaymentMethodRepository.save(orderPaymentMethod);
+  for (const card of cards) {
+    if (typeof card.id !== "string" || typeof card.value !== "number") {
+      return false;
+    }
+  }
+  return true;
+}
+
+function checkAllCardsMinCardAmount(cards: Array<{ value: number }>): boolean {
+  const MIN_CARD_AMOUNT = 1000;
+  return cards.every((card) => card.value >= MIN_CARD_AMOUNT);
+}
+
+function checkCardsPaysAllOrder(
+  cards: Array<{ value: number }>,
+  orderTotalPrice: number,
+): boolean {
+  return cards.reduce((acc, card) => acc + card.value, 0) >= orderTotalPrice;
 }

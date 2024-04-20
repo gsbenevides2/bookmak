@@ -5,3 +5,8 @@
 .book-cover{
     width: 160px;
 }
+
+#addCard{
+    max-height: 38px;
+    margin-top: auto;
+}
