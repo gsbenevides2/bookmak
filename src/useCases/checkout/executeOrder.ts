@@ -27,6 +27,11 @@ export default async function executeOrder(params: Params): Promise<void> {
     "Valor de cartão minimo não atingido. Para cada cartão, o valor mínimo é de R$ 10,00",
   );
 
+  throwErrorIfFalse(
+    checkHasNoRepeatedCards(cards),
+    "Cartões repetidos não são permitidos",
+  );
+
   const datasource = await DatabaseConnection.getDataSource();
   const orderRepository = datasource.getRepository(Order);
   const cardsRepository = datasource.getRepository(Card);
@@ -42,6 +47,11 @@ export default async function executeOrder(params: Params): Promise<void> {
   throwErrorIfFalse(
     checkCardsPaysAllOrder(cards, order.totalPrice),
     "O valor dos cartões não é suficiente para pagar o pedido",
+  );
+
+  throwErrorIfFalse(
+    checkCardsByPassOrder(cards, order.totalPrice),
+    "O valor dos cartões é maior que o valor do pedido",
   );
 
   await datasource.transaction(async (manager) => {
@@ -94,4 +104,16 @@ function checkCardsPaysAllOrder(
   orderTotalPrice: number,
 ): boolean {
   return cards.reduce((acc, card) => acc + card.value, 0) >= orderTotalPrice;
+}
+
+function checkCardsByPassOrder(
+  cards: Array<{ value: number }>,
+  orderTotalPrice: number,
+): boolean {
+  return cards.reduce((acc, card) => acc + card.value, 0) !== orderTotalPrice;
+}
+
+function checkHasNoRepeatedCards(cards: Array<{ id: string }>): boolean {
+  const cardIds = cards.map((card) => card.id);
+  return new Set(cardIds).size === cardIds.length;
 }
