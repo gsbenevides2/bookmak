@@ -107,26 +107,31 @@
           </div>
         </div>
       </div>
-      <!--Endereço de Envio-->
+      <!--Endereço de Envio e Cobrança-->
       <div class="mt-3 border p-3">
         <h5 class="deliveryAddressNickname">
           Endereço de Envio: <%- order.shippingAddress.nickname %>
         </h5>
-        <p class="mb-0 deliveryAddress">
+        <p class="deliveryAddress">
           <%= maskAddresss(order.shippingAddress) %><br />
           Observações:
           <%- order.shippingAddress.observations %>
         </p>
-      </div>
-      <!--Endereço de Cobrança-->
-      <div class="mt-3 border p-3">
         <h5 class="billingAddressNickname">
           Endereço de Cobrança: <%- order.billingAddress.nickname %>
         </h5>
-        <p class="mb-0 billingAddress">
+        <p class="billingAddress">
           <%= maskAddresss(order.billingAddress) %><br />
           Observações:
           <%- order.billingAddress.observations %>
+        </p>
+      </div>
+      <!--<Marca Página-->
+      <div class="mt-3 border p-3">
+        <h5>Marca Página Personalizado:</h5>
+        <p>
+          <b>Estilo:</b> <%- order.bookmarkStyle %><br/>
+          <b>Texto:</b>Texto: <%- order.bookmarkText %>
         </p>
       </div>
       <!--Cupom-->
