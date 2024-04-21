@@ -12,6 +12,11 @@ export enum CouponType {
   Exchange = "exchange",
 }
 
+export const couponsText: Record<CouponType, string> = {
+  discount: "Desconto",
+  exchange: "Troca",
+};
+
 @Entity()
 export class Coupon {
   @PrimaryGeneratedColumn("uuid")

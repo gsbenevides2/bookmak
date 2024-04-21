@@ -140,7 +140,9 @@
 
         <div class="row">
           <div class="mb-0 d-flex justify-content-between">
-            <p class="mb-0">Cupon 1</p>
+            <% order.usedPaymentMethods.filter((paymentMethod) => paymentMethod.coupon != null).forEach((paymentMethod) => { %>
+              <p class="mb-0"><%- paymentMethod.coupon.code %>  (<%- formatPrice(paymentMethod.value*-1) %>)</p>
+            <% }) %>
           </div>
         </div>
       </div>
@@ -158,7 +160,7 @@
           </div>
           <div class="col-6">Desconto</div>
           <div class="col-6 text-end discount">
-            <%- formatPrice(order.discounts) %>
+            <%- formatPrice(order.discounts*-1) %>
           </div>
           <div class="col-6">Total</div>
           <div class="col-6 text-end totalPrice">
@@ -172,7 +174,9 @@
         <h5>Pagamento:</h5>
         <p class="mb-0 card">
           <% order.usedPaymentMethods.forEach((paymentMethod) => { %>
-            <%= formatCardNumber(paymentMethod.card.number) %> - <%= formatCardFlag(paymentMethod.card.flag) %> - <%= formatPrice(paymentMethod.value) %><br/>
+            <% if(paymentMethod.card !== null) { %>
+              <%= formatCardNumber(paymentMethod.card.number) %> - <%= formatCardFlag(paymentMethod.card.flag) %> - <%= formatPrice(paymentMethod.value) %><br/>
+            <% } %>
           <% }) %>
         </p>
       </div>

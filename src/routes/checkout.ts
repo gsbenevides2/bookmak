@@ -38,6 +38,16 @@ checkoutRouter.get(
   checkoutController.getAllDataForCheckout,
 );
 checkoutRouter.post(
+  "/payment/addCoupon",
+  authMiddleware,
+  checkoutController.addCoupon,
+);
+checkoutRouter.post(
+  "/payment/removeCoupon/:couponCode",
+  authMiddleware,
+  checkoutController.removeCoupon,
+);
+checkoutRouter.post(
   "/payment",
   authMiddleware,
   checkoutController.finishCheckout,

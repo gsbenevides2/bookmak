@@ -29,6 +29,10 @@ export default async function getOrder(orderId: string): Promise<Order> {
         updates: true,
         billingAddress: true,
         shippingAddress: true,
+        usedPaymentMethods: {
+          card: true,
+          coupon: true,
+        },
       },
     })
     .catch((error) => {

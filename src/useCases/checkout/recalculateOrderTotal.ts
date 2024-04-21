@@ -10,7 +10,12 @@ export default async function recalculateOrderTotal(
 
   const order = await orderRepository.findOne({
     where: { id: orderId },
-    relations: ["items", "items.sku"],
+    relations: [
+      "items",
+      "items.sku",
+      "usedPaymentMethods",
+      "usedPaymentMethods.coupon",
+    ],
   });
 
   if (order === null) {
@@ -24,13 +29,19 @@ export default async function recalculateOrderTotal(
     };
   });
 
+  const discounts = order.usedPaymentMethods.reduce((acc, paymentMethod) => {
+    return acc + (paymentMethod.coupon?.value ?? 0);
+  }, 0);
+
   order.items = newItems;
 
   const subtotal = order.items.reduce((acc, item) => {
     return acc + item.unitSellPrice * item.quantity;
   }, 0);
 
+  order.discounts = discounts;
   order.subtotal = subtotal;
-  order.totalPrice = subtotal - order.discounts + order.shippingPrice;
+  order.totalPrice = subtotal - discounts + order.shippingPrice;
+
   await orderRepository.save(order);
 }

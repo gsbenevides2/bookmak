@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import "dotenv/config";
 
-const instructions = `Vou te passar a descrição de alguns livros e seus nomes, me gere 4 textos curtos para eu escrever em um marca página customizado. Os textos devem ser curtos com menos de 15 palavras. Você deve me retornar uma lista numerado. Os textos não podem incluir o nome do livro.`;
+const instructions = `Vou te passar a descrição de alguns livros e seus nomes, me gere somente 4 textos curtos com no maximo 10 palavras cada, eu irei usar esses textos para escrever em um marca página customizado. Você deve me retornar somente uma lista numerada. Os textos não podem incluir o nome do livro.`;
 
 function transformMarkdownOrderedListToArrayAndRemoveNumbers(
   markdown: string,
@@ -19,7 +19,7 @@ type Books = Array<{
 
 function makeBooksText(books: Books): string {
   return books
-    .map((book) => `Livro: ${book.name} Descrição: ${book.description}`)
+    .map((book) => `Livro: ${book.name}\nDescrição: ${book.description}`)
     .join("\n");
 }
 
@@ -37,6 +37,7 @@ export class BookmarkGenerator {
   }
 
   async generateBookmarks(books: Books): Promise<string[]> {
+    /*
     const assistantId = this.assistantId;
     if (assistantId == null) {
       throw new Error("Assistant not loaded");
@@ -75,6 +76,28 @@ export class BookmarkGenerator {
     return await new Promise((resolve, reject) => {
       callback(resolve, reject).catch(reject);
     });
+    */
+    const message = `${instructions}\n${makeBooksText(books)}`;
+    const response = await this.openai.chat.completions.create({
+      model: "gpt-4-turbo",
+      messages: [
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+      frequency_penalty: 0,
+      presence_penalty: 0,
+      top_p: 1,
+      max_tokens: 100,
+      temperature: 1,
+    });
+    const openAiText = response.choices[0].message.content;
+    if (openAiText == null) return [];
+
+    const texts =
+      transformMarkdownOrderedListToArrayAndRemoveNumbers(openAiText);
+    return texts;
   }
 
   static instance = new BookmarkGenerator();

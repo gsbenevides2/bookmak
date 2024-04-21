@@ -31,6 +31,7 @@ export default async function getOrder(orderId: string): Promise<Order | null> {
       shippingAddress: true,
       usedPaymentMethods: {
         card: true,
+        coupon: true,
       },
     },
   });

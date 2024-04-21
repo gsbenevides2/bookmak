@@ -219,6 +219,36 @@ export const getAllDataForCheckout: Controller = (req, res) => {
       res.redirect("/login?error=Erro ao buscar dados");
     });
 };
+export const addCoupon: Controller = (req, res) => {
+  interface Body {
+    couponCode: string;
+  }
+  const { couponCode } = req.body as Body;
+  const accountId = req.cookies.accountId as string;
+  const orderId = req.cookies.orderId as string;
+
+  checkoutUseCases
+    .addCoupon({ code: couponCode, accountId, orderId })
+    .then(() => {
+      res.redirect("/checkout/payment");
+    })
+    .catch((error) => {
+      res.redirect("/checkout/payment?error=" + error.message);
+    });
+};
+export const removeCoupon: Controller = (req, res) => {
+  const { couponCode } = req.params;
+  const orderId = req.cookies.orderId as string;
+
+  checkoutUseCases
+    .removeCoupon(orderId, couponCode)
+    .then(() => {
+      res.redirect("/checkout/payment");
+    })
+    .catch((error) => {
+      res.redirect("/checkout/payment?error=" + error.message);
+    });
+};
 export const finishCheckout: Controller = (req, res) => {
   interface Body {
     cards: string;

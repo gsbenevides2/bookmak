@@ -238,7 +238,17 @@ export const deleteCard: Controller = (req, res) => {
 };
 
 export const getMyCupons: Controller = (req, res) => {
-  res.render("accounts/mycupons");
+  const accountId = req.cookies?.accountId as string;
+  customerUseCase
+    .viewCoupons(accountId)
+    .then((coupons) => {
+      res.render("accounts/coupons", {
+        coupons,
+      });
+    })
+    .catch(() => {
+      res.redirect("/accounts/me?error=Erro ao buscar cupons");
+    });
 };
 
 export const getMyOrders: Controller = (req, res) => {

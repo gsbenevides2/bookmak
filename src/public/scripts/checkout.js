@@ -19,6 +19,7 @@ window.addEventListener("load", () => {
     const cardId = cardSelect.value;
     const cardText = cardSelect.options[cardSelect.selectedIndex].text;
     const valueForPay = parseInt(valueInput.value.replace(/\D/g, ""));
+    const orderTotal = parseInt(totalPriceDiv.dataset.totalprice);
 
     if (cardSelect.selectedIndex === 0) {
       alert("Selecione um cartão");
@@ -26,8 +27,12 @@ window.addEventListener("load", () => {
     }
 
     if (valueForPay < MIN_VALUE) {
-      alert(`Valor mínimo para pagamento é de ${formatMoney(MIN_VALUE / 100)}`);
-      return;
+      if (orderTotal > MIN_VALUE) {
+        alert(
+          `Valor mínimo para pagamento é de ${formatMoney(MIN_VALUE / 100)}`,
+        );
+        return;
+      }
     }
 
     const cardsListInputValue = JSON.parse(cardListInput.value);
@@ -38,8 +43,7 @@ window.addEventListener("load", () => {
     );
 
     const totalPayed = totalPayedWithCards + valueForPay;
-    console.log(totalPayed, parseInt(totalPriceDiv.dataset.totalprice));
-    if (totalPayed > parseInt(totalPriceDiv.dataset.totalprice)) {
+    if (totalPayed > orderTotal) {
       alert("Valor total excedido");
       return;
     }

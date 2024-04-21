@@ -37,6 +37,7 @@ export default async function getOrder(
       shippingAddress: true,
       usedPaymentMethods: {
         card: true,
+        coupon: true,
       },
     },
   });

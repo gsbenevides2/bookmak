@@ -1,9 +1,11 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Card } from "../../models/Card";
+import { Coupon } from "../../models/Coupon";
 import { Order } from "../../models/Order";
 import { OrderPaymentMethod } from "../../models/OrderPaymentMethod";
 import { OrderStatus, OrderUpdate } from "../../models/OrderUpdate";
 import { throwErrorIfFalse } from "../../utils/errors";
+import recalculateOrderTotal from "./recalculateOrderTotal";
 
 interface Params {
   cards: Array<{
@@ -23,42 +25,69 @@ export default async function executeOrder(params: Params): Promise<void> {
   );
 
   throwErrorIfFalse(
-    checkAllCardsMinCardAmount(cards),
-    "Valor de cartão minimo não atingido. Para cada cartão, o valor mínimo é de R$ 10,00",
-  );
-
-  throwErrorIfFalse(
     checkHasNoRepeatedCards(cards),
     "Cartões repetidos não são permitidos",
   );
 
   const datasource = await DatabaseConnection.getDataSource();
-  const orderRepository = datasource.getRepository(Order);
-  const cardsRepository = datasource.getRepository(Card);
-
-  const order = await orderRepository.findOne({
-    where: { id: orderId, customer: { id: customerId } },
-    relations: ["customer"],
-  });
-
-  if (order == null) {
-    throw new Error("Pedido não encontrado");
-  }
-  throwErrorIfFalse(
-    checkCardsPaysAllOrder(cards, order.totalPrice),
-    "O valor dos cartões não é suficiente para pagar o pedido",
-  );
-
-  throwErrorIfFalse(
-    checkCardsByPassOrder(cards, order.totalPrice),
-    "O valor dos cartões é maior que o valor do pedido",
-  );
+  const orderPaymentMethodRepository =
+    datasource.getRepository(OrderPaymentMethod);
 
   await datasource.transaction(async (manager) => {
-    const orderPaymentMethodRepository =
-      manager.getRepository(OrderPaymentMethod);
+    const orderRepository = manager.getRepository(Order);
+    const cardsRepository = manager.getRepository(Card);
+    const couponRepository = manager.getRepository(Coupon);
     const orderUpdateRepository = manager.getRepository(OrderUpdate);
 
+    const orderPaymentMethodRepositoryTrx =
+      manager.getRepository(OrderPaymentMethod);
+    const order = await orderRepository.findOne({
+      where: { id: orderId, customer: { id: customerId } },
+      relations: [
+        "customer",
+        "usedPaymentMethods",
+        "usedPaymentMethods.coupon",
+      ],
+    });
+
+    if (order == null) {
+      throw new Error("Pedido não encontrado");
+    }
+
+    throwErrorIfFalse(
+      checkAllCardsMinCardAmount(cards, order.totalPrice),
+      "Valor de cartão minimo não atingido. Para cada cartão, o valor mínimo é de R$ 10,00",
+    );
+
+    throwErrorIfFalse(
+      checkCardsPaysAllOrder(cards, order.totalPrice),
+      "O valor dos cartões não é suficiente para pagar o pedido",
+    );
+
+    throwErrorIfFalse(
+      checkCardsByPassOrder(cards, order.totalPrice),
+      "O valor dos cartões é maior que o valor do pedido",
+    );
+
+    // Coupons
+    for (const paymentMethod of order.usedPaymentMethods) {
+      if (paymentMethod.coupon === null) continue;
+      if (paymentMethod.coupon?.used === true) {
+        await orderPaymentMethodRepository.remove(paymentMethod);
+
+        await recalculateOrderTotal(orderId);
+        throw new Error(
+          `Cupom ${paymentMethod.coupon.code} já utilizado. Tente novamente.`,
+        );
+      } else {
+        await couponRepository.save({
+          ...paymentMethod.coupon,
+          used: true,
+        });
+      }
+    }
+
+    // Cards
     for (const card of cards) {
       const dbCard = await cardsRepository.findOne({
         where: { id: card.id, customer: { id: customerId } },
@@ -68,7 +97,7 @@ export default async function executeOrder(params: Params): Promise<void> {
         throw new Error("Cartão não encontrado");
       }
 
-      await orderPaymentMethodRepository.save({
+      await orderPaymentMethodRepositoryTrx.save({
         card: dbCard,
         value: card.value,
         order,
@@ -94,8 +123,12 @@ function checkCardsStructure(cards: any): boolean {
   return true;
 }
 
-function checkAllCardsMinCardAmount(cards: Array<{ value: number }>): boolean {
+function checkAllCardsMinCardAmount(
+  cards: Array<{ value: number }>,
+  orderTotal: number,
+): boolean {
   const MIN_CARD_AMOUNT = 1000;
+  if (orderTotal < MIN_CARD_AMOUNT) return true;
   return cards.every((card) => card.value >= MIN_CARD_AMOUNT);
 }
 

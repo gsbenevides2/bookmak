@@ -16,6 +16,7 @@ import registerNewCard from "./registerNewCard";
 import removeAddress from "./removeAddress";
 import updateAddress from "./updateAddress";
 import updateCustomerData from "./updateCustomerData";
+import viewCoupons from "./viewCoupons";
 
 export default {
   changeOrder,
@@ -36,4 +37,5 @@ export default {
   removeAddress,
   updateAddress,
   updateCustomerData,
+  viewCoupons,
 };

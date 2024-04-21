@@ -51,6 +51,6 @@ accountsRouter.post(
   AccountsController.exchangeOrder,
 );
 
-accountsRouter.get("/me/cupons", AccountsController.getMyCupons);
+accountsRouter.get("/me/coupons", AccountsController.getMyCupons);
 
 export default accountsRouter;
