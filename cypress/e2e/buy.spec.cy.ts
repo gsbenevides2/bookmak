@@ -101,9 +101,10 @@ describe("Fluxo de Compra", function () {
 
     // Continua a compra
     cy.get(".continue-btn").click();
+    // Aguarda o termino da request
+    cy.wait(1000);
 
     // Loga o cliente
-
     cy.get("input[name='email']").type(customer.email);
     cy.get("input[name='password']").type(customer.password);
     const [bookmarks] = bookmarkFixtures;

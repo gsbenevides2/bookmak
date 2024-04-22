@@ -15,6 +15,7 @@ export async function downDatabase(): Promise<null> {
     await trx.raw('DELETE FROM "book"');
     await trx.raw('DELETE FROM "order"');
     await trx.raw('DELETE FROM "card"');
+    await trx.raw('DELETE FROM "coupon"');
     await trx.raw('DELETE FROM "customer"');
     await trx.raw('DELETE FROM "address"');
     await trx.commit();
