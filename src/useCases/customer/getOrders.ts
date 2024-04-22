@@ -15,6 +15,11 @@ export default async function getOrders(customerId: string): Promise<Order[]> {
     relations: {
       updates: true,
     },
+    order: {
+      updates: {
+        timestamp: "DESC",
+      },
+    },
   });
   return orders;
 }

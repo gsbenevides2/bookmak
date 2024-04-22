@@ -58,4 +58,7 @@ adminRouter.post(
   adminController.aproveExchange,
 );
 
+adminRouter.get("/coupons", adminController.listCoupons);
+adminRouter.post("/coupons/new", adminController.createCoupon);
+
 export default adminRouter;

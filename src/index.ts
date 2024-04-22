@@ -20,7 +20,11 @@ const serverPort = process.env.PORT ?? 3000;
 server.use(express.json());
 server.use(cookieParser());
 server.use(express.urlencoded({ extended: true }));
-server.use(express.static("src/public"));
+server.use(
+  express.static("src/public", {
+    extensions: ["html", "htm"],
+  }),
+);
 server.set("views", "src/views");
 server.set("view engine", "ejs");
 server.locals = {

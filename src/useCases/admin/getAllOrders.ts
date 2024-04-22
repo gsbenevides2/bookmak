@@ -14,6 +14,11 @@ export default async function getAllOrders(): Promise<Order[]> {
         id: Raw((alias) => `${alias} IS NOT NULL`),
       },
     },
+    order: {
+      updates: {
+        timestamp: "DESC",
+      },
+    },
   });
   return orders;
 }

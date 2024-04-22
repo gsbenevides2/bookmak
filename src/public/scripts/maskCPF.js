@@ -7,11 +7,9 @@ function maskCPF(cpf) {
     .replace(/(-\d{2})\d+?$/, "$1");
 }
 
-function autoMaskCPF() {
-  const cpf = document.querySelector("#cpf");
-  cpf.addEventListener("input", (e) => {
+function loadCPFMasker(elementID) {
+  const element = document.getElementById(elementID);
+  element.addEventListener("input", (e) => {
     e.target.value = maskCPF(e.target.value);
   });
 }
-
-window.addEventListener("load", autoMaskCPF);

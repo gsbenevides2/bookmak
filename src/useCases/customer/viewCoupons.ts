@@ -12,6 +12,9 @@ export default async function viewCoupons(
         id: accountId,
       },
     },
+    order: {
+      createdAt: "DESC",
+    },
   });
 
   return coupons;

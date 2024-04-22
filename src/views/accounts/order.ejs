@@ -121,9 +121,11 @@
 
         <div class="row">
           <div class="mb-0 d-flex justify-content-between">
-            <% order.usedPaymentMethods.filter((paymentMethod) => paymentMethod.coupon != null).forEach((paymentMethod) => { %>
-              <p class="mb-0"><%- paymentMethod.coupon.code %>  (<%- formatPrice(paymentMethod.value*-1) %>)</p>
-            <% }) %>
+            <p class="mb-0">
+              <% order.usedPaymentMethods.filter((paymentMethod) => paymentMethod.coupon != null).forEach((paymentMethod) => { %>
+                <%- `Cupom de ${formatCouponTypeText(paymentMethod.coupon.type)}: ${paymentMethod.coupon.code} - Valor Abatido: ${formatPrice(paymentMethod.value*-1)}`%><br/>
+              <% }) %>
+              </p>
           </div>
         </div>
       </div>

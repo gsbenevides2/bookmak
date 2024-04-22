@@ -2,9 +2,9 @@ import { DatabaseConnection } from "../../dbConnection";
 import { Coupon, CouponType } from "../../models/Coupon";
 import { Order } from "../../models/Order";
 import { OrderStatus, OrderUpdate } from "../../models/OrderUpdate";
+import { getRandomCouponCode } from "../../utils/coupon";
 import { throwErrorIfFalse } from "../../utils/errors";
 import checkOrderIsExchangeable from "./checkOrderIsExchangeable";
-import short from "short-uuid";
 
 export default async function aproveExchange(orderId: string): Promise<void> {
   throwErrorIfFalse(
@@ -30,12 +30,13 @@ export default async function aproveExchange(orderId: string): Promise<void> {
       value += order.totalPrice;
     }
 
-    const couponCode = short.generate();
+    const couponCode = getRandomCouponCode();
     await manager.getRepository(Coupon).save({
       attachedCustomer: order.customer,
       code: couponCode,
       type: CouponType.Exchange,
       used: false,
+      description: "Cupom de troca da compra " + order.id,
       value,
     });
 

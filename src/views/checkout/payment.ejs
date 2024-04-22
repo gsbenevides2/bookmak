@@ -136,7 +136,7 @@
           <p class="mb-0">Cupons Aplicados:</p>
           <% order.usedPaymentMethods.filter((paymentMethod) => paymentMethod.coupon != null).forEach((paymentMethod) => { %>
           <form class="mb-0 d-flex justify-content-between" method="POST" action="/checkout/payment/removeCoupon/<%- paymentMethod.coupon.code %>">
-            <p class="mb-0"><%- paymentMethod.coupon.code %>  (<%- formatPrice(paymentMethod.value*-1) %>)</p>
+            <p class="mb-0"><%- `Cupom de ${formatCouponTypeText(paymentMethod.coupon.type)}: ${paymentMethod.coupon.code} - Valor Abatido: ${formatPrice(paymentMethod.value*-1)}`%></p><br/>
             <button class="btn link-primary p-0 border-none" type="submit">
               Remover
             </button>
@@ -167,6 +167,13 @@
         </div>
       </div>
       <!--Aviso de Geração Automática de Cupom de Troco-->
+      <% if(order.totalPrice < 0) { %>
+      <div class="alert alert-warning mt-3" role="alert">
+        Identificamos uso de cupons que geraram um valor negativo, o valor
+        negativo será convertido em um cupom de troco, após a confirmação do
+        pagamento. Você pode prosseguir com o pagamento sem usar cartões.
+      </div>
+      <% } %>
       <!--Pagamento-->
       <div class="mt-3 border p-3">
         <h5>Pagamento:</h5>

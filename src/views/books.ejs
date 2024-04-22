@@ -85,7 +85,7 @@
               <% authors.forEach(author => { %>
               <option
                 value="<%= author.id %>"
-                <%= parseInt(filters.author) === author.id ? 'selected' : '' %>
+                <%= filters.author === author.id ? 'selected' : '' %>
               >
                 <%= author.name %>
               </option>

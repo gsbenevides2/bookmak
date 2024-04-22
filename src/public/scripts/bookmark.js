@@ -11,7 +11,12 @@ const elements = {
 
 async function fetchData() {
   const response = await fetch("/checkout/bookmark/getInfo");
-  if (response.ok) {
+  console.log(response);
+  if (response.redirected) {
+    console.log(response.url);
+    window.location.href =
+      "/login?error=Faça login para continuar&redirectTo=/checkout/bookmark";
+  } else if (response.ok) {
     return await response.json();
   } else {
     elements.pageTitle.innerHTML = "Ocorreu um erro inesperado";
@@ -56,6 +61,7 @@ window.addEventListener("load", async () => {
   elements.body.style.display = "block";
   elements.loadingSpinner.style.display = "flex";
   const data = await fetchData();
+  if (data == null) return;
   const aiBookmarksTexts = data.aiBookmarkTexts;
   for (const aiBookmarksText of aiBookmarksTexts) {
     const div = document.createElement("div");

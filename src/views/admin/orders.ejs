@@ -30,8 +30,8 @@
             <%= message %>
           </p>
         </p>
-        <a href="/admin/createCoupom.html" class="btn btn-dark col-12 mt-3">
-          Novo Cupom
+        <a href="/admin/coupons" class="btn btn-dark col-12 mt-3">
+          Cupons
         </a>
 
         <% orders.forEach(order=> { %>
@@ -45,16 +45,14 @@
                 <strong>Status:</strong>
                 <%- formatOrderStatus(orderUpdates(order.updates)[0].status) %>
               </div>
-  
               <a
                 href="/admin/order/<%- order.id %>"
-                class="btn btn-outline-dark col-2"
-                >Ver Detalhes</a
-              >
+                class="btn btn-outline-dark col-2">
+                Ver Detalhes
+              </a>
             </div>
           </div>
-          <% }) %>
-
+        <% }) %>
       </div>
     </main>
     <!--Bootstrap JS-->

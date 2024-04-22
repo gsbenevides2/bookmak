@@ -7,9 +7,6 @@ const checkoutRouter = Router();
 checkoutRouter.get("/cart", checkoutController.getCart);
 checkoutRouter.post("/cart", checkoutController.updateCart);
 
-checkoutRouter.get("/bookmark", authMiddleware, (_req, res) => {
-  res.render("checkout/bookmark");
-});
 checkoutRouter.get(
   "/bookmark/getInfo",
   authMiddleware,

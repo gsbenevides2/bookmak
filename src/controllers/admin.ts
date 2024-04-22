@@ -222,3 +222,34 @@ export const rejectExchange: Controller = (req, res) => {
       res.redirect(`/admin?error=${err.message}`);
     });
 };
+
+export const listCoupons: Controller = (req, res) => {
+  adminUseCases
+    .listCoupons()
+    .then((coupons) => {
+      res.render("admin/coupons", {
+        coupons,
+        success: req.query.success,
+      });
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const createCoupon: Controller = (req, res) => {
+  interface Body {
+    value: string;
+    cpf: string;
+  }
+  const { value, cpf } = req.body as Body;
+  const parsedValue = parseInt((parseFloat(value) * 100).toFixed(0), 10);
+  adminUseCases
+    .createCoupon(parsedValue, cpf)
+    .then((code) => {
+      res.redirect(`/admin/coupons?success=Cupom criado com sucesso: ${code}`);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};

@@ -28,6 +28,9 @@ export class Coupon {
   @Column()
   value!: number;
 
+  @Column()
+  description!: string;
+
   @Column({
     type: "enum",
     enum: CouponType,
@@ -42,4 +45,10 @@ export class Coupon {
   @ManyToOne(() => Customer, (customer) => customer.attachedCoupons)
   @JoinColumn()
   attachedCustomer?: Customer;
+
+  @Column({
+    type: "timestamp",
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  createdAt!: Date;
 }

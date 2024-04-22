@@ -43,9 +43,7 @@ accountsRouter.get(
   "/me/orders/:orderId/change",
   AccountsController.checkOrderIsExchangeable,
 );
-accountsRouter.get("/me/orders/1/cancel", (_req, res) => {
-  res.render("accounts/cancelOrder");
-});
+
 accountsRouter.post(
   "/me/orders/:orderId/change",
   AccountsController.exchangeOrder,

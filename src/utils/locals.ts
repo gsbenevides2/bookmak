@@ -7,6 +7,7 @@ import {
 } from "../models/Address";
 import { type Author } from "../models/Author";
 import { CardFlag, cardFlagText } from "../models/Card";
+import { type CouponType, couponsText } from "../models/Coupon";
 import {
   OrderStatus,
   orderStatusText,
@@ -115,4 +116,8 @@ export function maskPhone(phone: string): string {
     .slice(0, 9)
     .replace(/(\d{5})(\d{4})/, "$1-$2")
     .replace(/(\d{4})(\d{4})/, "$1-$2");
+}
+
+export function formatCouponTypeText(type: CouponType): string {
+  return couponsText[type];
 }

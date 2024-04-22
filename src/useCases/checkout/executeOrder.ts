@@ -1,9 +1,10 @@
 import { DatabaseConnection } from "../../dbConnection";
 import { Card } from "../../models/Card";
-import { Coupon } from "../../models/Coupon";
+import { Coupon, CouponType } from "../../models/Coupon";
 import { Order } from "../../models/Order";
 import { OrderPaymentMethod } from "../../models/OrderPaymentMethod";
 import { OrderStatus, OrderUpdate } from "../../models/OrderUpdate";
+import { getRandomCouponCode } from "../../utils/coupon";
 import { throwErrorIfFalse } from "../../utils/errors";
 import recalculateOrderTotal from "./recalculateOrderTotal";
 
@@ -55,6 +56,11 @@ export default async function executeOrder(params: Params): Promise<void> {
     }
 
     throwErrorIfFalse(
+      !detectCardToPayNegativeOrder(cards, order.totalPrice),
+      "Pedido com valor negativo por cupons não pode ser pago com cartões",
+    );
+
+    throwErrorIfFalse(
       checkAllCardsMinCardAmount(cards, order.totalPrice),
       "Valor de cartão minimo não atingido. Para cada cartão, o valor mínimo é de R$ 10,00",
     );
@@ -103,6 +109,30 @@ export default async function executeOrder(params: Params): Promise<void> {
         order,
       });
     }
+
+    // Coupons bypass order
+    if (order.totalPrice < 0) {
+      const couponCode = getRandomCouponCode();
+      const value = order.totalPrice * -1;
+      await couponRepository.save({
+        attachedCustomer: order.customer,
+        code: couponCode,
+        type: CouponType.Exchange,
+        used: false,
+        description:
+          `Cupom gerado automaticamente por valor excedente de cupons no pedido: ` +
+          order.id,
+        value,
+      });
+      await orderUpdateRepository.save({
+        status: OrderStatus.PROCESSING,
+        observations:
+          "Identificamos um valor excedente em seu pedido. Seu cupom de troca é: " +
+          couponCode,
+        order,
+      });
+    }
+
     await orderUpdateRepository.save({
       status: OrderStatus.PROCESSING,
       observations: `Estamos recebendo seu pagamento. Aguarde!`,
@@ -143,11 +173,18 @@ function checkCardsByPassOrder(
   cards: Array<{ value: number }>,
   orderTotalPrice: number,
 ): boolean {
-  console.log(cards, orderTotalPrice);
+  if (orderTotalPrice < 0) return true;
   return cards.reduce((acc, card) => acc + card.value, 0) === orderTotalPrice;
 }
 
 function checkHasNoRepeatedCards(cards: Array<{ id: string }>): boolean {
   const cardIds = cards.map((card) => card.id);
   return new Set(cardIds).size === cardIds.length;
+}
+
+function detectCardToPayNegativeOrder(
+  cards: Array<{ value: number }>,
+  orderTotalPrice: number,
+): boolean {
+  return orderTotalPrice < 0 && cards.length > 1;
 }
