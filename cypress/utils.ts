@@ -92,3 +92,12 @@ export function parseCardFlag(cardFlag: string): string {
   };
   return cardFlagMap[cardFlag];
 }
+
+export function getRandomItemFromArray<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+export function getRandomWordInText(text: string): string {
+  const words = text.split(" ");
+  return getRandomItemFromArray(words);
+}
