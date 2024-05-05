@@ -6,9 +6,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: bookmak
+      POSTGRES_PASSWORD: bookmak
+      POSTGRES_DB: bookmak
     volumes:
       - ./data:/var/lib/postgresql/data
   node:
@@ -23,10 +23,10 @@ services:
       DB_TYPE: postgres
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_DATABASE: postgres
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_DATABASE: bookmak
+      DB_USERNAME: bookmak
+      DB_PASSWORD: bookmak
       DB_SYNCHRONIZE: true
       DB_LOGGING: true
-      OPENAI_API_KEY: 
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     command: npm run start
