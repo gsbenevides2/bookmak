@@ -20,11 +20,11 @@ export const getBooks: Controller = (req, res) => {
           : undefined,
       minPrice:
         typeof filters.minPrice === "string" && filters.minPrice.trim() !== ""
-          ? parseInt(filters.minPrice) * 100
+          ? parseFloat(filters.minPrice) * 100
           : undefined,
       maxPrice:
         typeof filters.maxPrice === "string" && filters.maxPrice.trim() !== ""
-          ? parseInt(filters.maxPrice) * 100
+          ? parseFloat(filters.maxPrice) * 100
           : undefined,
     }),
     booksUseCases.getCategories(),
