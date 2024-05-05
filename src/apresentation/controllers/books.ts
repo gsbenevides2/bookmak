@@ -3,6 +3,21 @@ import booksUseCases from "../../business/useCases/books";
 
 export const getBooks: Controller = (req, res) => {
   const filters = req.query;
+  console.log({ filters });
+  let minPrice: number | undefined;
+  if (typeof filters.minPrice === "string" && filters.minPrice.trim() !== "") {
+    const floatMinPrice = parseFloat(filters.minPrice);
+    const intMinPrice = parseInt((floatMinPrice * 100).toFixed(0));
+    minPrice = intMinPrice;
+  }
+
+  let maxPrice: number | undefined;
+  if (typeof filters.maxPrice === "string" && filters.maxPrice.trim() !== "") {
+    const floatMaxPrice = parseFloat(filters.maxPrice);
+    const intMaxPrice = parseInt((floatMaxPrice * 100).toFixed(0));
+    maxPrice = intMaxPrice;
+  }
+
   Promise.all([
     booksUseCases.getBooks({
       categoryId:
@@ -18,14 +33,8 @@ export const getBooks: Controller = (req, res) => {
         filters.searchQuery.trim() !== ""
           ? filters.searchQuery
           : undefined,
-      minPrice:
-        typeof filters.minPrice === "string" && filters.minPrice.trim() !== ""
-          ? parseFloat(filters.minPrice) * 100
-          : undefined,
-      maxPrice:
-        typeof filters.maxPrice === "string" && filters.maxPrice.trim() !== ""
-          ? parseFloat(filters.maxPrice) * 100
-          : undefined,
+      minPrice,
+      maxPrice,
     }),
     booksUseCases.getCategories(),
     booksUseCases.getAuthors(),
