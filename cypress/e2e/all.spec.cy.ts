@@ -2,6 +2,7 @@ import "./bookmak.spec.cy";
 import "./buy.spec.cy";
 import "./cart.spec.cy";
 import "./change.spec.cy";
+import "./checkoutAddress.spec.cy";
 import "./client_crud.cy";
 import "./home.spec.cy";
 import "./product.spec.cy";

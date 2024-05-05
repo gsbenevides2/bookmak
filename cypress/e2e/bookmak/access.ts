@@ -5,7 +5,6 @@ import { bookmarkFixtures } from "../../fixtures/bookmark";
 import { booksFixtures } from "../../fixtures/books";
 import { customersFixtures } from "../../fixtures/customer";
 import { ordersFixtures } from "../../fixtures/orders";
-import * as utils from "../../utils";
 
 import { faker } from "@faker-js/faker";
 export default function access(): void {
@@ -141,6 +140,17 @@ export default function access(): void {
     cy.get("#errorAlert")
       .should("be.visible")
       .should("contain.text", "Escolha um estilo de marca página");
+  });
+
+  it("Erro: Carrinho Vazio", function () {
+    cy.setCookie("accountId", customer.id);
+    cy.clearCookie("orderId");
+    cy.visit("http://localhost:3000");
+    cy.visit("http://localhost:3000/checkout/bookmark");
+    cy.wait(1000);
+    cy.get("#errorAlert")
+      .should("be.visible")
+      .should("contain.text", "Esse pedido não possui itens.");
   });
 
   it("Erro: Digita mais de 200 caracteres", function () {
