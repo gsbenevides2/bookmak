@@ -1,9 +1,11 @@
+/// <reference types="cypress" />
+
 import * as utils from "../../utils";
 
 import { customersFixtures } from "../../fixtures/customer";
 import { addressesFixtures } from "../../fixtures/address";
 
-export default function clientBasicTests(): void {
+describe("CRUD de Cliente", function () {
   beforeEach(function () {
     cy.downDatabase();
   });
@@ -259,4 +261,4 @@ export default function clientBasicTests(): void {
     cy.get("button:contains('Entrar')").click();
     cy.get(".alert").should("contain.text", "conta inativa");
   });
-}
+});

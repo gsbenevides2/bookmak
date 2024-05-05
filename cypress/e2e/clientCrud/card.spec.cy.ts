@@ -2,7 +2,7 @@ import { addressesFixtures } from "../../fixtures/address";
 import { cardsFixtures } from "../../fixtures/card";
 import { customersFixtures } from "../../fixtures/customer";
 
-export default function clientCardTests(): void {
+describe("CRUD de Cliente - Cartão", function () {
   const customer = customersFixtures[0];
 
   beforeEach(function () {
@@ -105,4 +105,4 @@ export default function clientCardTests(): void {
     cy.get("div.col-12 > .mt-3").find("button:contains('Excluir')").click();
     cy.get(".alert").should("contain.text", "Cartão removido");
   });
-}
+});

@@ -5,7 +5,7 @@ import { booksFixtures } from "../../fixtures/books";
 import { customersFixtures } from "../../fixtures/customer";
 import { ordersFixtures } from "../../fixtures/orders";
 
-export default function testAddress(): void {
+describe("Escolha de Endereço de Cobrança e Entrega", function () {
   const [address] = addressesFixtures;
   beforeEach(function () {
     const [customer] = customersFixtures;
@@ -49,4 +49,4 @@ export default function testAddress(): void {
     cy.visit("http://localhost:3000/checkout/addresses");
     cy.url().should("be.equal", "http://localhost:3000/checkout/cart");
   });
-}
+});

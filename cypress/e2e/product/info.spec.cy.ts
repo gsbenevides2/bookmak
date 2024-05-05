@@ -7,7 +7,7 @@ function escapeTextAndSanitize(text: string): string {
   return text.replace(/\n/g, "").replace(/\s+/g, " ").trim();
 }
 
-export default function testInfo(): void {
+describe("Informações sobre o produto", function () {
   const [books] = booksFixtures;
   beforeEach(() => {
     cy.downDatabase();
@@ -63,4 +63,4 @@ export default function testInfo(): void {
     );
     cy.get("img.mx-auto").should("have.attr", "src", `${sku.cover}.512.jpg`);
   });
-}
+});

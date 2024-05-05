@@ -4,7 +4,7 @@ import { faker } from "@faker-js/faker";
 import { booksFixtures } from "../../fixtures/books";
 import * as utils from "../../utils";
 
-export default function testAddToCart(): void {
+describe("Adicionar ao Carrinho", function () {
   const [books] = booksFixtures;
   beforeEach(() => {
     cy.downDatabase();
@@ -42,4 +42,4 @@ export default function testAddToCart(): void {
 
     cy.get(".total-price").should("contain.text", `Total: ${precoSubtotal}`);
   });
-}
+});

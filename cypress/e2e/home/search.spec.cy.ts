@@ -3,7 +3,7 @@
 import * as utils from "../../utils";
 import { booksFixtures } from "../../fixtures/books";
 
-export default function testSeach(): void {
+describe("Busca de Produtos", function () {
   const [books] = booksFixtures;
   beforeEach(() => {
     cy.downDatabase();
@@ -70,4 +70,4 @@ export default function testSeach(): void {
     cy.get("button:contains('Pesquisar / Filtrar')").click();
     cy.get(".fw-bold").should("contain.text", utils.formatMoney(price / 100));
   });
-}
+});

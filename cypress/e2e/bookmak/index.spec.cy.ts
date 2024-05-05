@@ -7,7 +7,8 @@ import { customersFixtures } from "../../fixtures/customer";
 import { ordersFixtures } from "../../fixtures/orders";
 
 import { faker } from "@faker-js/faker";
-export default function access(): void {
+
+describe("Acesso a paǵina de Marca Pagina", function () {
   const order = ordersFixtures[6];
   const [customer] = customersFixtures;
   const [address] = addressesFixtures;
@@ -256,4 +257,4 @@ export default function access(): void {
     cy.wait(1000);
     cy.url().should("not.be.equal", "http://localhost:3000/checkout/bookmark");
   });
-}
+});

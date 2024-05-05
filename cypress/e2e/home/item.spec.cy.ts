@@ -2,7 +2,7 @@
 
 import { booksFixtures } from "../../fixtures/books";
 
-export default function testItem(): void {
+describe("Item", function () {
   beforeEach(() => {
     const [books] = booksFixtures;
     cy.downDatabase();
@@ -43,4 +43,4 @@ export default function testItem(): void {
       cy.get(".book-price").should("contains.text", precoVitrine);
     });
   });
-}
+});

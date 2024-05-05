@@ -89,6 +89,7 @@ export function maskZipCode(zipCode: string): string {
 export function parseCardFlag(cardFlag: string): string {
   const cardFlagMap: Record<string, string> = {
     visa: "Visa",
+    mastercard: "MasterCard",
   };
   return cardFlagMap[cardFlag];
 }

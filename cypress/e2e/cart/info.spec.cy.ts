@@ -4,7 +4,7 @@ import { booksFixtures } from "../../fixtures/books";
 import { ordersFixtures } from "../../fixtures/orders";
 import * as utils from "../../utils";
 
-export default function testInfo(): void {
+describe("Informações do Carrinho", function () {
   const order = ordersFixtures[6];
   const [books] = booksFixtures;
   const sku = books.booksSkus.find(
@@ -41,4 +41,4 @@ export default function testInfo(): void {
 
     cy.get(".total-price").should("contain.text", `Total: ${precoSubtotal}`);
   });
-}
+});

@@ -7,7 +7,7 @@ import { cardsFixtures } from "../../fixtures/card";
 import { booksFixtures } from "../../fixtures/books";
 import { bookmarkFixtures } from "../../fixtures/bookmark";
 
-export default function all(): void {
+describe("Fluxo de Compra", function () {
   const [customer] = customersFixtures;
   const [address] = addressesFixtures;
   const [card] = cardsFixtures;
@@ -260,4 +260,4 @@ export default function all(): void {
     );
     cy.get(".status").should("contains.text", "Em processamento");
   });
-}
+});

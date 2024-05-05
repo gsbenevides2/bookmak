@@ -1,8 +1,10 @@
+/// <reference types="cypress" />
+
 import * as utils from "../../utils";
 import { customersFixtures } from "../../fixtures/customer";
 import { addressesFixtures } from "../../fixtures/address";
 
-export default function clientAddressTests(): void {
+describe("CRUD de Cliente - Endereço", function () {
   const customer = customersFixtures[0];
   const [address, ...remaingAdddressFixtures] = addressesFixtures;
   beforeEach(function () {
@@ -221,4 +223,4 @@ export default function clientAddressTests(): void {
     cy.get("button:contains('Excluir')").eq(1).click();
     cy.get(".alert").should("contain.text", "Endereço removido");
   });
-}
+});

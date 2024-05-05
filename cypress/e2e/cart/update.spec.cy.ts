@@ -4,7 +4,8 @@ import { booksFixtures } from "../../fixtures/books";
 import { ordersFixtures } from "../../fixtures/orders";
 import * as utils from "../../utils";
 import { faker } from "@faker-js/faker";
-export default function testUpdateInfo(): void {
+
+describe("Atualizações de Carrinho", function () {
   const order = ordersFixtures[6];
   const [books] = booksFixtures;
   const orderItem = order.orderItem[0];
@@ -51,4 +52,4 @@ export default function testUpdateInfo(): void {
     cy.get(".d-flex.mt-2 > .btn").click();
     cy.get(".text-center").should("contain.text", "Seu carrinho está vazio");
   });
-}
+});

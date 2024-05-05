@@ -453,4 +453,32 @@ export const ordersFixtures: OrderFixtureData[] = [
     orderPaymentMethod: [],
     orderUpdate: [],
   },
+  {
+    orders: [
+      {
+        id: "f30640a6-8453-469e-a551-b0d14ff6955a",
+        subtotal: 2786,
+        totalPrice: 3907,
+        discounts: 0,
+        shippingPrice: 1121,
+        bookmarkStyle: "Estilo 2",
+        bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
+        generatedBookmarks: "{}",
+        customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
+        billingAddressId: "57de5059-c649-4f53-a081-660cd2e4a8eb",
+        shippingAddressId: "57de5059-c649-4f53-a081-660cd2e4a8eb",
+      },
+    ],
+    orderItem: [
+      {
+        id: "8bbaa417-69f4-4305-af27-6669ce154e75",
+        quantity: 2,
+        unitSellPrice: 1393,
+        skuId: "759b09fb-cb2a-414a-92ac-af63ddf81f56",
+        orderId: "f30640a6-8453-469e-a551-b0d14ff6955a",
+      },
+    ],
+    orderPaymentMethod: [],
+    orderUpdate: [],
+  },
 ];

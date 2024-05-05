@@ -1,10 +1,10 @@
 /// <reference types="cypress" />
 
-import { addressesFixtures } from "../fixtures/address";
-import { booksFixtures } from "../fixtures/books";
-import { cardsFixtures } from "../fixtures/card";
-import { customersFixtures } from "../fixtures/customer";
-import { ordersFixtures } from "../fixtures/orders";
+import { addressesFixtures } from "../../fixtures/address";
+import { booksFixtures } from "../../fixtures/books";
+import { cardsFixtures } from "../../fixtures/card";
+import { customersFixtures } from "../../fixtures/customer";
+import { ordersFixtures } from "../../fixtures/orders";
 
 describe("Alteração de Status", function () {
   const [customer, admin] = customersFixtures;
