@@ -3,7 +3,6 @@ import booksUseCases from "../../business/useCases/books";
 
 export const getBooks: Controller = (req, res) => {
   const filters = req.query;
-  console.log({ filters });
   let minPrice: number | undefined;
   if (typeof filters.minPrice === "string" && filters.minPrice.trim() !== "") {
     const floatMinPrice = parseFloat(filters.minPrice);

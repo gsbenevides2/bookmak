@@ -37,7 +37,6 @@ export default async function addCoupon(params: Params): Promise<void> {
       where: { order: { id: orderId }, coupon: { code } },
     });
 
-    console.log("usedCoupon", usedCoupon);
     throwErrorIfFalse(usedCoupon === null, "Cupon já utilizado");
 
     const coupon = await couponRepository.findOne({

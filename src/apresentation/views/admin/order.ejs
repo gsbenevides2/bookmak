@@ -92,6 +92,11 @@
                 <%= formatPrice(item.unitSellPrice * item.quantity) %>
               </p>
             </div>
+            <% if(item.inExchange) { %>
+              <div class="ms-auto">
+                <span class="badge bg-warning">Item Em Troca</span>
+              </div>
+            <% } %>
           </li>
         <% }) %>
       </ul>

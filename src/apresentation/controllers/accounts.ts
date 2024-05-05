@@ -253,12 +253,13 @@ export const getMyCupons: Controller = (req, res) => {
 
 export const getMyOrders: Controller = (req, res) => {
   const accountId = req.cookies?.accountId as string;
-
+  const error = req.query.error;
   customerUseCase
     .getOrders(accountId)
     .then((orders) => {
       res.render("accounts/orders", {
         orders,
+        error,
       });
     })
     .catch(() => {
@@ -268,6 +269,7 @@ export const getMyOrders: Controller = (req, res) => {
 export const getDataFromOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
   const accountId = req.cookies?.accountId as string;
+  const error = req.query.error;
   customerUseCase
     .getOrder(orderId, accountId)
     .then((order) => {
@@ -277,6 +279,7 @@ export const getDataFromOrder: Controller = (req, res) => {
       }
       res.render("accounts/order", {
         order,
+        error,
       });
     })
     .catch(() => {
@@ -288,28 +291,45 @@ export const checkOrderIsExchangeable: Controller = (req, res) => {
   const accountId = req.cookies?.accountId as string;
   customerUseCase
     .checkOrderIsExchangeable(orderId, accountId)
-    .then((isExchangeable) => {
-      if (isExchangeable) {
-        res.render("accounts/changeOrder", {
-          orderId,
-        });
-      } else {
-        res.redirect(`/accounts/me/orders/${orderId}`);
+    .then(async (isExchangeable) => {
+      if (!isExchangeable) {
+        throw new Error("Pedido não pode ser trocado");
       }
+
+      return await customerUseCase.getOrder(orderId, accountId);
     })
-    .catch(() => {
-      res.redirect("/accounts/me/orders");
+    .then((order) => {
+      res.render("accounts/changeOrder", {
+        orderId,
+        order,
+      });
+    })
+    .catch((error) => {
+      res.redirect(`/accounts/me/orders/${orderId}?error=${error.message}`);
     });
 };
 export const exchangeOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
   const accountId = req.cookies?.accountId as string;
+  if (req.body?.items?.length == null) {
+    res.redirect(
+      `/accounts/me/orders/${orderId}?error=Selecione os itens para troca`,
+    );
+    return;
+  }
+  let items: string[] = [];
+  if (Array.isArray(req.body.items)) {
+    items = req.body.items;
+  } else {
+    items = [req.body.items];
+  }
+
   customerUseCase
-    .changeOrder(orderId, accountId)
+    .changeOrder(orderId, accountId, items)
     .then(() => {
       res.redirect(`/accounts/me/orders/${orderId}`);
     })
-    .catch(() => {
-      res.redirect(`/accounts/me/orders/${orderId}`);
+    .catch((error) => {
+      res.redirect(`/accounts/me/orders/${orderId}?error=${error.message}`);
     });
 };

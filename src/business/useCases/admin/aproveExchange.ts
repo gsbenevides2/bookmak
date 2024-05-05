@@ -19,15 +19,31 @@ export default async function aproveExchange(orderId: string): Promise<void> {
       relations: {
         customer: true,
         usedPaymentMethods: true,
+        items: true,
       },
     });
     if (order == null) {
       throw new Error("Pedido não encontrado");
     }
-    let value = order.usedPaymentMethods.reduce((acc, pm) => acc + pm.value, 0);
 
-    if (order.totalPrice < 0) {
-      value += order.totalPrice;
+    const allItemsToChange = order.items.every((item) => item.inExchange);
+    let couponValue = 0;
+    if (allItemsToChange) {
+      couponValue = order.usedPaymentMethods.reduce(
+        (acc, pm) => acc + pm.value,
+        0,
+      );
+
+      if (order.totalPrice < 0) {
+        couponValue += order.totalPrice;
+      }
+    } else {
+      couponValue = order.items.reduce((acc, item) => {
+        if (item.inExchange ?? false) {
+          return acc + item.unitSellPrice * item.quantity;
+        }
+        return acc;
+      }, 0);
     }
 
     const couponCode = getRandomCouponCode();
@@ -37,7 +53,7 @@ export default async function aproveExchange(orderId: string): Promise<void> {
       type: CouponType.Exchange,
       used: false,
       description: "Cupom de troca da compra " + order.id,
-      value,
+      value: couponValue,
     });
 
     await manager.getRepository(OrderUpdate).save({

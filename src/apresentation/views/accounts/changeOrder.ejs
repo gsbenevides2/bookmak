@@ -39,6 +39,37 @@
           troca.
         </p>
         <form method="POST">
+          <p class="mt-3">Selecione os item que deseja trocar:</p>
+          <% order.items.forEach((item) => { %>
+            <li class="list-group-item d-flex align-items-center border-0">
+              <img
+                src="<%= item.sku.cover %>"
+                alt="<%= item.sku.title %>"
+                class="me-3 book-cover cursor-pointer"
+                role="button"
+              />
+              <div class="d-flex flex-column">
+                <h6 class="fw-bold"><%- item.sku.title %></h6>
+                <p>Autor: <%- formatAuthors(item.sku.book.authors) %></p>
+                <p>
+                  Preço Unitário: <%= formatPrice(item.unitSellPrice) %>
+                  <br />Quantidade:
+                  <%- item.quantity %>
+                  <br />Subtotal:
+                  <%= formatPrice(item.unitSellPrice * item.quantity) %>
+                </p>
+              </div>
+              <div class="ms-auto d-flex justify-content-center align-items-center">
+                <label for="<%= item.id %>" class="mb-0 pe-1 d-block">Selecione ao lado ao lado deseja trocar esse produto</label>
+                <input
+                  type="checkbox"
+                  name="items"
+                  value="<%= item.id %>"
+                  id="<%= item.id %>"
+                />
+              </div>
+            </li>
+            <% }) %>
           <button type="submit" class="btn btn-outline-secondary mt-2">
             Trocar Pedido
           </button>

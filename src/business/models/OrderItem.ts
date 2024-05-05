@@ -19,6 +19,11 @@ export class OrderItem {
   @Column()
   unitSellPrice!: number;
 
+  @Column({
+    nullable: true,
+  })
+  inExchange?: boolean;
+
   @ManyToOne(() => BookSku)
   @JoinColumn()
   sku!: BookSku;

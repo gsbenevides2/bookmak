@@ -30,7 +30,11 @@
     <!--Conteudo-->
     <main class="container mb-5">
       <h1 class="mt-3 text-center">Detalhes do Pedido</h1>
-
+      <% if(typeof error === "string" && error) { %>
+      <div class="alert alert-danger mt-3 row" role="alert">
+        <%= error %>
+      </div>
+      <% } %>
       <div class="mt-3 border p-3">
         <h5>
           ID:
@@ -73,6 +77,11 @@
               <%= formatPrice(item.unitSellPrice * item.quantity) %>
             </p>
           </div>
+          <% if(item.inExchange) { %>
+          <div class="ms-auto">
+            <span class="badge bg-warning">Item Em Troca</span>
+          </div>
+          <% } %>
         </li>
         <% }) %>
       </ul>
