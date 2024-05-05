@@ -10,5 +10,6 @@ declare namespace Cypress {
     createCard: (data: DatabaseCreateCardData[]) => Chainable<void>;
     createBook: (data: DatabaseCreateBookData) => Chainable<void>;
     createOrder: (data: DatabaseCreateOrderData) => Chainable<void>;
+    createCoupon: (data: DatabaseCreateCouponData) => Chainable<void>;
   }
 }

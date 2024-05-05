@@ -3,6 +3,7 @@ import * as customer from "./customer";
 import * as card from "./card";
 import * as book from "./book";
 import * as order from "./order";
+import * as coupon from "./coupon";
 import { downDatabase } from "./downDatabase";
 
 export default {
@@ -11,5 +12,6 @@ export default {
   ...card,
   ...book,
   ...order,
+  ...coupon,
   downDatabase,
 };

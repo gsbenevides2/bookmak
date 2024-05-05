@@ -117,6 +117,16 @@ declare interface CategoryTable {
   name: string;
 }
 
+declare interface CouponTable {
+  id: string;
+  code: string;
+  value: number;
+  description: string;
+  type: "discount" | "exchange";
+  used: boolean;
+  attachedCustomerId?: string;
+}
+
 declare interface DatabaseCreateCustomerData {
   customer: CustomerFixtureData;
   address: AddressFixtureData;
@@ -139,6 +149,12 @@ declare interface DatabaseCreateCardData {
   card: CardFixtureData;
   active?: boolean;
   customerId: string;
+}
+
+declare interface DatabaseCreateCouponData {
+  coupon: CouponFixtureData;
+  used?: boolean;
+  attachedCustomerId?: string;
 }
 
 declare type DatabaseCreateBookData = BookFixtureData;

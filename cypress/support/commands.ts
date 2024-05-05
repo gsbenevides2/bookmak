@@ -18,3 +18,6 @@ Cypress.Commands.add("createBook", (data) => {
 Cypress.Commands.add("createOrder", (data) => {
   return cy.task("db:createOrder", data);
 });
+Cypress.Commands.add("createCoupon", (data) => {
+  return cy.task("db:createCoupon", data);
+});

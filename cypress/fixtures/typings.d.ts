@@ -109,3 +109,11 @@ declare interface OrderFixtureData {
     orderId: string;
   }>;
 }
+
+declare interface CouponFixtureData {
+  id: string;
+  code: string;
+  value: number;
+  description: string;
+  type: "discount" | "exchange";
+}
