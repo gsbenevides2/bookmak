@@ -4,8 +4,8 @@ import { config } from "dotenv";
 import fs from "fs";
 
 export function getConnection(): knex.Knex {
-  const cypressEnvPath = path.resolve(process.cwd(), "..", "..", ".env.test");
-  const defaultEnvPath = path.resolve(process.cwd(), ".env.test");
+  const cypressEnvPath = path.resolve(process.cwd(), "..", "..", ".env");
+  const defaultEnvPath = path.resolve(process.cwd(), ".env");
   const envPath = fs.existsSync(cypressEnvPath)
     ? cypressEnvPath
     : defaultEnvPath;
