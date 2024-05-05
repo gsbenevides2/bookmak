@@ -1,3 +1,4 @@
+import "./bookmak.spec.cy";
 import "./buy.spec.cy";
 import "./cart.spec.cy";
 import "./change.spec.cy";

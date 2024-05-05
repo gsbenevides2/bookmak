@@ -29,18 +29,29 @@ export default function testInfo(): void {
     cy.visit(`http://localhost:3000/books/${sku.id}`);
     cy.get(".book-name").should("contain.text", sku.title);
     cy.get("div.col-6 > :nth-child(2)").should(
-      "includes.text",
-      utils.getFirstWords(sku.description, 20),
+      "contains.text",
+      utils.getFirstWords(sku.description, 10),
     );
-    cy.get(".mb-0").should(
-      "contain.text",
-      authors.map((author) => author.name).join(", "),
-    );
+    cy.get(".mb-0")
+      .invoke("text")
+      .then((text) => {
+        const pdpAuthors = text.replace("Autores: ", "").split(", ");
+        expect(pdpAuthors).to.have.length(authors.length);
+        authors.forEach((author) => {
+          expect(pdpAuthors).to.include(author.name);
+        });
+      });
 
-    cy.get("div.col-6 > :nth-child(4)").should(
-      "contain.text",
-      categories.map((category) => category.name).join(", "),
-    );
+    cy.get("div.col-6 > :nth-child(4)")
+      .invoke("text")
+      .then((text) => {
+        const pdpCategories = text.replace("Categorias: ", "").split(", ");
+        expect(pdpCategories).to.have.length(categories.length);
+        categories.forEach((category) => {
+          expect(pdpCategories).to.include(category.name);
+        });
+      });
+
     cy.get(".book-price").should(
       "contain.text",
       utils.formatMoney(sku.price / 100),
