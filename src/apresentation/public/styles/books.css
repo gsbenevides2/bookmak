@@ -2,3 +2,9 @@
     max-width: 230px;
     width: 25vw;
 }
+
+.card-image{
+    min-height: 355px;
+    display: flex;
+    justify-content: center;
+}
