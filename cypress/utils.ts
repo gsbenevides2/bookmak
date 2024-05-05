@@ -101,3 +101,21 @@ export function getRandomWordInText(text: string): string {
   const words = text.split(" ");
   return getRandomItemFromArray(words);
 }
+
+export function getRandomFisrtWordInText(
+  text: string,
+  firtNWords: number,
+  minWordSize?: number,
+): string {
+  let words = text.split(" ");
+  if (minWordSize != null)
+    words = words.filter((word) => word.length >= minWordSize);
+  return getRandomItemFromArray(words.slice(0, firtNWords));
+}
+
+export function formatMoney(value: number): string {
+  return value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
