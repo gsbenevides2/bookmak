@@ -80,12 +80,12 @@ declare interface OrderFixtureData {
     totalPrice: number;
     discounts: number;
     shippingPrice: number;
-    bookmarkStyle: string;
-    bookmarkText: string;
+    bookmarkStyle: string | null;
+    bookmarkText: string | null;
     generatedBookmarks: string;
-    customerId: string;
-    billingAddressId: string;
-    shippingAddressId: string;
+    customerId: string | null;
+    billingAddressId: string | null;
+    shippingAddressId: string | null;
   }>;
   orderItem: Array<{
     id: string;

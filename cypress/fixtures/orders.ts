@@ -397,4 +397,32 @@ export const ordersFixtures: OrderFixtureData[] = [
       },
     ],
   },
+  {
+    orders: [
+      {
+        id: "f30640a6-8453-469e-a551-b0d14ff6955a",
+        subtotal: 2786,
+        totalPrice: 2786,
+        discounts: 0,
+        shippingPrice: 0,
+        bookmarkStyle: null,
+        bookmarkText: null,
+        generatedBookmarks: "{}",
+        customerId: null,
+        billingAddressId: null,
+        shippingAddressId: null,
+      },
+    ],
+    orderItem: [
+      {
+        id: "8bbaa417-69f4-4305-af27-6669ce154e75",
+        quantity: 2,
+        unitSellPrice: 1393,
+        skuId: "759b09fb-cb2a-414a-92ac-af63ddf81f56",
+        orderId: "f30640a6-8453-469e-a551-b0d14ff6955a",
+      },
+    ],
+    orderPaymentMethod: [],
+    orderUpdate: [],
+  },
 ];

@@ -119,3 +119,7 @@ export function formatMoney(value: number): string {
     currency: "BRL",
   });
 }
+
+export function getFirstWords(text: string, n: number): string {
+  return text.split(" ").slice(0, n).join(" ");
+}

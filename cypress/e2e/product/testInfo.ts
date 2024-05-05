@@ -1,0 +1,50 @@
+/// <reference types="cypress" />
+
+import { booksFixtures } from "../../fixtures/books";
+import * as utils from "../../utils";
+
+export default function testInfo(): void {
+  const [books] = booksFixtures;
+  beforeEach(() => {
+    cy.downDatabase();
+    cy.createBook(books);
+  });
+
+  it("Verifica dados do livro", function () {
+    const book = utils.getRandomItemFromArray(books.books);
+    const skus = books.booksSkus.filter((sku) => sku.bookId === book.id);
+    const sku = utils.getRandomItemFromArray(skus);
+    const bookAuthorsIds = books.booksAuthors
+      .filter((author) => author.bookId === book.id)
+      .map((author) => author.authorId);
+    const authors = books.authors.filter((author) =>
+      bookAuthorsIds.includes(author.id),
+    );
+    const bookCategoriesIds = books.booksCategories
+      .filter((category) => category.bookId === book.id)
+      .map((category) => category.categoryId);
+    const categories = books.categories.filter((category) =>
+      bookCategoriesIds.includes(category.id),
+    );
+    cy.visit(`http://localhost:3000/books/${sku.id}`);
+    cy.get(".book-name").should("contain.text", sku.title);
+    cy.get("div.col-6 > :nth-child(2)").should(
+      "includes.text",
+      utils.getFirstWords(sku.description, 20),
+    );
+    cy.get(".mb-0").should(
+      "contain.text",
+      authors.map((author) => author.name).join(", "),
+    );
+
+    cy.get("div.col-6 > :nth-child(4)").should(
+      "contain.text",
+      categories.map((category) => category.name).join(", "),
+    );
+    cy.get(".book-price").should(
+      "contain.text",
+      utils.formatMoney(sku.price / 100),
+    );
+    cy.get("img.mx-auto").should("have.attr", "src", `${sku.cover}.512.jpg`);
+  });
+}

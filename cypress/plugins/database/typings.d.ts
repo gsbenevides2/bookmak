@@ -79,13 +79,13 @@ declare interface OrderTable {
   subtotal: number;
   totalPrice: number;
   discounts: number;
-  shippingPrice: number;
-  bookmarkStyle: string;
-  bookmarkText: string;
+  shippingPrice: number | null;
+  bookmarkStyle: string | null;
+  bookmarkText: string | null;
   generatedBookmarks: string;
-  customerId: string;
-  billingAddressId: string;
-  shippingAddressId: string;
+  customerId: string | null;
+  billingAddressId: string | null;
+  shippingAddressId: string | null;
 }
 
 declare interface OrderItemTable {
