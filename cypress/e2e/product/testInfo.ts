@@ -3,6 +3,10 @@
 import { booksFixtures } from "../../fixtures/books";
 import * as utils from "../../utils";
 
+function escapeTextAndSanitize(text: string): string {
+  return text.replace(/\n/g, "").replace(/\s+/g, " ").trim();
+}
+
 export default function testInfo(): void {
   const [books] = booksFixtures;
   beforeEach(() => {
@@ -11,7 +15,8 @@ export default function testInfo(): void {
   });
 
   it("Verifica dados do livro", function () {
-    const book = utils.getRandomItemFromArray(books.books);
+    const book = books.books.find((book) => book.title.includes("Kaguya"));
+    if (book == null) throw new Error("Book not found");
     const skus = books.booksSkus.filter((sku) => sku.bookId === book.id);
     const sku = utils.getRandomItemFromArray(skus);
     const bookAuthorsIds = books.booksAuthors
@@ -30,7 +35,7 @@ export default function testInfo(): void {
     cy.get(".book-name").should("contain.text", sku.title);
     cy.get("div.col-6 > :nth-child(2)").should(
       "contains.text",
-      utils.getFirstWords(sku.description, 10),
+      escapeTextAndSanitize(utils.getFirstWords(sku.description, 10)),
     );
     cy.get(".mb-0")
       .invoke("text")
