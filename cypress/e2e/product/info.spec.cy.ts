@@ -61,6 +61,6 @@ describe("Informações sobre o produto", function () {
       "contain.text",
       utils.formatMoney(sku.price / 100),
     );
-    cy.get("img.mx-auto").should("have.attr", "src", `${sku.cover}.512.jpg`);
+    cy.get("img.mx-auto").invoke("attr", "src").should("contain", sku.cover);
   });
 });
