@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run --record --key f52db946-47ba-4f02-9969-c74230ab45e5",
+    "cypress:run": "cypress run --record --key f52db946-47ba-4f02-9969-c74230ab45e5 --spec 'cypress/e2e/index.spec.cy.ts'",
     "lint": "eslint --ext .ts src"
   },
   "devDependencies": {
