@@ -76,7 +76,7 @@
         <% order.items.forEach((item) => { %>
           <li class="list-group-item d-flex align-items-center border-0">
             <img
-              src="<%= item.sku.cover %>"
+              src="<%= getCoverImageURL(item.sku.cover) %>"
               alt="<%= item.sku.title %>"
               class="me-3 book-cover cursor-pointer"
               role="button"

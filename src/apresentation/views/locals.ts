@@ -121,3 +121,7 @@ export function maskPhone(phone: string): string {
 export function formatCouponTypeText(type: CouponType): string {
   return couponsText[type];
 }
+
+export function getCoverImageURL(image: string): string {
+  return `${image}.256.jpg`;
+}
