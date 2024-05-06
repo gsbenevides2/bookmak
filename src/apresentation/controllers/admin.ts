@@ -253,3 +253,46 @@ export const createCoupon: Controller = (req, res) => {
       res.redirect(`/admin?error=${err.message}`);
     });
 };
+
+export const checkOrderIsCancelable: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const isReject = req.originalUrl.includes("reject");
+  adminUseCases
+    .checkOrderIsCancelable(orderId)
+    .then((isCancelable) => {
+      if (isCancelable) {
+        res.render(isReject ? "admin/rejectCancel" : "admin/aproveCancel", {
+          orderId,
+        });
+      } else {
+        res.redirect("/admin");
+      }
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const cancelOrder: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  adminUseCases
+    .cancelOrder(orderId)
+    .then(() => {
+      res.redirect(`/admin/order/${orderId}`);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+export const rejectCanceling: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const { reason } = req.body as { reason: string };
+  adminUseCases
+    .rejectCancel(orderId, reason)
+    .then(() => {
+      res.redirect(`/admin/order/${orderId}`);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};

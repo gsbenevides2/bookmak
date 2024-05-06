@@ -61,4 +61,19 @@ adminRouter.post(
 adminRouter.get("/coupons", adminController.listCoupons);
 adminRouter.post("/coupons/new", adminController.createCoupon);
 
+adminRouter.get(
+  "/order/:orderId/cancel",
+  adminController.checkOrderIsCancelable,
+);
+adminRouter.post("/order/:orderId/cancel", adminController.cancelOrder);
+adminRouter.get(
+  "/order/:orderId/rejectCancel",
+  adminController.checkOrderIsCancelable,
+);
+
+adminRouter.post(
+  "/order/:orderId/rejectCancel",
+  adminController.rejectCanceling,
+);
+
 export default adminRouter;

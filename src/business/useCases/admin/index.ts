@@ -1,5 +1,7 @@
 import aproveExchange from "./aproveExchange";
 import aprovePayment from "./aprovePayment";
+import cancelOrder from "./cancelOrder";
+import checkOrderIsCancelable from "./checkOrderIsCancelable";
 import checkOrderIsExchangeable from "./checkOrderIsExchangeable";
 import checkOrderIsPayable from "./checkOrderIsPayable";
 import checkOrderIsPayed from "./checkOrderIsPayed";
@@ -10,6 +12,7 @@ import finishOrder from "./finishOrder";
 import getAllOrders from "./getAllOrders";
 import getOrder from "./getOrder";
 import listCoupons from "./listCoupons";
+import rejectCancel from "./rejectCancel";
 import rejectExchange from "./rejectExchange";
 import rejectPayment from "./rejectPayment";
 import sendOrder from "./sendOrder";
@@ -18,6 +21,8 @@ import startPreparing from "./startPreparing";
 export default {
   aproveExchange,
   aprovePayment,
+  cancelOrder,
+  checkOrderIsCancelable,
   checkOrderIsExchangeable,
   checkOrderIsPayable,
   checkOrderIsPayed,
@@ -28,6 +33,7 @@ export default {
   getAllOrders,
   getOrder,
   listCoupons,
+  rejectCancel,
   rejectExchange,
   rejectPayment,
   sendOrder,

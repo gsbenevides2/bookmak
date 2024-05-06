@@ -17,6 +17,9 @@ export enum OrderStatus {
   EXCHANGING = "exchanging",
   EXCHANGED = "exchanged",
   EXCHANGE_REJECTED = "exchange_rejected",
+  CANCELED = "canceled",
+  CANCELING = "canceling",
+  CANCEL_REJECTED = "cancel_rejected",
 }
 
 export const orderStatusText = {
@@ -29,6 +32,9 @@ export const orderStatusText = {
   [OrderStatus.EXCHANGING]: "Em troca",
   [OrderStatus.EXCHANGED]: "Trocado",
   [OrderStatus.EXCHANGE_REJECTED]: "Troca recusada",
+  [OrderStatus.CANCELED]: "Cancelado",
+  [OrderStatus.CANCELING]: "Cancelando",
+  [OrderStatus.CANCEL_REJECTED]: "Cancelamento recusado",
 };
 
 @Entity()

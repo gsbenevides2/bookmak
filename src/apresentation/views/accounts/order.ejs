@@ -54,6 +54,10 @@
         <%- ordenatedStatus[0].status === OrderStatusEnum.SENDED ? `
         <a href="/accounts/me/orders/${order.id}/change" class="btn btn-outline-secondary mt-2 change">Trocar Pedido</a>
         ` : '' %>
+        <% const notCancelableStatus = [OrderStatusEnum.CANCELED, OrderStatusEnum.CANCELING, OrderStatusEnum. CANCEL_REJECTED, OrderStatusEnum.EXCHANGING, OrderStatusEnum.EXCHANGED, OrderStatusEnum.EXCHANGE_REJECTED, OrderStatusEnum.PAYMENT_REJECTED] %>
+         <%- !notCancelableStatus.includes(ordenatedStatus[0].status) ? `
+         <a href="/accounts/me/orders/${order.id}/cancel" class="btn btn-outline-secondary mt-2 change">Cancelar Pedido</a>
+         ` : '' %>
       </div>
       <!--Lista de Produtos-->
       <ul class="list-group mt-3 border p-3">

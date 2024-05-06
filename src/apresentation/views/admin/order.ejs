@@ -67,6 +67,10 @@
           <%- lastStatus.status === OrderStatusEnum.SENDING ? `
           <a href="/admin/order/${order.id}/sendedOrder" class="btn btn-outline-secondary mt-2 sendedOrder">Confirmar Entrega</a>
           ` : '' %>
+           <%- lastStatus.status === OrderStatusEnum.CANCELING ? `
+           <a href="/admin/order/${order.id}/cancel" class="btn btn-outline-secondary mt-2 sendedOrder aproveCancel">Confirmar Cancelamento</a>
+           <a href="/admin/order/${order.id}/rejectCancel" class="btn btn-outline-secondary mt-2 sendedOrder rejectCancel">Recusar Cancelamento</a>
+           ` : '' %>
         </div>
       
       </div>

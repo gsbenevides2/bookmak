@@ -333,3 +333,35 @@ export const exchangeOrder: Controller = (req, res) => {
       res.redirect(`/accounts/me/orders/${orderId}?error=${error.message}`);
     });
 };
+
+export const checkOrderIsCancelable: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const accountId = req.cookies?.accountId as string;
+  customerUseCase
+    .checkOrderIsCancelable(orderId, accountId)
+    .then(async () => {
+      return await customerUseCase.getOrder(orderId, accountId);
+    })
+    .then((order) => {
+      res.render("accounts/cancelOrder", {
+        orderId,
+        order,
+      });
+    })
+    .catch((error) => {
+      res.redirect(`/accounts/me/orders/${orderId}?error=${error.message}`);
+    });
+};
+
+export const cancelOrder: Controller = (req, res) => {
+  const orderId = req.params.orderId;
+  const accountId = req.cookies?.accountId as string;
+  customerUseCase
+    .cancelOrder(orderId, accountId)
+    .then(() => {
+      res.redirect(`/accounts/me/orders/${orderId}`);
+    })
+    .catch((error) => {
+      res.redirect(`/accounts/me/orders/${orderId}?error=${error.message}`);
+    });
+};

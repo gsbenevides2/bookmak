@@ -51,4 +51,14 @@ accountsRouter.post(
 
 accountsRouter.get("/me/coupons", AccountsController.getMyCupons);
 
+accountsRouter.get(
+  "/me/orders/:orderId/cancel",
+  AccountsController.checkOrderIsCancelable,
+);
+
+accountsRouter.post(
+  "/me/orders/:orderId/cancel",
+  AccountsController.cancelOrder,
+);
+
 export default accountsRouter;

@@ -1,3 +1,4 @@
+import checkOrderIsCancelable from "./checkOrderIsCancelable";
 import changeOrder from "./changeOrder";
 import changePassword from "./changePassword";
 import checkOrderIsExchangeable from "./checkOrderIsExchangeable";
@@ -17,10 +18,13 @@ import removeAddress from "./removeAddress";
 import updateAddress from "./updateAddress";
 import updateCustomerData from "./updateCustomerData";
 import viewCoupons from "./viewCoupons";
+import cancelOrder from "./cancelOrder";
 
 export default {
+  cancelOrder,
   changeOrder,
   changePassword,
+  checkOrderIsCancelable,
   checkOrderIsExchangeable,
   deactivateAccount,
   deleteCard,
