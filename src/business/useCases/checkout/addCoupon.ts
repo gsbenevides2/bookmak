@@ -4,7 +4,7 @@ import { Coupon } from "../../models/Coupon";
 import { Order } from "../../models/Order";
 import { OrderPaymentMethod } from "../../models/OrderPaymentMethod";
 import recalculateOrderTotal from "./recalculateOrderTotal";
-import { throwErrorIfFalse } from "../../../utils/errors";
+import { throwErrorIfFalse, throwErrorIfTrue } from "../../../utils/errors";
 
 interface Params {
   code: string;
@@ -32,6 +32,11 @@ export default async function addCoupon(params: Params): Promise<void> {
     if (order == null) {
       throw new Error("Pedido não encontrado");
     }
+
+    throwErrorIfTrue(
+      order.totalPrice <= 0,
+      "Não é possível adicionar mais cupons ao pedido.",
+    );
 
     const usedCoupon = await paymentMethodRepository.findOne({
       where: { order: { id: orderId }, coupon: { code } },
