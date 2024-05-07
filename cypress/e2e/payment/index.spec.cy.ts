@@ -27,7 +27,7 @@ describe("Pagamento", function () {
     cy.setCookie("accountId", customer.id);
   });
 
-  it("Pagamento Simples: Somente um Cartão", function () {
+  it("Um cartão para pagar o todo.", function () {
     const order = ordersFixtures[8];
     const [card] = cardsFixtures;
     cy.createOrder(order);
@@ -65,7 +65,7 @@ describe("Pagamento", function () {
     cy.get(".status").should("contains.text", "Em processamento");
   });
 
-  it("Pagamento Simples Erro: Somente um Cartão, com valor menor", function () {
+  it("Passar somente um cartão com valor menor da compra.", function () {
     const order = ordersFixtures[8];
     const [card] = cardsFixtures;
     cy.createOrder(order);
@@ -103,7 +103,7 @@ describe("Pagamento", function () {
     );
   });
 
-  it("Pagamento Simples: Dois Cartões", function () {
+  it("Usar dois cartões e pagar meio a meio", function () {
     const order = ordersFixtures[8];
     const [cardOne, cardTwo] = cardsFixtures;
     cy.createOrder(order);
@@ -166,7 +166,7 @@ describe("Pagamento", function () {
     cy.get(".status").should("contains.text", "Em processamento");
   });
 
-  it("Pagamento Simples Erro: Dois Cartões, com valor menor", function () {
+  it("Usar dois cartões porém ainda não pagar a compra toda.", function () {
     const order = ordersFixtures[8];
     const [cardOne, cardTwo] = cardsFixtures;
     cy.createOrder(order);
@@ -224,7 +224,7 @@ describe("Pagamento", function () {
     );
   });
 
-  it("Pagamento com Cupom, totalidade", function () {
+  it("Usar um cupom para pagar o todo.", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
     const couponCode = "CUPOM-DE-DESCONTO";
@@ -266,7 +266,7 @@ describe("Pagamento", function () {
     );
   });
 
-  it("Pagamento com Cupom, metade cartão metade cupom", function () {
+  it("Metade Cartão e outra metade com um cupom", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
 
@@ -338,7 +338,7 @@ describe("Pagamento", function () {
     );
   });
 
-  it("Pagamento com cupom, valor maior", function () {
+  it("Pagamento com um cupom de valor maior de compra, gera um cupom de troca.", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
     const couponCode = "CUPOM-DE-DESCONTO";
@@ -397,8 +397,7 @@ describe("Pagamento", function () {
     );
   });
 
-  /* A imeplementar essa validação no servidor
-  it("Pagamento com dois cupons sendo que o primeiro já paga o pedido todo", function () {
+  it("Pagamento com dois cupons sendo que o primeiro já paga o pedido todo. Ao tentar usar o segundo gera um aviso", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
     const couponCodeOne = "CUPOM-DE-DESCONTO";
@@ -433,9 +432,13 @@ describe("Pagamento", function () {
 
     cy.get(".input-group > .form-control").type(couponCodeTwo);
     cy.get("#button-addon2").click();
+    cy.get(".alert.alert-danger").should(
+      "contains.text",
+      "Não é possível adicionar mais cupons ao pedido.",
+    );
   });
-  */
-  it("Pagamento com cupom, valor menor, Erro de Cartão", function () {
+
+  it("Pagamento com cupom e cartão, porem ainda não paga toda a compra.", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
     const couponCode = "CUPOM-DE-DESCONTO";
@@ -487,7 +490,7 @@ describe("Pagamento", function () {
     );
   });
 
-  it("Pagamento com cartão, erro valor minimo de 10", function () {
+  it("Tentar pagar uma compra > 10 reais. Usando um cartão no valor menor que 10 reais", function () {
     const order = ordersFixtures[8];
     const [card] = cardsFixtures;
     cy.createOrder(order);
@@ -515,7 +518,7 @@ describe("Pagamento", function () {
     });
   });
 
-  it("Pagamento multiplos cupons e multiplos cartões de valor minimo de 10", function () {
+  it("Pagamento multiplos cupons e multiplos cartões sendo que o valor da compra após os cupons é menor que 10 reais", function () {
     // Criar Um Cupon com valor da compra menos 20
     const order = ordersFixtures[8];
     cy.createOrder(order);
