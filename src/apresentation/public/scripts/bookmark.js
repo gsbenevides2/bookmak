@@ -133,7 +133,7 @@ function drawBookmark() {
   if (imageUrl === "Escolha...") return;
   const text =
     elements.inputCustomText.value ||
-    document.querySelector("input[name='text']:checked").value;
+    document.querySelector("input[name='text']:checked")?.value;
   if (!text) return;
 
   elements.bookmarkPreview.style.backgroundImage = `url(${imageUrl})`;
