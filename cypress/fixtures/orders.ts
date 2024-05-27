@@ -333,7 +333,7 @@ export const ordersFixtures: OrderFixtureData[] = [
         unitSellPrice: 1393,
         skuId: "759b09fb-cb2a-414a-92ac-af63ddf81f56",
         orderId: "f30640a6-8453-469e-a551-b0d14ff6955a",
-        inExchange: true,
+        changeQuantity: 2,
       },
       {
         id: "13574b5b-c885-425f-bf16-0bf109f94d33",
@@ -341,7 +341,7 @@ export const ordersFixtures: OrderFixtureData[] = [
         unitSellPrice: 3732,
         skuId: "2ba8d77e-be04-44eb-830d-12076793798f",
         orderId: "f30640a6-8453-469e-a551-b0d14ff6955a",
-        inExchange: true,
+        changeQuantity: 1,
       },
     ],
     orderPaymentMethod: [
@@ -513,7 +513,7 @@ export const ordersFixtures: OrderFixtureData[] = [
         unitSellPrice: 1393,
         skuId: "759b09fb-cb2a-414a-92ac-af63ddf81f56",
         orderId: "f30640a6-8453-469e-a551-b0d14ff6955a",
-        inExchange: true,
+        changeQuantity: 1,
       },
       {
         id: "13574b5b-c885-425f-bf16-0bf109f94d33",
@@ -521,7 +521,7 @@ export const ordersFixtures: OrderFixtureData[] = [
         unitSellPrice: 3732,
         skuId: "2ba8d77e-be04-44eb-830d-12076793798f",
         orderId: "f30640a6-8453-469e-a551-b0d14ff6955a",
-        inExchange: false,
+        changeQuantity: 0,
       },
     ],
     orderPaymentMethod: [

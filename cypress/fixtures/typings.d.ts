@@ -93,7 +93,7 @@ declare interface OrderFixtureData {
     unitSellPrice: number;
     skuId: string;
     orderId: string;
-    inExchange?: boolean;
+    changeQuantity?: number;
   }>;
   orderPaymentMethod: Array<{
     id: string;

@@ -47,10 +47,14 @@ describe("Fluxo de Troca", function () {
     cy.get(
       '[href="/accounts/me/orders/f30640a6-8453-469e-a551-b0d14ff6955a/change"]',
     ).click();
-    cy.get("input").click();
+    for (const item of order.orderItem) {
+      cy.get(`input[name="quantity[${item.id}]"]`)
+        .clear()
+        .type((item.quantity - 1).toString());
+    }
     cy.get("form > .btn").click();
     cy.get(".status").should("contain.text", "Em troca");
-    cy.get(".badge").should("contain.text", "Item Em Troca");
+    cy.get(".badge").should("contain.text", "1 Item(s) Em Troca");
   });
 
   it("Aprovar troca: Todos os Item", function () {
@@ -89,11 +93,13 @@ describe("Fluxo de Troca", function () {
     cy.visit(`http://localhost:3000/accounts/me/orders/${order.orders[0].id}`);
     cy.get(".status").should("contain.text", "Trocado");
     cy.visit("http://localhost:3000/accounts/me/coupons");
+    const value = order.orderItem.reduce(
+      (acc, item) => acc + item.unitSellPrice * (item.changeQuantity ?? 0),
+      0,
+    );
     cy.get("#couponValueValue").should(
       "contain.text",
-      utils.formatMoney(
-        (order.orderItem[0].unitSellPrice * order.orderItem[0].quantity) / 100,
-      ),
+      utils.formatMoney(value / 100),
     );
   });
 
