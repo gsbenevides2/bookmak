@@ -92,6 +92,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
         cy.wrap(estiloSelecionado).as("estiloSelecionado");
         cy.get("#style-bookmark").select(randonIndex);
       });
+
     cy.get("button[type='submit']").click();
     cy.get("#errorAlert")
       .should("be.visible")

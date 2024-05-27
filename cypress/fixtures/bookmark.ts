@@ -8,6 +8,8 @@ export const bookmarkFixtures: BookmarkFixtureData[] = [
       "Sonhe alto e ame ainda mais sob estrelas cintilantes.",
       "Cada estrela, um sonho; cada olhar, um novo amor aguardando.",
     ],
-    bookmarkStyles: ["Estilo A", "Estilo 2", "Estilo C"],
+    bookmarkStyles: [
+      "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
+    ],
   },
 ];

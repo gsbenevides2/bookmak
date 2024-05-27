@@ -9,7 +9,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 3907,
         discounts: 0,
         shippingPrice: 1121,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
@@ -53,7 +54,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 3907,
         discounts: 0,
         shippingPrice: 1121,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
@@ -106,7 +108,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 3907,
         discounts: 0,
         shippingPrice: 1121,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
@@ -168,7 +171,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 3907,
         discounts: 0,
         shippingPrice: 1121,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
@@ -239,7 +243,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 3907,
         discounts: 0,
         shippingPrice: 1121,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
@@ -318,7 +323,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 7639,
         discounts: 0,
         shippingPrice: 1121,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
@@ -442,7 +448,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 2786,
         discounts: 0,
         shippingPrice: 0,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: null,
@@ -470,7 +477,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 3907,
         discounts: 0,
         shippingPrice: 1121,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
@@ -498,7 +506,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 7639,
         discounts: 0,
         shippingPrice: 1121,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
@@ -594,7 +603,8 @@ export const ordersFixtures: OrderFixtureData[] = [
         totalPrice: 7639,
         discounts: 0,
         shippingPrice: 1121,
-        bookmarkStyle: "Estilo 2",
+        bookmarkStyle:
+          "https://storage.googleapis.com/bookmak/bookmarks/Tonikaku%20Kawai.png",
         bookmarkText: "Quando os destinos se cruzam, a magia do amor floresce.",
         generatedBookmarks: "{}",
         customerId: "e243275a-458b-4e74-91e0-235e40e4faa7",
