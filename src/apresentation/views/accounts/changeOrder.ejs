@@ -59,15 +59,16 @@
                   <%= formatPrice(item.unitSellPrice * item.quantity) %>
                 </p>
               </div>
-              <div class="ms-auto d-flex justify-content-center align-items-center">
-                <label for="<%= item.id %>" class="mb-0 pe-1 d-block">Selecione ao lado ao lado deseja trocar esse produto</label>
+              <div class="ms-auto d-flex justify-content-center align-items-center flex-column">
+                <label for="<%= item.id %>" class="mb-0 pe-1 d-block w-75 text-center">Quantidade de Itens que Deseja Trocar:</label>
                 <input
-                  type="checkbox"
-                  name="items"
-                  value="<%= item.id %>"
+                  type="number"
+                  name="quantity[<%= item.id %>]"
+                  value="<%= item.quantity %>"
                   id="<%= item.id %>"
                 />
               </div>
+           
             </li>
             <% }) %>
           <button type="submit" class="btn btn-outline-secondary mt-2">

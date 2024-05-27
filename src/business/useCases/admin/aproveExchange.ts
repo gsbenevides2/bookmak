@@ -26,7 +26,9 @@ export default async function aproveExchange(orderId: string): Promise<void> {
       throw new Error("Pedido não encontrado");
     }
 
-    const allItemsToChange = order.items.every((item) => item.inExchange);
+    const allItemsToChange = order.items.every(
+      (item) => item.changeQuantity === item.quantity,
+    );
     let couponValue = 0;
     if (allItemsToChange) {
       couponValue = order.usedPaymentMethods.reduce(
@@ -39,8 +41,8 @@ export default async function aproveExchange(orderId: string): Promise<void> {
       }
     } else {
       couponValue = order.items.reduce((acc, item) => {
-        if (item.inExchange ?? false) {
-          return acc + item.unitSellPrice * item.quantity;
+        if (item.changeQuantity > 0 ?? false) {
+          return acc + item.unitSellPrice * item.changeQuantity;
         }
         return acc;
       }, 0);

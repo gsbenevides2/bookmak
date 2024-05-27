@@ -311,21 +311,9 @@ export const checkOrderIsExchangeable: Controller = (req, res) => {
 export const exchangeOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
   const accountId = req.cookies?.accountId as string;
-  if (req.body?.items?.length == null) {
-    res.redirect(
-      `/accounts/me/orders/${orderId}?error=Selecione os itens para troca`,
-    );
-    return;
-  }
-  let items: string[] = [];
-  if (Array.isArray(req.body.items)) {
-    items = req.body.items;
-  } else {
-    items = [req.body.items];
-  }
-
+  const itemsQuantity = req.body.quantity as Record<string, string>;
   customerUseCase
-    .changeOrder(orderId, accountId, items)
+    .changeOrder(orderId, accountId, itemsQuantity)
     .then(() => {
       res.redirect(`/accounts/me/orders/${orderId}`);
     })

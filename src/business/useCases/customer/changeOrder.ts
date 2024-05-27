@@ -1,13 +1,19 @@
 import { DatabaseConnection } from "../../../persistence/dbConnection";
 import { OrderStatus, OrderUpdate } from "../../models/OrderUpdate";
-import { throwErrorIfFalse } from "../../../utils/errors";
+import {
+  secure,
+  throwErrorIfFalse,
+  throwErrorIfTrue,
+} from "../../../utils/errors";
 import checkOrderIsExchangeable from "./checkOrderIsExchangeable";
 import { OrderItem } from "../../models/OrderItem";
+
+type ItemsQuantity = Record<string, string>;
 
 export default async function changeOrder(
   orderId: string,
   accountId: string,
-  items: string[],
+  itemsQuantity: ItemsQuantity,
 ): Promise<void> {
   throwErrorIfFalse(
     await checkOrderIsExchangeable(orderId, accountId),
@@ -16,18 +22,30 @@ export default async function changeOrder(
   const dataSource = await DatabaseConnection.getDataSource().catch((error) => {
     throw new Error("Erro ao conectar com o banco de dados: " + error);
   });
+  // Check if all values are positive
+  for (const key in itemsQuantity) {
+    const numberValue = secure(
+      () => Number(itemsQuantity[key]),
+      "Erro ao converter valor",
+    );
+    throwErrorIfTrue(numberValue < 0, "Quantidade inválida");
+  }
 
   dataSource
     .transaction(async (trx) => {
       const orderUpdateRepository = trx.getRepository(OrderUpdate);
       const orderItemRepository = trx.getRepository(OrderItem);
-      for (const itemId of items) {
+      for (const itemId in itemsQuantity) {
+        const itemQuantity = secure(
+          () => Number(itemsQuantity[itemId]),
+          "Erro ao converter valor",
+        );
         await orderItemRepository.update(
           {
             id: itemId,
           },
           {
-            inExchange: true,
+            changeQuantity: itemQuantity,
           },
         );
       }
