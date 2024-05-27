@@ -1,5 +1,4 @@
 import knex from "knex";
-import "dotenv/config";
 import LowDb, { type Book } from "./lowdb";
 
 const db = knex({

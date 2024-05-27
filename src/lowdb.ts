@@ -30,7 +30,10 @@ export interface Category {
 export interface Db {
   books: Book[];
 }
-
+interface ImageNewUrl {
+  newUrl: string;
+  oldUrl: string;
+}
 export default class LowDb {
   loaded = false;
   data: Db = { books: [] };
@@ -81,6 +84,10 @@ export default class LowDb {
     this.write();
   }
 
+  findBookById(id: string): Book | undefined {
+    return this.data.books.find((book) => book.id === id);
+  }
+
   fethAllCategories(): Category[] {
     const categories: Category[] = [];
     this.data.books.forEach((book) => {
@@ -113,5 +120,33 @@ export default class LowDb {
 
   private write(): void {
     fs.writeFileSync("db.json", JSON.stringify(this.data));
+  }
+
+  listAllImagesUrls(): string[] {
+    const urls: string[] = [];
+    this.data.books.forEach((book) => {
+      urls.push(book.cover);
+      book.volumes.forEach((volume) => {
+        urls.push(volume.cover);
+      });
+    });
+    return urls;
+  }
+
+  updateImagesUrls(images: ImageNewUrl[]): void {
+    const { books } = this.data;
+    images.forEach((image) => {
+      books.forEach((book) => {
+        if (book.cover === image.oldUrl) {
+          book.cover = image.newUrl;
+        }
+        book.volumes.forEach((volume) => {
+          if (volume.cover === image.oldUrl) {
+            volume.cover = image.newUrl;
+          }
+        });
+      });
+    });
+    this.write();
   }
 }

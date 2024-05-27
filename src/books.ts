@@ -11,4 +11,5 @@ export default [
   "676fbea0-be6d-437e-be60-43800486842e", // Yamada-kun to 7-nin no Majo
   "67b35ba4-9c53-4957-91e7-4f7884e4b412", // Kobayashi-san Chi no Maid Dragon
   "76ee7069-23b4-493c-bc44-34ccbf3051a8", // Tomo Chan wa Onnanoko
+  "e9dc373b-314c-44ff-9428-ae63319ae86b", // Toradora!
 ];

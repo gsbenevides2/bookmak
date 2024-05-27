@@ -1,54 +1,15 @@
 import axios from "axios";
-import { readJsonFile } from "./readJsonFile";
-import jwt from "jsonwebtoken";
 import "dotenv/config";
-import LowDb, { type Category, type Book } from "./lowdb";
-
-export interface ServiceAccount {
-  type: string;
-  project_id: string;
-  private_key_id: string;
-  private_key: string;
-  client_email: string;
-  client_id: string;
-  auth_uri: string;
-  token_uri: string;
-  auth_provider_x509_cert_url: string;
-  client_x509_cert_url: string;
-}
+import LowDb, { type Category, type Book } from "../lowdb";
+import { getServiceAccount, retriveAccessToken } from "./serviceAccount";
 
 export async function translateText(
   text: string,
   sourceLanguageCode: string,
 ): Promise<string | undefined> {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const creds = process.env.GOOGLE_APPLICATION_CREDENTIALS!;
-  const serviceAccount = readJsonFile<ServiceAccount>(creds);
+  const serviceAccount = getServiceAccount();
   const projectId = serviceAccount.project_id;
-  const token = jwt.sign(
-    {
-      iss: serviceAccount.client_email,
-      scope: "https://www.googleapis.com/auth/cloud-platform",
-      aud: "https://oauth2.googleapis.com/token",
-      exp: Math.floor(Date.now() / 1000) + 3600,
-      iat: Math.floor(Date.now() / 1000),
-    },
-    serviceAccount.private_key,
-    {
-      algorithm: "RS256",
-    },
-  );
-
-  const accessTokenResponse = await axios.post(
-    `https://oauth2.googleapis.com/token`,
-    {
-      client_id: serviceAccount.client_id,
-      client_secret: serviceAccount.private_key,
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-      assertion: token,
-    },
-  );
-  const accessToken = accessTokenResponse.data.access_token;
+  const accessToken = await retriveAccessToken(serviceAccount);
 
   const api = axios.create({
     baseURL:
