@@ -1,0 +1,48 @@
+<div class="mt-3 border p-3">
+  <div
+    class="modal fade"
+    id="bookmakPreviewModal"
+    tabindex="-1"
+    aria-labelledby="bookmakPreviewModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            Visualizar Marca Página
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="preview-bookmark mx-auto" style="background-image: url(<%- bookmarkStyle %>)">
+            <p><%- bookmarkText %></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Fechar
+          </button>
+          <% if (enablePrint) { %>
+          <button type="button" class="btn btn-primary" onclick="printBookmark()">Imprimir</button>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h5>Marca Página Personalizado:</h5>
+  <p><b>Texto:</b>Texto: <%- bookmarkText %></p>
+  <% if (enableEdit) { %>
+  <a href="/checkout/bookmark" class="btn btn-secondary">Alterar</a>
+  <% } %>
+  <button
+    type="button"
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#bookmakPreviewModal"
+  >
+    Visualizar
+  </button>
+  <link rel="stylesheet" href="/styles/bookmarkCartView.css" />
+  <script src="/scripts/bookmarkCartView.js"></script>
+</div>

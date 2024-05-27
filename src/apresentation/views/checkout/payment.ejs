@@ -73,14 +73,12 @@
         <a href="/checkout/addresses" class="btn btn-secondary">Alterar</a>
       </div>
       <!--<Marca Página-->
-      <div class="mt-3 border p-3">
-        <h5>Marca Página Personalizado:</h5>
-        <p>
-          <b>Estilo:</b> <%- order.bookmarkStyle %><br/>
-          <b>Texto:</b>Texto: <%- order.bookmarkText %>
-        </p>
-        <a href="/checkout/bookmark" class="btn btn-secondary">Alterar</a>
-      </div>
+      <%- include('../components/bookmakCartView', { 
+        bookmarkText: order.bookmarkText,
+        bookmarkStyle: order.bookmarkStyle,
+        enableEdit: true,
+        enablePrint: false
+      }) %>
       <!--Cupom-->
       <div class="mt-3 border p-3">
         <h5>Cupons:</h5>

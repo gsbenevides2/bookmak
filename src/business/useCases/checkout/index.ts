@@ -2,6 +2,7 @@ import addCoupon from "./addCoupon";
 import addToCart from "./addToCart";
 import executeOrder from "./executeOrder";
 import getAiBookmarks from "./getAiBookmarks";
+import getBookmakStyle from "./getBookmakStyle";
 import getOrder from "./getOrder";
 import recalculateOrderTotal from "./recalculateOrderTotal";
 import removeCoupon from "./removeCoupon";
@@ -15,6 +16,7 @@ export default {
   addToCart,
   executeOrder,
   getAiBookmarks,
+  getBookmakStyle,
   getOrder,
   recalculateOrderTotal,
   removeCoupon,

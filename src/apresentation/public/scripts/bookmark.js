@@ -7,6 +7,7 @@ const elements = {
   inputCustomText: document.getElementById("text-bookmark"),
   loadingSpinner: document.getElementById("loadingSpinner"),
   styleBookmark: document.getElementById("style-bookmark"),
+  bookmarkPreview: document.getElementById("preview-bookmark"),
 };
 
 async function fetchData() {
@@ -80,10 +81,11 @@ window.addEventListener("load", async () => {
     elements.aiBookmarks.insertBefore(div, elements.inputCustomText);
   }
   const bookmarkStyles = data.bookmarkStyles;
-  for (const bookmarkStyle of bookmarkStyles) {
+  for (let i = 1; i <= bookmarkStyles.length; i++) {
+    const bookmarkStyle = bookmarkStyles[i - 1];
     const option = document.createElement("option");
     option.value = bookmarkStyle;
-    option.text = bookmarkStyle;
+    option.text = `Estilo ${i}`;
     elements.styleBookmark.appendChild(option);
   }
 
@@ -114,5 +116,26 @@ window.addEventListener("load", async () => {
     for (const inputCheck of inputChecks) {
       inputCheck.checked = false;
     }
+    drawBookmark();
+  });
+  elements.styleBookmark.addEventListener("change", () => {
+    drawBookmark();
+  });
+  document.querySelectorAll("input[name='text']").forEach((input) => {
+    input.addEventListener("change", () => {
+      drawBookmark();
+    });
   });
 });
+
+function drawBookmark() {
+  const imageUrl = elements.styleBookmark.value;
+  if (imageUrl === "Escolha...") return;
+  const text =
+    elements.inputCustomText.value ||
+    document.querySelector("input[name='text']:checked").value;
+  if (!text) return;
+
+  elements.bookmarkPreview.style.backgroundImage = `url(${imageUrl})`;
+  elements.bookmarkPreview.querySelector("p").innerHTML = text;
+}

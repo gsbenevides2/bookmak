@@ -1,7 +1,7 @@
-import { type Controller } from "./types";
 import getAddresses from "../../business/useCases/customer/getAddresses";
 import getCards from "../../business/useCases/customer/getCards";
 import getCustomerAddressSettings from "../../business/useCases/customer/getCustomerAddressSettings";
+import { type Controller } from "./types";
 
 import checkoutUseCases from "../../business/useCases/checkout";
 
@@ -67,12 +67,16 @@ export const updateCart: Controller = (req, res) => {
 
 export const getAvailableBokmarkTexts: Controller = (req, res) => {
   const orderId = req.cookies.orderId as string;
-  const bookmarkStyles = ["Estilo A", "Estilo 2", "Estilo C"];
-  checkoutUseCases
-    .getAiBookmarks(orderId)
-    .then((bookmarks) => {
+
+  const promises = [
+    checkoutUseCases.getAiBookmarks(orderId),
+    checkoutUseCases.getBookmakStyle(orderId),
+  ];
+
+  Promise.all(promises)
+    .then(([aiBookmarkTexts, bookmarkStyles]) => {
       res.json({
-        aiBookmarkTexts: bookmarks,
+        aiBookmarkTexts,
         bookmarkStyles,
       });
     })

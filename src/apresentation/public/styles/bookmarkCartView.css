@@ -1,7 +1,3 @@
-.loading-text {
-  line-height: 32px;
-}
-
 .preview-bookmark {
   width: 250px;
   height: 750px;
@@ -9,6 +5,9 @@
   background-size: cover;
   background-repeat: no-repeat;
   margin-top: 20px;
+  -webkit-print-color-adjust: exact !important; /* Chrome, Safari 6 – 15.3, Edge */
+  color-adjust: exact !important; /* Firefox 48 – 96 */
+  print-color-adjust: exact !important;
 }
 .preview-bookmark p {
   color: black;
