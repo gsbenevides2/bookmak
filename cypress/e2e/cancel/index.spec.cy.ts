@@ -6,6 +6,7 @@ import { cardsFixtures } from "../../fixtures/card";
 import { customersFixtures } from "../../fixtures/customer";
 import { ordersFixtures } from "../../fixtures/orders";
 import * as utils from "../../utils";
+
 describe("Fluxo de Cancelamento", function () {
   const [customer, admin] = customersFixtures;
   beforeEach(function () {
@@ -36,7 +37,7 @@ describe("Fluxo de Cancelamento", function () {
     cy.setCookie("accountId", customer.id);
   });
 
-  it("Fazer um pedido de cancelamento, sem ter recebido", function () {
+  it("Fazer um pedido de cancelamento, sem o produto ter sido enviado", function () {
     const order = ordersFixtures[1];
     cy.createOrder(order);
     cy.setCookie("accountId", customer.id);
@@ -55,7 +56,7 @@ describe("Fluxo de Cancelamento", function () {
       utils.formatMoney(order.orders[0].totalPrice / 100),
     );
   });
-  it("Fazer um pedido de cancelamento, em recebimento ou recebido", function () {
+  it("Fazer um pedido de cancelamento, com o produto enviado", function () {
     const order = ordersFixtures[4];
     cy.createOrder(order);
     cy.setCookie("accountId", customer.id);
@@ -70,7 +71,7 @@ describe("Fluxo de Cancelamento", function () {
     cy.get(".status").should("contain.text", "Cancelando");
   });
 
-  it("Aprovar Cancelamento", function () {
+  it("Admin Aprovar Cancelamento", function () {
     const order = ordersFixtures[10];
     cy.createOrder(order);
     cy.setCookie("accountId", admin.id);
@@ -91,7 +92,7 @@ describe("Fluxo de Cancelamento", function () {
     );
   });
 
-  it("Reprovar cancelamento", function () {
+  it("Admin Reprovar cancelamento", function () {
     const order = ordersFixtures[10];
     cy.createOrder(order);
     cy.setCookie("accountId", admin.id);

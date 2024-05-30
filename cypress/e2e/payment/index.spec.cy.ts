@@ -1,12 +1,12 @@
 /// <reference types="cypress" />
 
+import { faker } from "@faker-js/faker";
 import { addressesFixtures } from "../../fixtures/address";
 import { booksFixtures } from "../../fixtures/books";
 import { cardsFixtures } from "../../fixtures/card";
 import { customersFixtures } from "../../fixtures/customer";
 import { ordersFixtures } from "../../fixtures/orders";
 import * as utils from "../../utils";
-import { faker } from "@faker-js/faker";
 
 describe("Pagamento", function () {
   const [customer] = customersFixtures;
@@ -65,7 +65,7 @@ describe("Pagamento", function () {
     cy.get(".status").should("contains.text", "Em processamento");
   });
 
-  it("Passar somente um cartão com valor menor da compra.", function () {
+  it("Tentar passar somente um cartão com valor menor da compra.", function () {
     const order = ordersFixtures[8];
     const [card] = cardsFixtures;
     cy.createOrder(order);
@@ -490,7 +490,7 @@ describe("Pagamento", function () {
     );
   });
 
-  it("Tentar pagar uma compra > 10 reais. Usando um cartão no valor menor que 10 reais", function () {
+  it("Tentar pagar uma compra menor que 10 reais. Usando um cartão no valor menor que 10 reais", function () {
     const order = ordersFixtures[8];
     const [card] = cardsFixtures;
     cy.createOrder(order);
@@ -518,7 +518,7 @@ describe("Pagamento", function () {
     });
   });
 
-  it("Pagamento multiplos cupons e multiplos cartões sendo que o valor da compra após os cupons é menor que 10 reais", function () {
+  it("Pagamento múltiplos cupons e múltiplos cartões sendo que o valor da compra após os cupons é menor que 10 reais", function () {
     // Criar Um Cupon com valor da compra menos 20
     const order = ordersFixtures[8];
     cy.createOrder(order);

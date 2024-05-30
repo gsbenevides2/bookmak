@@ -35,7 +35,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
     cy.setCookie("orderId", order.orders[0].id);
   });
 
-  it("Acesso ao Bookmak", function () {
+  it("Acesso a página com produtos no carrinho", function () {
     cy.visit("http://localhost:3000/checkout/cart");
     // Continua a compra
     cy.get(".continue-btn").click();

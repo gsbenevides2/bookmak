@@ -57,7 +57,7 @@ describe("Fluxo de Troca", function () {
     cy.get(".badge").should("contain.text", "1 Item(s) Em Troca");
   });
 
-  it("Aprovar troca: Todos os Item", function () {
+  it("Aprovar troca: Todos os Items", function () {
     const order = ordersFixtures[5];
     cy.createOrder(order);
     cy.setCookie("accountId", admin.id);
@@ -78,7 +78,7 @@ describe("Fluxo de Troca", function () {
     );
   });
 
-  it("Aprovar troca: Um dos Item", function () {
+  it("Aprovar troca: Um dos Items", function () {
     const order = ordersFixtures[9];
     cy.createOrder(order);
     cy.setCookie("accountId", admin.id);
