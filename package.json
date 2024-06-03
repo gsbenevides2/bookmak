@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node --transpile-only src/index.ts",
     "dev": "nodemon -w src -x ts-node --transpile-only src/index.ts",
+    "makeOrders": "ts-node --transpile-only src/makeOrders.ts",
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {

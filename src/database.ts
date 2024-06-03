@@ -1,5 +1,6 @@
 import knex from "knex";
 import LowDb, { type Book } from "./lowdb";
+import { type OrderToDB } from "./makeOrders";
 
 const db = knex({
   client: "pg",
@@ -83,4 +84,65 @@ export async function syncronizeBooks(): Promise<void> {
     }),
   );
   console.log("Books syncronized in PostgreSQL");
+}
+
+export async function getCustomerId(): Promise<string | null> {
+  const result = await db("customer").select("id").limit(1);
+  return result[0].id;
+}
+
+export async function getCardIdOfCustomer(
+  customerId: string,
+): Promise<string | null> {
+  const result = await db("card")
+    .select("id")
+    .where("customerId", customerId)
+    .limit(1);
+  return result[0].id;
+}
+
+export async function getAddressIdOfCustomer(
+  customerId: string,
+): Promise<string | null> {
+  const result = await db("customer")
+    .select("deliveryAddressId")
+    .where("id", customerId)
+    .limit(1);
+  return result[0].deliveryAddressId;
+}
+
+export async function saveOrderInDatabase(order: OrderToDB): Promise<void> {
+  await db("order").insert({
+    id: order.orderId,
+    subtotal: order.subtotal,
+    totalPrice: order.totalPrice,
+    shippingPrice: order.shippingPrice,
+    bookmarkStyle: order.bookmarkStyle,
+    bookmarkText: order.bookmarkText,
+    customerId: order.customerId,
+    billingAddressId: order.billingAddressId,
+    shippingAddressId: order.shippingAddressId,
+  });
+
+  await db("order_payment_method").insert({
+    orderId: order.orderId,
+    cardId: order.cardId,
+    value: order.totalPrice,
+  });
+
+  await db("order_update").insert({
+    orderId: order.orderId,
+    status: "processing",
+    observations: "Estamos recebendo seu pagamento. Aguarde!",
+    timestamp: order.createdDate,
+  });
+
+  await db("order_item").insert(
+    order.itensData.map((item) => ({
+      orderId: order.orderId,
+      skuId: item.skuId,
+      quantity: item.quantity,
+      unitSellPrice: item.unitSellPrice,
+    })),
+  );
 }

@@ -149,4 +149,16 @@ export default class LowDb {
     });
     this.write();
   }
+
+  getRandomVolume(): Volume {
+    const book =
+      this.data.books[Math.floor(Math.random() * this.data.books.length)];
+    return book.volumes[Math.floor(Math.random() * book.volumes.length)];
+  }
+
+  findBookByVolumeId(volumeId: string): Book | undefined {
+    return this.data.books.find((book) =>
+      book.volumes.some((volume) => volume.id === volumeId),
+    );
+  }
 }
