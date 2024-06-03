@@ -8,7 +8,5 @@ COPY tsconfig.json /app
 COPY src /app/src
 
 RUN yarn install
-RUN yarn runMigrations
 
-
-CMD ["yarn", "start"]
+CMD ["/bin/sh", "-c", "yarn runMigration && yarn start"]

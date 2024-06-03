@@ -29,4 +29,3 @@ services:
       DB_SYNCHRONIZE: true
       DB_LOGGING: true
       OPENAI_API_KEY: ${OPENAI_API_KEY}
-    command: npm run start
