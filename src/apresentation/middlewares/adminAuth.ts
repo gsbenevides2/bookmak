@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from "express";
-import { DatabaseConnection } from "../../persistence/dbConnection";
 import { Customer } from "../../business/models/Customer";
+import { DatabaseConnection } from "../../persistence/dbConnection";
 
 export const adminMiddleware = (
   req: Request,

@@ -11,6 +11,7 @@ import createCoupon from "./createCoupon";
 import finishOrder from "./finishOrder";
 import getAllOrders from "./getAllOrders";
 import getOrder from "./getOrder";
+import getOrdersToAnalysis from "./getOrdersToAnalysis";
 import listCoupons from "./listCoupons";
 import rejectCancel from "./rejectCancel";
 import rejectExchange from "./rejectExchange";
@@ -32,6 +33,7 @@ export default {
   finishOrder,
   getAllOrders,
   getOrder,
+  getOrdersToAnalysis,
   listCoupons,
   rejectCancel,
   rejectExchange,

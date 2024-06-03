@@ -1,195 +1,109 @@
 <html lang="pt-br">
-  <head>
-    <title>bookmak</title>
-    <!--Meta Tags-->
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--Bootstrap CSS-->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/styles/checkout.css" />
-  </head>
-  <style>
-    .book-cover {
-      width: 100px;
-      height: 150px;
-      object-fit: cover;
-    }
-  </style>
 
-  <body>
-    <!--Header-->
-    <header>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-          <a href="/" class="navbar-brand">Bookmak</a>
-        </div>
-      </nav>
-    </header>
-    <!--Conteudo-->
-    <main class="container mb-5">
-      <h1 class="mt-3 text-center">Confirmação e Pagamento</h1>
-      <p>
-        Confirme os produtos a seguir, o endereço de entrega e seus dados, no
-        final coloque o cupom e o endereço de cobrança
-      </p>
-      <%- typeof(error) === "string" ? `
+<head>
+  <title>bookmak</title>
+  <!--Meta Tags-->
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--Bootstrap CSS-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/checkout.css" />
+</head>
+<style>
+  .book-cover {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+  }
+</style>
+
+<body>
+  <!--Header-->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a href="/" class="navbar-brand">Bookmak</a>
+      </div>
+    </nav>
+  </header>
+  <!--Conteudo-->
+  <main class="container mb-5">
+    <h1 class="mt-3 text-center">Confirmação e Pagamento</h1>
+    <p>
+      Confirme os produtos a seguir, o endereço de entrega e seus dados, no
+      final coloque o cupom e o endereço de cobrança
+    </p>
+    <%- typeof(error) === "string" ? `
       <div class="alert alert-danger" role="alert">${error}</div>
       ` : '' %>
-      <!--Lista de Produtos-->
-      <%- include('../components/orderDetailsProductList', { order }) %>
-      <!--Dados do Cliente-->
-      <div class="mt-3 border p-3">
-        <h5>Dados do Cliente:</h5>
-        <div class="row">
-          <div class="col-7 name">Nome: <%= order.customer.name %></div>
-          <div class="col-5 email">Email: <%= order.customer.email %></div>
-          <div class="col-7 cpf">CPF: <%= maskCPF(order.customer.cpf) %></div>
-          <div class="col-5 dateOfBirth">
-            Data de Nascimento: <%= maskDate(order.customer.dateOfBirth) %>
-          </div>
-        </div>
-      </div>
-      <!--Endereço de Envio e Cobrança-->
-      <div class="mt-3 border p-3">
-        <h5 class="deliveryAddressNickname">
-          Endereço de Envio: <%- order.shippingAddress.nickname %>
-        </h5>
-        <p class="deliveryAddress">
-          <%= maskAddresss(order.shippingAddress) %><br />
-          Observações:
-          <%- order.shippingAddress.observations %>
-        </p>
-        <h5 class="billingAddressNickname">
-          Endereço de Cobrança: <%- order.billingAddress.nickname %>
-        </h5>
-        <p class="billingAddress">
-          <%= maskAddresss(order.billingAddress) %><br />
-          Observações:
-          <%- order.billingAddress.observations %>
-        </p>
-        <a href="/checkout/addresses" class="btn btn-secondary">Alterar</a>
-      </div>
-      <!--<Marca Página-->
-      <%- include('../components/bookmakCartView', { 
+    <!--Lista de Produtos-->
+    <%- include('../components/orderDetails/productList', { order }) %>
+    <!--Dados do Cliente-->
+    <%- include('../components/orderDetails/clientData', { customer:order.customer }) %>
+    <!--Endereço de Envio e Cobrança-->
+    <%- include('../components/orderDetails/addressData', { 
+        shippingAddress: order.shippingAddress, 
+        billingAddress: order.billingAddress, 
+        enableEdit: true
+    }) %>
+    <!--<Marca Página-->
+    <%- include('../components/orderDetails/bookmark', { 
         bookmarkText: order.bookmarkText,
         bookmarkStyle: order.bookmarkStyle,
         enableEdit: true,
         enablePrint: false
-      }) %>
-      <!--Cupom-->
-      <div class="mt-3 border p-3">
-        <h5>Cupons:</h5>
-        <form method="POST" action="/checkout/payment/addCoupon">
-          <div class="input-group mb-3">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Cupom"
-              aria-label="Cupom"
-              name="couponCode"
-              aria-describedby="button-addon2"
-            />
-            <button
-              class="btn btn-outline-secondary"
-              type="submit"
-              id="button-addon2"
-            >
-              Aplicar
-            </button>
-          </div>
-        </form>
-        <div class="row">
-          <p class="mb-0">Cupons Aplicados:</p>
-          <% order.usedPaymentMethods.filter((paymentMethod) => paymentMethod.coupon != null).forEach((paymentMethod) => { %>
-          <form class="mb-0 d-flex justify-content-between" method="POST" action="/checkout/payment/removeCoupon/<%- paymentMethod.coupon.code %>">
-            <p class="mb-0"><%- `Cupom de ${formatCouponTypeText(paymentMethod.coupon.type)}: ${paymentMethod.coupon.code} - Valor Abatido: ${formatPrice(paymentMethod.value*-1)}`%></p><br/>
-            <button class="btn link-primary p-0 border-none" type="submit">
-              Remover
-            </button>
-          </form>
-          <% }) %>
+    }) %>
+    <!--Cupom-->
+    <%- include('../components/orderDetails/coupon', { order, enableEdit:true }) %>
+    <!--Resumo-->
+    <%- include('../components/orderDetails/summarizer', { order }) %>
+    <!--Aviso de Geração Automática de Cupom de Troco-->
+    <% if(order.totalPrice < 0) { %>
+    <div class="alert alert-warning mt-3" role="alert">
+      Identificamos uso de cupons que geraram um valor negativo, o valor
+      negativo será convertido em um cupom de troco, após a confirmação do
+      pagamento. Você pode prosseguir com o pagamento sem usar cartões.
+    </div>
+    <% } %>
+    <!--Pagamento-->
+    <div class="mt-3 border p-3">
+      <h5>Pagamento:</h5>
+      <div class="mb-3 row">
+        <div class="col-4">
+          <label for="card" class="form-label">Selecione o Cartão:</label>
+          <select class="form-select cardSelect" id="card" name="cardId">
+            <option selected>Selecione o Cartão</option>
+            <% cards.forEach((card) => { %>
+            <option value="<%= card.id %>">
+              <%= utils.card.formatCardNumber(card.number) %> - <%= utils.card.formatCardFlag(card.flag) %>
+            </option>
+            <% }) %>
+          </select>
         </div>
-      </div>
-      <!--Resumo-->
-      <div class="mt-3 border p-3 sumarizer">
-        <h5>Resumo:</h5>
-        <div class="row">
-          <div class="col-6">Subtotal</div>
-          <div class="col-6 text-end subtotal">
-            <%- formatPrice(order.subtotal) %>
-          </div>
-          <div class="col-6">Frete</div>
-          <div class="col-6 text-end shippingPrice">
-            <%- formatPrice(order.shippingPrice) %>
-          </div>
-          <div class="col-6">Desconto</div>
-          <div class="col-6 text-end discount">
-            <%- formatPrice(order.discounts*-1) %>
-          </div>
-          <div class="col-6">Total</div>
-          <div class="col-6 text-end totalPrice" data-totalPrice="<%-order.totalPrice %>">
-            <%- formatPrice(order.totalPrice) %>
-          </div>
+        <div class="col-4">
+          <label for="card" class="form-label">Digite o valor a ser pago com esse cartão:</label>
+          <input type="number" min="0.00" step="0.01" class="form-control" id="value" name="value" />
         </div>
+        <button type="button" class="btn btn-primary col-4" id="addCard">Usar mais um cartão.</button>
       </div>
-      <!--Aviso de Geração Automática de Cupom de Troco-->
-      <% if(order.totalPrice < 0) { %>
-      <div class="alert alert-warning mt-3" role="alert">
-        Identificamos uso de cupons que geraram um valor negativo, o valor
-        negativo será convertido em um cupom de troco, após a confirmação do
-        pagamento. Você pode prosseguir com o pagamento sem usar cartões.
-      </div>
-      <% } %>
-      <!--Pagamento-->
-      <div class="mt-3 border p-3">
-        <h5>Pagamento:</h5>
-        <div class="mb-3 row">
-          <div class="col-4">
-            <label for="card" class="form-label">Selecione o Cartão:</label>
-            <select class="form-select cardSelect" id="card" name="cardId">
-              <option selected>Selecione o Cartão</option>
-              <% cards.forEach((card) => { %>
-              <option value="<%= card.id %>">
-                <%= formatCardNumber(card.number) %> - <%= formatCardFlag(card.flag) %>
-              </option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="col-4">
-            <label for="card" class="form-label">Digite o valor a ser pago com esse cartão:</label>
-            <input type="number"  min="0.00" step="0.01" class="form-control" id="value" name="value" />
-          </div>
-          <button type="button" class="btn btn-primary col-4" id="addCard">Usar mais um cartão.</button>
+      <p>Cartões usados:</p>
+      <ul class="usedCardsList" id="usedCardsList">
+      </ul>
+      <form method="POST" action="/checkout/payment" id="sendForm">
+        <input type="hidden" name="cards" id="cards" value="[]" />
+        <div class="d-flex gap-3">
+          <button type="button" class="btn btn-outline-primary" onclick="window.location.reload()">
+            Recarregar Cartões
+          </button>
+          <a href="/accounts/me/cards/new" target="_blank" class="btn btn-outline-primary">Adicionar Cartão</a>
+          <button type="submit" class="btn btn-primary pay">Pagar</button>
         </div>
-        <p>Cartões usados:</p>
-        <ul class="usedCardsList" id="usedCardsList">
-        </ul>
-        <form method="POST" action="/checkout/payment" id="sendForm">
-          <input type="hidden" name="cards" id="cards" value="[]" />
-          <div class="d-flex gap-3">
-            <button
-              type="button"
-              class="btn btn-outline-primary"
-              onclick="window.location.reload()"
-            >
-              Recarregar Cartões
-            </button>
-            <a
-              href="/accounts/me/cards/new"
-              target="_blank"
-              class="btn btn-outline-primary"
-              >Adicionar Cartão</a
-            >
-            <button type="submit" class="btn btn-primary pay">Pagar</button>
-          </div>
-        </form>
-      </div>
-    </main>
-    <!--Bootstrap JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/scripts/checkout.js"></script>
-  </body>
+      </form>
+    </div>
+  </main>
+  <!--Bootstrap JS-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/scripts/checkout.js"></script>
+</body>
+
 </html>

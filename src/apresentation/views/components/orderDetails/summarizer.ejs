@@ -1,0 +1,21 @@
+<div class="mt-3 border p-3 sumarizer">
+  <h5>Resumo:</h5>
+  <div class="row">
+    <div class="col-6">Subtotal</div>
+    <div class="col-6 text-end subtotal">
+      <%- utils.price.format(order.subtotal) %>
+    </div>
+    <div class="col-6">Frete</div>
+    <div class="col-6 text-end shippingPrice">
+      <%- utils.price.format(order.shippingPrice) %>
+    </div>
+    <div class="col-6">Desconto</div>
+    <div class="col-6 text-end discount">
+      <%- utils.price.format(order.discounts*-1) %>
+    </div>
+    <div class="col-6">Total</div>
+    <div class="col-6 text-end totalPrice" data-totalPrice="<%-order.totalPrice %>">
+      <%- utils.price.format(order.totalPrice) %>
+    </div>
+  </div>
+</div>

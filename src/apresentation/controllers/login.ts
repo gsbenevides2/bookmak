@@ -1,7 +1,7 @@
-import { DatabaseConnection } from "../../persistence/dbConnection";
 import { Customer } from "../../business/models/Customer";
-import { type Controller } from "./types";
 import registerCustomer from "../../business/useCases/customer/registerCustomer";
+import { DatabaseConnection } from "../../persistence/dbConnection";
+import { type Controller } from "./types";
 
 export const getLogInPage: Controller = (req, res) => {
   const handles = async (): Promise<void> => {

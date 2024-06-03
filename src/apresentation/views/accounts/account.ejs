@@ -1,247 +1,166 @@
 <html>
-  <head>
-    <title>bookmak</title>
-    <!--Meta Tags-->
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--Bootstrap CSS-->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!--Header-->
-    <header>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-          <a href="/" class="navbar-brand">Bookmak</a>
-          <div class="d-flex justify-content-end gap-1">
-            <% if (account.isAdmin) { %>
-            <a href="/admin" class="btn btn-outline-light">Painel Admin</a>
+
+<head>
+  <title>bookmak</title>
+  <!--Meta Tags-->
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--Bootstrap CSS-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <!--Header-->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a href="/" class="navbar-brand">Bookmak</a>
+        <div class="d-flex justify-content-end gap-1">
+          <% if (account.isAdmin) { %>
+          <a href="/admin" class="btn btn-outline-light">Painel Admin</a>
+          <% } %>
+          <a href="/checkout/cart" class="btn btn-outline-light">Carrinho</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <!--Conteudo-->
+  <main class="container">
+    <!--Dados do Usuário e Menu de Navegação-->
+    <div class="row">
+      <h1 class="mt-3 text-center col-12">Minha Conta</h1>
+      <p class="mt-3 text-center col-12">
+        Olá, <%= account.name %>! Caso queira alterar seus dados veja a seguir:
+      </p>
+      <!--Dados do Usuário-->
+      <form class="row col-12" method="post">
+        <div class="mb-3 col-6">
+          <label for="name" class="form-label">Nome</label>
+          <input type="text" class="form-control" id="name" name="name" value="<%= account.name %>" required />
+        </div>
+        <div class="mb-3 col-6">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" name="email" value="<%= account.email %>" required />
+        </div>
+        <div class="mb-3 col-2">
+          <label for="cpf" class="form-label">CPF</label>
+          <input type="text" class="form-control" id="cpf" name="cpf" value="<%= utils.cpf.mask(account.cpf) %>" required />
+        </div>
+        <div class="mb-3 col-2">
+          <label for="date-of-birth" class="form-label">Data de Nascimento</label>
+          <input type="date" class="form-control" id="date-of-birth" name="dateOfBirth" value="<%= account.dateOfBirth.toISOString().split("T")[0] %>" required />
+        </div>
+        <div class="mb-3 col-2">
+          <label for="phoneType" class="form-label">Tipo de Telefone</label>
+          <select class="form-select" id="phoneType" name="phoneType" required>
+            <option value="landline" <% if (account.phoneType === 'landline') { %> selected <% } %>>Residencial</option>
+            <option value="cellphone" <% if (account.phoneType === 'cellphone') { %> selected <% } %>>Celular</option>
+          </select>
+        </div>
+        <div class="mb-3 col-1">
+          <label for="phoneAreaCode" class="form-label">DDD</label>
+          <input type="text" class="form-control" id="phoneAreaCode" name="phoneAreaCode" value="<%= account.phoneAreaCode %>" required />
+        </div>
+        <div class="mb-3 col-3">
+          <label for="phoneNumber" class="form-label">Telefone</label>
+          <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="<%= utils.phone.mask(account.phoneNumber) %>" required />
+        </div>
+        <div class="mb-3 col-2">
+          <label for="gender" class="form-label">Gênero</label>
+          <select class="form-select" id="gender" name="gender" required>
+
+            <option value="male" <% if (account.gender === 'male') { %> selected <% } %>>Masculino</option>
+            <option value="female" <% if (account.gender === 'female') { %> selected <% } %>>Feminino</option>
+            <option value="uniformed" <% if (account.gender === 'uniformed') { %> selected <% } %>>Não informar</option>
+            <option value="other" <% if (account.gender === 'other') { %> selected <% } %>>Outro</option>
+          </select>
+        </div>
+        <div class="mb-3 col-6">
+          <label for="billingAddress" class="form-label">Endereço de Cobrança:</label>
+          <select id="billingAddress" name="billingAddressId" class="form-select">
+            <option disabled>Selecione um Endereço</option>
+            <option selected value="<%= account.billingAddress.id %>"><%= account.billingAddress.nickname %></option>
+            <% for( let index = 0; index < account.addresses.length; index++ ) { %>
+            <% const address = account.addresses[index] %>
+            <% if (address.id !== account.billingAddress.id) { %>
+            <option value="<%= address.id %>"><%= address.nickname %></option>
             <% } %>
-            <a href="/checkout/cart" class="btn btn-outline-light">Carrinho</a>
-          </div>
+            <% } %>
+          </select>
+        </div>
+        <div class="mb-3 col-6">
+          <label class="form-label" for="deliveryAddress">Endereço de Entrega:</label>
+          <select id="deliveryAddress" name="deliveryAddressId" class="form-select">
+            <option disabled>Selecione um Endereço</option>
+            <option selected value="<%= account.deliveryAddress.id %>"><%= account.deliveryAddress.nickname %></option>
+            <% for( let index = 0; index < account.addresses.length; index++ ) { %>
+            <% const address = account.addresses[index] %>
+            <% if (address.id !== account.deliveryAddress.id) { %>
+            <option value="<%= address.id %>"><%= address.nickname %></option>
+            <% } %>
+            <% } %>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-dark">Alterar Cadastro</button>
+      </form>
+      <!--Menu de Navegação-->
+      <nav class="mt-2 col-12 row gap-1 justify-content-center">
+        <a href="/accounts/me/changePassword" class="btn btn-dark col-12 mb-2">Alterar Senha</a>
+        <a href="/accounts/me/addresses" class="btn btn-dark col-2">Meus Endereços</a>
+        <a href="/accounts/me/cards" class="btn btn-dark col-2">Meus Cartões</a>
+        <a href="/accounts/me/orders" class="btn btn-dark col-2">Meus Pedidos</a>
+        <a href="/accounts/me/coupons" class="btn btn-dark col-2">Meus Cupons</a>
+        <div class="col-12 row gap-1 justify-content-center">
+          <button type="button" class="btn btn-danger col-2" data-bs-toggle="modal" data-bs-target="#deactivateAccountModal">
+            Desativar Conta
+          </button>
+          <a href="/login/logout" class="btn btn-danger col-2">Sair da Conta</a>
         </div>
       </nav>
-    </header>
-    <!--Conteudo-->
-    <main class="container">
-      <!--Dados do Usuário e Menu de Navegação-->
-      <div class="row">
-        <h1 class="mt-3 text-center col-12">Minha Conta</h1>
-        <p class="mt-3 text-center col-12">
-          Olá, <%= account.name %>! Caso queira alterar seus dados veja a seguir:
-        </p>
-        <!--Dados do Usuário-->
-        <form class="row col-12" method="post">
-          <div class="mb-3 col-6">
-            <label for="name" class="form-label">Nome</label>
-            <input
-              type="text"
-              class="form-control"
-              id="name"
-              name="name"
-              value="<%= account.name %>"
-              required
-            />
-          </div>
-          <div class="mb-3 col-6">
-            <label for="email" class="form-label">Email</label>
-            <input
-              type="email"
-              class="form-control"
-              id="email"
-              name="email"
-              value="<%= account.email %>"
-              required
-            />
-          </div>
-          <div class="mb-3 col-2">
-            <label for="cpf" class="form-label">CPF</label>
-            <input
-              type="text"
-              class="form-control"
-              id="cpf"
-              name="cpf"
-              value="<%= maskCPF(account.cpf) %>"
-              required
-            />
-          </div>
-          <div class="mb-3 col-2">
-            <label for="date-of-birth" class="form-label"
-              >Data de Nascimento</label
-            >
-            <input
-              type="date"
-              class="form-control"
-              id="date-of-birth"
-              name="dateOfBirth"
-              value="<%= account.dateOfBirth.toISOString().split("T")[0] %>"
-              required
-            />
-          </div>
-          <div class="mb-3 col-2">
-            <label for="phoneType" class="form-label">Tipo de Telefone</label>
-            <select
-              class="form-select"
-              id="phoneType"
-              name="phoneType"
-             
-              required
-            >
-              <option value="landline"
-                <% if (account.phoneType === 'landline') { %> selected <% } %>
-              >Residencial</option>
-              <option value="cellphone"
-                <% if (account.phoneType === 'cellphone') { %> selected <% } %>
-              >Celular</option>
-            </select>
-          </div>
-          <div class="mb-3 col-1">
-            <label for="phoneAreaCode" class="form-label">DDD</label>
-            <input
-              type="text"
-              class="form-control"
-              id="phoneAreaCode"
-              name="phoneAreaCode"
-              value="<%= account.phoneAreaCode %>"
-              required
-            />
-          </div>
-          <div class="mb-3 col-3">
-            <label for="phoneNumber" class="form-label">Telefone</label>
-            <input
-              type="text"
-              class="form-control"
-              id="phoneNumber"
-              name="phoneNumber"
-              value="<%= maskPhone(account.phoneNumber) %>"
-              required
-            />
-          </div>
-          <div class="mb-3 col-2">
-            <label for="gender" class="form-label">Gênero</label>
-            <select class="form-select" id="gender" name="gender" required>
-            
-              <option value="male"
-                <% if (account.gender === 'male') { %> selected <% } %>
-              >Masculino</option>
-              <option value="female"
-              <% if (account.gender === 'female') { %> selected <% } %>
-              >Feminino</option>
-              <option value="uniformed"
-              <% if (account.gender === 'uniformed') { %> selected <% } %>
-              >Não informar</option>
-              <option value="other"
-              <% if (account.gender === 'other') { %> selected <% } %>
-              >Outro</option>
-            </select>
-          </div>
-          <div class="mb-3 col-6">
-            <label for="billingAddress" class="form-label">Endereço de Cobrança:</label>
-            <select id="billingAddress" name="billingAddressId" class="form-select">
-              <option disabled>Selecione um Endereço</option>
-              <option selected value="<%= account.billingAddress.id %>"><%= account.billingAddress.nickname %></option>
-              <% for( let index = 0; index < account.addresses.length; index++ ) { %>
-                <% const address = account.addresses[index] %>
-                <% if (address.id !== account.billingAddress.id) { %>
-                  <option value="<%= address.id %>"><%= address.nickname %></option>
-                <% } %>
-              <% } %>
-            </select>
-          </div>
-          <div class="mb-3 col-6">
-            <label class="form-label" for="deliveryAddress">Endereço de Entrega:</label>
-            <select id="deliveryAddress" name="deliveryAddressId" class="form-select">
-              <option disabled>Selecione um Endereço</option>
-              <option selected value="<%= account.deliveryAddress.id %>"><%= account.deliveryAddress.nickname %></option>
-              <% for( let index = 0; index < account.addresses.length; index++ ) { %>
-                <% const address = account.addresses[index] %>
-                <% if (address.id !== account.deliveryAddress.id) { %>
-                  <option value="<%= address.id %>"><%= address.nickname %></option>
-                <% } %>
-              <% } %>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-dark">Alterar Cadastro</button>
-        </form>
-        <!--Menu de Navegação-->
-        <nav class="mt-2 col-12 row gap-1 justify-content-center">
-          <a href="/accounts/me/changePassword" class="btn btn-dark col-12 mb-2">Alterar Senha</a>
-          <a href="/accounts/me/addresses" class="btn btn-dark col-2">Meus Endereços</a>
-          <a href="/accounts/me/cards" class="btn btn-dark col-2">Meus Cartões</a>
-          <a href="/accounts/me/orders" class="btn btn-dark col-2">Meus Pedidos</a>
-          <a href="/accounts/me/coupons" class="btn btn-dark col-2">Meus Cupons</a>
-          <div class="col-12 row gap-1 justify-content-center">
-            <button
-            type="button"
-            class="btn btn-danger col-2"
-            data-bs-toggle="modal"
-            data-bs-target="#deactivateAccountModal">
+    </div>
+    <!--Modal de Desativação-->
+    <div class="modal fade" id="deactivateAccountModal" tabindex="-1" aria-labelledby="deactivateAccountModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deactivateAccountModalLabel">
               Desativar Conta
-            </button>
-            <a href="/login/logout" class="btn btn-danger col-2">Sair da Conta</a>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-        </nav>
-      </div>
-      <!--Modal de Desativação-->
-      <div
-        class="modal fade"
-        id="deactivateAccountModal"
-        tabindex="-1"
-        aria-labelledby="deactivateAccountModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="deactivateAccountModalLabel">
-                Desativar Conta
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              Tem certeza que deseja desativar sua conta?
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancelar
-              </button>
-              <a href="/accounts/me/deactivate" class="btn btn-danger">Desativar</a>
-            </div>
+          <div class="modal-body">
+            Tem certeza que deseja desativar sua conta?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancelar
+            </button>
+            <a href="/accounts/me/deactivate" class="btn btn-danger">Desativar</a>
           </div>
         </div>
-        <!--Alertas-->
-      
       </div>
       <!--Alertas-->
-      <% if(success) { %>
-      <div class="alert alert-success mt-3 row" role="alert">
-        <%= success %>
-      </div>
-      <% } %>
-      <% if(error) { %>
-      <div class="alert alert-danger mt-3 row" role="alert">
-        <%= error %>
-      </div>
-      <% } %>
-    </main>
-    <!--Bootstrap JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/scripts/maskPhone.js"></script>
-    <script src="/scripts/maskCPF.js"></script>
-    <script>
-      loadCPFMasker("cpf");
-    </script>
-  </body>
+
+    </div>
+    <!--Alertas-->
+    <% if(success) { %>
+    <div class="alert alert-success mt-3 row" role="alert">
+      <%= success %>
+    </div>
+    <% } %>
+    <% if(error) { %>
+    <div class="alert alert-danger mt-3 row" role="alert">
+      <%= error %>
+    </div>
+    <% } %>
+  </main>
+  <!--Bootstrap JS-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/scripts/maskPhone.js"></script>
+  <script src="/scripts/maskCPF.js"></script>
+  <script>
+    loadCPFMasker("cpf");
+  </script>
+</body>
+
 </html>

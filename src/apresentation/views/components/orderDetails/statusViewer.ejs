@@ -1,0 +1,21 @@
+<div class="mt-3 border p-3">
+  <h5>
+    ID:
+    <%= order.id %>
+  </h5>
+  <h5>Status:</h5>
+  <% const ordenatedStatus = utils.orderUpdate.sort(order.updates) %>
+  <p class="mt-0 status"><%= utils.orderUpdate.formatStatus(ordenatedStatus[0].status) %></p>
+  <h5>Histórico</h5>
+  <p class="mt-0 statusObs">
+    <% ordenatedStatus.forEach((status) => { %>
+    <%- utils.time.format(status.timestamp) %> -
+    <%- utils.orderUpdate.formatStatus(status.status) %> -
+    <%- status.observations %><br />
+    <% }) %>
+  </p>
+  <% const buttons = userType === 'customer' ? utils.orderUpdate.getCustomerButtons(order) : utils.orderUpdate.getAdminButtons(order) %>
+  <% buttons.forEach(button => { %>
+  <a href="<%= button.url %>" class="btn btn-outline-secondary mt-2 change"><%= button.text %></a>
+  <% }) %>
+</div>

@@ -1,4 +1,4 @@
-<% const streetTypes = getAvailableStreetTypes(); %>
+<% const streetTypes = utils.address.getAvailableStreetTypes(); %>
 <% const hasStreetTypeSelected = typeof(streetType) === 'string'; %>
 
 <div class="<%- className %>">
@@ -6,12 +6,10 @@
   <select class="form-select" id="streetType" name="streetType" required>
     <option <%- !hasStreetTypeSelected && 'selected' %> value="" disabled>Escolha...</option>
     <% streetTypes.forEach((streetTypeListItem) => { %>
-        <% const isSelected = hasStreetTypeSelected && streetType === streetTypeListItem.value; %>
-        <option 
-            value="<%= streetTypeListItem.value %>" 
-            <%- isSelected && "selected" %> > 
-            <%= streetTypeListItem.text %>
-        </option>
+    <% const isSelected = hasStreetTypeSelected && streetType === streetTypeListItem.value; %>
+    <option value="<%= streetTypeListItem.value %>" <%- isSelected && "selected" %>>
+      <%= streetTypeListItem.text %>
+    </option>
     <% }); %>
   </select>
 </div>

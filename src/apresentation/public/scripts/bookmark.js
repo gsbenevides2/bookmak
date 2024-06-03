@@ -12,7 +12,6 @@ const elements = {
 
 async function fetchData() {
   const response = await fetch("/checkout/bookmark/getInfo");
-
   if (response.redirected) {
     window.location.href =
       "/login?error=Faça login para continuar&redirectTo=/checkout/bookmark";

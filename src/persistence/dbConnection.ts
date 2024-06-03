@@ -1,5 +1,5 @@
-import { DataSource } from "typeorm";
 import path from "path";
+import { DataSource } from "typeorm";
 function getEnviromentVariable(variable: string): string {
   const value = process.env[variable];
   if (value == null) {
@@ -26,7 +26,10 @@ export class DatabaseConnection {
         database: getEnviromentVariable("DB_DATABASE"),
         synchronize: process.env.DB_SYNCHRONIZE === "true",
         logging: process.env.DB_LOGGING === "true",
-        entities: [path.join(__dirname, "..", "business", "models", "*")],
+        entities: [
+          path.join(__dirname, "..", "business", "models", "*"),
+          path.join(__dirname, "..", "persistence", "views", "*"),
+        ],
       });
 
       await this.dataSource.initialize();

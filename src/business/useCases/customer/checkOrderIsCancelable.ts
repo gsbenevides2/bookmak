@@ -1,19 +1,18 @@
-import { OrderStatusEnum } from "../../../apresentation/views/locals";
 import { DatabaseConnection } from "../../../persistence/dbConnection";
-import { OrderUpdate } from "../../models/OrderUpdate";
+import { OrderStatus, OrderUpdate } from "../../models/OrderUpdate";
 
 export default async function checkOrderIsCancelable(
   orderId: string,
   customerId: string,
 ): Promise<boolean> {
   const notCancelableStatus = [
-    OrderStatusEnum.CANCELED,
-    OrderStatusEnum.CANCELING,
-    OrderStatusEnum.CANCEL_REJECTED,
-    OrderStatusEnum.EXCHANGING,
-    OrderStatusEnum.EXCHANGED,
-    OrderStatusEnum.EXCHANGE_REJECTED,
-    OrderStatusEnum.PAYMENT_REJECTED,
+    OrderStatus.CANCELED,
+    OrderStatus.CANCELING,
+    OrderStatus.CANCEL_REJECTED,
+    OrderStatus.EXCHANGING,
+    OrderStatus.EXCHANGED,
+    OrderStatus.EXCHANGE_REJECTED,
+    OrderStatus.PAYMENT_REJECTED,
   ];
   const orderUpdates = await (await DatabaseConnection.getDataSource())
 

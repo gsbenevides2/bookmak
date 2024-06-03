@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { adminMiddleware } from "../middlewares/adminAuth";
 import * as adminController from "../controllers/admin";
+import { adminMiddleware } from "../middlewares/adminAuth";
 const adminRouter = Router();
 
 adminRouter.use(adminMiddleware);
 
-adminRouter.get("/", adminController.getOrders);
+adminRouter.get("/orders", adminController.getOrders);
 adminRouter.get("/order/:orderId", adminController.getDataFromOrder);
 adminRouter.get(
   "/order/:orderId/aprovePayment",

@@ -1,0 +1,21 @@
+<div class="mt-3 border p-3">
+  <h5 class="deliveryAddressNickname">
+    Endereço de Envio: <%- shippingAddress.nickname %>
+  </h5>
+  <p class="deliveryAddress">
+    <%= utils.address.mask(shippingAddress) %><br />
+    Observações:
+    <%- order.shippingAddress.observations %>
+  </p>
+  <h5 class="billingAddressNickname">
+    Endereço de Cobrança: <%- billingAddress.nickname %>
+  </h5>
+  <p class="billingAddress">
+    <%= utils.address.mask(billingAddress) %><br />
+    Observações:
+    <%- billingAddress.observations %>
+  </p>
+  <% if(enableEdit) { %>
+  <a href="/checkout/addresses" class="btn btn-secondary">Alterar</a>
+  <% } %>
+</div>

@@ -1,0 +1,24 @@
+<ul class="list-group mt-3 border p-3">
+  <h5>Lista de Produtos:</h5>
+  <% order.items.forEach((item) => { %>
+  <li class="list-group-item d-flex align-items-center border-0">
+    <img src="<%= utils.bookCoverImage.getMinifiedImageUrl(item.sku.cover) %>" alt="<%= item.sku.title %>" class="me-3 book-cover cursor-pointer" role="button" />
+    <div class="d-flex flex-column">
+      <h6 class="fw-bold"><%- item.sku.title %></h6>
+      <p>Autor: <%- utils.authors.format(item.sku.book.authors) %></p>
+      <p>
+        Preço Unitário: <%= utils.price.format(item.unitSellPrice) %>
+        <br />Quantidade:
+        <%- item.quantity %>
+        <br />Subtotal:
+        <%= utils.price.format(item.unitSellPrice * item.quantity) %>
+      </p>
+    </div>
+    <% if(item.changeQuantity > 0) { %>
+    <div class="ms-auto">
+      <span class="badge bg-warning"><%= item.changeQuantity %> Item(s) Em Troca</span>
+    </div>
+    <% } %>
+  </li>
+  <% }) %>
+</ul>

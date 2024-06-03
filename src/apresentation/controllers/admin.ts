@@ -2,12 +2,19 @@ import { type Controller } from "./types";
 
 import adminUseCases from "../../business/useCases/admin";
 
-export const getOrders: Controller = (_req, res) => {
+export const getOrders: Controller = (req, res) => {
+  const filters = req.query as {
+    orderId: string;
+    customerCPF: string;
+    status: string;
+  };
+
   adminUseCases
-    .getAllOrders()
+    .getAllOrders(filters)
     .then((orders) => {
       res.render("admin/orders", {
         orders,
+        filters,
       });
     })
     .catch((err) => {

@@ -1,6 +1,5 @@
-import { OrderStatusEnum } from "../../../apresentation/views/locals";
 import { DatabaseConnection } from "../../../persistence/dbConnection";
-import { OrderUpdate } from "../../models/OrderUpdate";
+import { OrderStatus, OrderUpdate } from "../../models/OrderUpdate";
 
 export default async function checkOrderIsCancelable(
   orderId: string,
@@ -22,5 +21,5 @@ export default async function checkOrderIsCancelable(
         },
       },
     });
-  return lastOrderStatus?.status === OrderStatusEnum.CANCELING;
+  return lastOrderStatus?.status === OrderStatus.CANCELING;
 }
