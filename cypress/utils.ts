@@ -124,3 +124,11 @@ export function formatMoney(value: number): string {
 export function getFirstWords(text: string, n: number): string {
   return text.split(" ").slice(0, n).join(" ");
 }
+
+export function formatCardFlag(cardFlag: string): string {
+  const cardFlagMap: Record<string, string> = {
+    visa: "Visa",
+    mastercard: "MasterCard",
+  };
+  return cardFlagMap[cardFlag];
+}

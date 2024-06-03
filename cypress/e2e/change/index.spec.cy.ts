@@ -64,8 +64,9 @@ describe("Fluxo de Troca", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".aproveExchange").click();
+    cy.get('.btn:contains("Pedidos")').click();
+    cy.get(".btn > .fa-eye").click();
+    cy.get(".btn:contains('Trocar Pedido')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("contain.text", "Trocado");
     cy.setCookie("accountId", customer.id);
@@ -85,8 +86,9 @@ describe("Fluxo de Troca", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".aproveExchange").click();
+    cy.get('.btn:contains("Pedidos")').click();
+    cy.get(".btn > .fa-eye").click();
+    cy.get(".btn:contains('Trocar Pedido')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("contain.text", "Trocado");
     cy.setCookie("accountId", customer.id);
@@ -110,8 +112,9 @@ describe("Fluxo de Troca", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".rejectExchange").click();
+    cy.get('.btn:contains("Pedidos")').click();
+    cy.get(".btn > .fa-eye").click();
+    cy.get(".btn:contains('Cancelar Troca')").click();
     cy.get(".form-control").type("O livro não está em condições de troca");
     cy.get("form > .btn").click();
     cy.get(".status").should("contain.text", "Troca recusada");

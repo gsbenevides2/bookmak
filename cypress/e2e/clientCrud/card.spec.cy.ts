@@ -1,7 +1,7 @@
 import { addressesFixtures } from "../../fixtures/address";
 import { cardsFixtures } from "../../fixtures/card";
 import { customersFixtures } from "../../fixtures/customer";
-
+import * as utils from "../../utils";
 describe("CRUD de Cliente - Cartão", function () {
   const customer = customersFixtures[0];
 
@@ -42,7 +42,7 @@ describe("CRUD de Cliente - Cartão", function () {
       );
     cy.get("@element")
       .find(":nth-child(2)")
-      .should("contain.text", "Bandeira: " + card.flag);
+      .should("contain.text", "Bandeira: " + utils.formatCardFlag(card.flag));
     cy.get("@element")
       .find(":nth-child(3)")
       .should("contain.text", "Nome: " + card.holderName);
@@ -77,7 +77,7 @@ describe("CRUD de Cliente - Cartão", function () {
       );
     cy.get("@element")
       .find(":nth-child(2)")
-      .should("contain.text", "Bandeira: " + card.flag);
+      .should("contain.text", "Bandeira: " + utils.formatCardFlag(card.flag));
     cy.get("@element")
       .find(":nth-child(3)")
       .should("contain.text", "Nome: " + card.holderName);

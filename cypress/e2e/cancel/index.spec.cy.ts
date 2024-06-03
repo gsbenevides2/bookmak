@@ -78,8 +78,9 @@ describe("Fluxo de Cancelamento", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".aproveCancel").click();
+    cy.get('[href="/admin/orders"]').click();
+    cy.get(":nth-child(7) > .btn").click();
+    cy.get('.btn:contains("Aprovar Cancelamento")').click();
     cy.get("form > .btn").click();
     cy.get(".status").should("contain.text", "Cancelado");
     cy.setCookie("accountId", customer.id);
@@ -99,8 +100,9 @@ describe("Fluxo de Cancelamento", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".rejectCancel").click();
+    cy.get('[href="/admin/orders"]').click();
+    cy.get(":nth-child(7) > .btn").click();
+    cy.get('.btn:contains("Rejeitar Cancelamento")').click();
     cy.get(".form-control").type(
       "O livro não está em condições de cancelamento",
     );

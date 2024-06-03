@@ -44,8 +44,9 @@ describe("Alteração de Status", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".aprovePayment").click();
+    cy.get('.btn:contains("Pedidos")').click();
+    cy.get(".btn > .fa-eye").click();
+    cy.get(".btn:contains('Aprovar Pagamento')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("have.text", "Pagamento aprovado");
     cy.visit("http://localhost:3000");
@@ -64,8 +65,10 @@ describe("Alteração de Status", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".rejectPayment").click();
+    cy.get('.btn:contains("Pedidos")').click();
+    cy.get(".btn > .fa-eye").click();
+    cy.get(".btn:contains('Rejeitar Pagamento')").click();
+    cy.get("form > .btn").click();
     cy.get(".form-control").type(
       "A operadora de cartão não aprovou o pagamento",
     );
@@ -95,8 +98,9 @@ describe("Alteração de Status", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".startPreparing").click();
+    cy.get('.btn:contains("Pedidos")').click();
+    cy.get(".btn > .fa-eye").click();
+    cy.get(".btn:contains('Iniciar Preparação')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("have.text", "Em preparação");
     cy.visit("http://localhost:3000");
@@ -116,8 +120,9 @@ describe("Alteração de Status", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".sendOrder").click();
+    cy.get('.btn:contains("Pedidos")').click();
+    cy.get(".btn > .fa-eye").click();
+    cy.get(".btn:contains('Enviar Pedido')").click();
     cy.get('[name="transporter"]').type("Correios");
     cy.get('[name="trackingCode"]').type("BR123456789BR");
     cy.get("form > .btn").click();
@@ -144,8 +149,9 @@ describe("Alteração de Status", function () {
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
-    cy.get(".mt-3 > .btn").click();
-    cy.get(".sendedOrder").click();
+    cy.get('.btn:contains("Pedidos")').click();
+    cy.get(".btn > .fa-eye").click();
+    cy.get(".btn:contains('Confirmar Entrega')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("have.text", "Entregue");
     cy.visit("http://localhost:3000");
