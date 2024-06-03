@@ -10,7 +10,9 @@
     "start": "ts-node --transpileOnly src/index.ts",
     "build": "tsc",
     "dev": "nodemon --watch src --ext \"*\" --exec \"npm run start\"",
-    "lint": "eslint --ext .ts src"
+    "lint": "eslint --ext .ts src",
+    "createMigration": "typeorm-ts-node-commonjs migration:generate src/persistence/migrations/migration -d src/persistence/dataSourceConfig.ts",
+    "runMigration": "typeorm-ts-node-commonjs migration:run -d src/persistence/dataSourceConfig.ts"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
@@ -41,5 +43,9 @@
     "reflect-metadata": "^0.2.1",
     "short-uuid": "^4.2.2",
     "typeorm": "^0.3.20"
+  },
+  "resolutions": {
+    "wrap-ansi": "7.0.0",
+    "string-width": "4.1.0"
   }
 }

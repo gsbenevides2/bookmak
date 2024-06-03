@@ -291,6 +291,7 @@ export const cancelOrder: Controller = (req, res) => {
       res.redirect(`/admin?error=${err.message}`);
     });
 };
+
 export const rejectCanceling: Controller = (req, res) => {
   const orderId = req.params.orderId;
   const { reason } = req.body as { reason: string };
@@ -298,6 +299,39 @@ export const rejectCanceling: Controller = (req, res) => {
     .rejectCancel(orderId, reason)
     .then(() => {
       res.redirect(`/admin/order/${orderId}`);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const getProductsToAnalyse: Controller = (req, res) => {
+  const filters = req.query as {
+    category: string | undefined;
+    end: string | undefined;
+    start: string | undefined;
+  };
+  let startDate, endDate;
+  const categories: string[] = [];
+  if (filters.start != null && filters.start.length > 0) {
+    startDate = new Date(filters.start);
+  }
+  if (filters.end != null && filters.end.length > 0) {
+    endDate = new Date(filters.end);
+  }
+  if (filters.category != null && filters.category.length > 0) {
+    categories.push(filters.category);
+  }
+
+  adminUseCases
+    .getOrdersToAnalysis({
+      authors: [],
+      categories,
+      endDate,
+      startDate,
+    })
+    .then((data) => {
+      res.json(data);
     })
     .catch((err) => {
       res.redirect(`/admin?error=${err.message}`);

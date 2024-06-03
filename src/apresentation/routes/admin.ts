@@ -76,4 +76,6 @@ adminRouter.post(
   adminController.rejectCanceling,
 );
 
+adminRouter.get("/analysis", adminController.getProductsToAnalyse);
+
 export default adminRouter;

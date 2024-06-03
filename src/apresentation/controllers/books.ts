@@ -1,5 +1,5 @@
-import { type Controller } from "./types";
 import booksUseCases from "../../business/useCases/books";
+import { type Controller } from "./types";
 
 export const getBooks: Controller = (req, res) => {
   const filters = req.query;
@@ -57,6 +57,18 @@ export const getBookById: Controller = (req, res) => {
     })
     .catch((err) => {
       console.error("Error getting book by id", err);
+      res.status(500).send("Internal server error");
+    });
+};
+
+export const getCategories: Controller = (req, res) => {
+  booksUseCases
+    .getCategories()
+    .then((categories) => {
+      res.json(categories);
+    })
+    .catch((err) => {
+      console.error("Error getting categories", err);
       res.status(500).send("Internal server error");
     });
 };

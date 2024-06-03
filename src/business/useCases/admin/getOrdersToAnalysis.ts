@@ -23,6 +23,9 @@ export default async function getOrdersToAnalysis(
       authors: authors.length > 0 ? ArrayOverlap(authors) : undefined,
       categories: categories.length > 0 ? ArrayOverlap(categories) : undefined,
     },
+    order: {
+      selledTimestamp: "ASC",
+    },
   });
 
   return orders;

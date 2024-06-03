@@ -1,0 +1,63 @@
+<html lang="pt-br">
+
+<head>
+  <title>bookmak</title>
+  <!--Meta Tags-->
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--Bootstrap CSS-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <!--Header-->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a href="/" class="navbar-brand">Bookmak</a>
+      </div>
+    </nav>
+  </header>
+  <!--Conteudo-->
+  <main class="container">
+    <div class="chart-container d-none" style="position: relative; height:60vh;" id="chartContainer">
+      <canvas id="myChart"></canvas>
+    </div>
+    <div class="d-flex justify-content-center align-items-center flex-column" style="height:60vh;" id="loading">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p>Carregando...</p>
+    </div>
+    <form id="form" class="d-none">
+      <div class="row align-items-end">
+        <div class="col-3">
+          <label for="dateStart" class="form-label">Data Inicial</label>
+          <input type="date" class="form-control" id="dateStart" />
+        </div>
+        <div class="col-3">
+          <label for="dateEnd" class="form-label">Data Final</label>
+          <input type="date" class="form-control" id="dateEnd" />
+        </div>
+        <div class="col-3">
+          <label for="category" class="form-label">Categoria</label>
+          <select class="form-select" aria-label="Default select example" id="category">
+            <option selected value="">Escolha uma Categoria</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <button type="submit" class="btn btn-primary">Gerar Relatório</button>
+        </div>
+      </div>
+    </form>
+  </main>
+  <!--Bootstrap JS-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/pt-br.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"></script>
+  <script src="/scripts/adminRelatory/index.js"></script>
+</body>
+
+</html>

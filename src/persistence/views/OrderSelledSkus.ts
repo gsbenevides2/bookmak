@@ -20,6 +20,8 @@ import { OrderExecuted } from "./OrderExecuted";
       .addSelect("orderExecuted.timestamp", "selledTimestamp")
       .addSelect("bookSku.title", "title")
       .addSelect("bookSku.cover", "cover")
+      .addSelect("bookSku.bookId", "bookId")
+      .addSelect("book.title", "bookTitle")
       .addSelect("array_agg(distinct bookAuthors.authorId)", "authors")
       .addSelect("array_agg(distinct bookCategories.categoryId)", "categories")
       .innerJoin(
@@ -38,10 +40,17 @@ import { OrderExecuted } from "./OrderExecuted";
         "bookCategories",
         "bookCategories.bookId = bookSku.bookId",
       )
+      .innerJoin("book", "book", "book.id = bookSku.bookId")
       .where(`orderItem.orderId IN (${sqlOfOrders})`)
-      .groupBy(
-        "orderItem.orderId, orderItem.skuId, orderItem.quantity, orderItem.unitSellPrice, orderExecuted.timestamp, bookSku.title, bookSku.cover",
-      );
+      .groupBy("orderItem.orderId")
+      .addGroupBy("orderItem.skuId")
+      .addGroupBy("orderItem.quantity")
+      .addGroupBy("orderItem.unitSellPrice")
+      .addGroupBy("orderExecuted.timestamp")
+      .addGroupBy("bookSku.title")
+      .addGroupBy("bookSku.cover")
+      .addGroupBy("bookSku.bookId")
+      .addGroupBy("book.title");
   },
 })
 export class OrderSelledSkus {
@@ -71,4 +80,10 @@ export class OrderSelledSkus {
 
   @ViewColumn()
   categories!: string[];
+
+  @ViewColumn()
+  bookId!: string;
+
+  @ViewColumn()
+  bookTitle!: string;
 }
