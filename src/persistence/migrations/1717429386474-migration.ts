@@ -1,17 +1,36 @@
 import { type MigrationInterface, type QueryRunner } from "typeorm";
 
-export class Migration1717386510104 implements MigrationInterface {
-  name = "Migration1717386510104";
+export class Migration1717429386474 implements MigrationInterface {
+  name = "Migration1717429386474";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+    await queryRunner.query(
+      `CREATE TYPE "public"."card_flag_enum" AS ENUM('mastercard', 'visa')`,
+    );
     await queryRunner.query(
       `CREATE TABLE "card" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "number" character varying NOT NULL, "holderName" character varying NOT NULL, "flag" "public"."card_flag_enum" NOT NULL, "cvv" character varying NOT NULL, "monthOfValidity" character varying NOT NULL, "yearOfValidity" character varying NOT NULL, "active" boolean NOT NULL DEFAULT true, "customerId" uuid, CONSTRAINT "PK_9451069b6f1199730791a7f4ae4" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."coupon_type_enum" AS ENUM('discount', 'exchange')`,
     );
     await queryRunner.query(
       `CREATE TABLE "coupon" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying NOT NULL, "value" integer NOT NULL, "description" character varying NOT NULL, "type" "public"."coupon_type_enum" NOT NULL, "used" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "attachedCustomerId" uuid, CONSTRAINT "PK_fcbe9d72b60eed35f46dc35a682" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
+      `CREATE TYPE "public"."customer_gender_enum" AS ENUM('male', 'female', 'uniformed', 'others')`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."customer_phonetype_enum" AS ENUM('cellphone', 'landline')`,
+    );
+    await queryRunner.query(
       `CREATE TABLE "customer" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "name" character varying NOT NULL, "cpf" character varying NOT NULL, "dateOfBirth" TIMESTAMP NOT NULL, "gender" "public"."customer_gender_enum" NOT NULL, "phoneType" "public"."customer_phonetype_enum" NOT NULL, "phoneAreaCode" character varying NOT NULL, "phoneNumber" character varying NOT NULL, "isActive" boolean NOT NULL, "password" character varying NOT NULL, "isAdmin" boolean NOT NULL DEFAULT false, "deliveryAddressId" uuid NOT NULL, "billingAddressId" uuid NOT NULL, CONSTRAINT "unique_email" UNIQUE ("email"), CONSTRAINT "unique_cpf" UNIQUE ("cpf"), CONSTRAINT "REL_c3cbbd1a0dd18665056c09b04b" UNIQUE ("deliveryAddressId"), CONSTRAINT "REL_c25bd44357205bdffc041b7bd0" UNIQUE ("billingAddressId"), CONSTRAINT "PK_a7a13f4cacb744524e44dfdad32" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."address_housetype_enum" AS ENUM('house', 'apartment', 'farm')`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."address_streettype_enum" AS ENUM('street', 'avenue', 'road', 'alley')`,
     );
     await queryRunner.query(
       `CREATE TABLE "address" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "houseType" "public"."address_housetype_enum" NOT NULL, "streetType" "public"."address_streettype_enum" NOT NULL, "nickname" character varying NOT NULL, "street" character varying NOT NULL, "number" character varying NOT NULL, "district" character varying NOT NULL, "zipCode" character varying NOT NULL, "city" character varying NOT NULL, "state" character varying NOT NULL, "country" character varying NOT NULL, "observations" character varying, "active" boolean NOT NULL DEFAULT true, "customerId" uuid, CONSTRAINT "PK_d92de1f82754668b5f5f5dd4fd5" PRIMARY KEY ("id"))`,
@@ -36,6 +55,9 @@ export class Migration1717386510104 implements MigrationInterface {
     );
     await queryRunner.query(
       `CREATE TABLE "order" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "subtotal" integer NOT NULL DEFAULT '0', "totalPrice" integer NOT NULL DEFAULT '0', "discounts" integer NOT NULL DEFAULT '0', "shippingPrice" integer NOT NULL DEFAULT '0', "bookmarkStyle" character varying, "bookmarkText" character varying, "generatedBookmarks" text array NOT NULL DEFAULT ARRAY[]::text[], "customerId" uuid, "billingAddressId" uuid, "shippingAddressId" uuid, CONSTRAINT "PK_1031171c13130102495201e3e20" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "public"."order_update_status_enum" AS ENUM('processing', 'payment_approved', 'payment_rejected', 'preparing', 'sending', 'sended', 'exchanging', 'exchanged', 'exchange_rejected', 'canceled', 'canceling', 'cancel_rejected')`,
     );
     await queryRunner.query(
       `CREATE TABLE "order_update" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "status" "public"."order_update_status_enum" NOT NULL, "observations" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "orderId" uuid, CONSTRAINT "PK_207a75b31eaa2f1fbbaac99ab30" PRIMARY KEY ("id"))`,
@@ -241,6 +263,7 @@ export class Migration1717386510104 implements MigrationInterface {
     );
     await queryRunner.query(`DROP TABLE "book_authors"`);
     await queryRunner.query(`DROP TABLE "order_update"`);
+    await queryRunner.query(`DROP TYPE "public"."order_update_status_enum"`);
     await queryRunner.query(`DROP TABLE "order"`);
     await queryRunner.query(`DROP TABLE "order_payment_method"`);
     await queryRunner.query(`DROP TABLE "order_item"`);
@@ -249,8 +272,14 @@ export class Migration1717386510104 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "category"`);
     await queryRunner.query(`DROP TABLE "author"`);
     await queryRunner.query(`DROP TABLE "address"`);
+    await queryRunner.query(`DROP TYPE "public"."address_streettype_enum"`);
+    await queryRunner.query(`DROP TYPE "public"."address_housetype_enum"`);
     await queryRunner.query(`DROP TABLE "customer"`);
+    await queryRunner.query(`DROP TYPE "public"."customer_phonetype_enum"`);
+    await queryRunner.query(`DROP TYPE "public"."customer_gender_enum"`);
     await queryRunner.query(`DROP TABLE "coupon"`);
+    await queryRunner.query(`DROP TYPE "public"."coupon_type_enum"`);
     await queryRunner.query(`DROP TABLE "card"`);
+    await queryRunner.query(`DROP TYPE "public"."card_flag_enum"`);
   }
 }
