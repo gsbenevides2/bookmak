@@ -8,7 +8,7 @@ export async function createCoupon(
   const knex = getConnection();
   await knex<CouponTable>("coupon").insert({
     ...data.coupon,
-    attachedCustomerId: data.attachedCustomerId,
+    attached_customer_id: data.attached_customer_id,
     used: data.used,
   });
   await knex.destroy();

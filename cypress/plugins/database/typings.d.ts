@@ -2,48 +2,48 @@
 
 declare interface CustomerTable {
   id: string;
-  isAdmin: boolean;
+  is_admin: boolean;
   name: string;
   email: string;
   cpf: string;
   password: string;
-  phoneType: string;
-  phoneNumber: string;
-  phoneAreaCode: string;
+  phone_type: string;
+  phone_number: string;
+  phone_area_code: string;
   gender: string;
-  dateOfBirth: Date;
-  deliveryAddressId: string;
-  billingAddressId: string;
-  isActive: boolean;
+  date_of_birth: Date;
+  delivery_address_id: string;
+  billing_address_id: string;
+  is_active: boolean;
 }
 
 declare interface AddressTable {
   id: string;
   nickname: string;
   street: string;
-  houseType: string;
-  streetType: string;
+  house_type: string;
+  street_type: string;
   number: string;
   district: string;
-  zipCode: string;
+  zip_code: string;
   city: string;
   state: string;
   country: string;
   observations: string;
   active: boolean;
-  customerId?: string;
+  customer_id?: string;
 }
 
 declare interface CardTable {
   id: string;
   number: string;
-  holderName: string;
+  holder_name: string;
   flag: string;
   cvv: string;
-  monthOfValidity: string;
-  yearOfValidity: string;
+  month_of_validity: string;
+  year_of_validity: string;
   active: boolean;
-  customerId: string;
+  customer_id: string;
 }
 
 declare interface AuthorTable {
@@ -57,12 +57,12 @@ declare interface BookTable {
   description: string;
 }
 declare interface BookAuthorTable {
-  authorId: string;
-  bookId: string;
+  author_id: string;
+  book_id: string;
 }
 declare interface BookCategoryTable {
-  categoryId: string;
-  bookId: string;
+  category_id: string;
+  book_id: string;
 }
 declare interface BookSkuTable {
   id: string;
@@ -70,46 +70,46 @@ declare interface BookSkuTable {
   cover: string;
   description: string;
   price: number;
-  stockQuantity: number;
-  bookId: string;
+  stock_quantity: number;
+  book_id: string;
 }
 
 declare interface OrderTable {
   id: string;
   subtotal: number;
-  totalPrice: number;
+  total_price: number;
   discounts: number;
-  shippingPrice: number | null;
-  bookmarkStyle: string | null;
-  bookmarkText: string | null;
-  generatedBookmarks: string;
-  customerId: string | null;
-  billingAddressId: string | null;
-  shippingAddressId: string | null;
+  shipping_price: number | null;
+  bookmark_style: string | null;
+  bookmark_text: string | null;
+  generated_bookmarks: string;
+  customer_id: string | null;
+  billing_address_id: string | null;
+  shipping_address_id: string | null;
 }
 
 declare interface OrderItemTable {
   id: string;
   quantity: number;
-  unitSellPrice: number;
-  skuId: string;
-  orderId: string;
+  unit_sell_price: number;
+  sku_id: string;
+  order_id: string;
 }
 
 declare interface OrderPaymentMethodTable {
   id: string;
   value: number;
-  cardId: string;
-  couponId: string | null;
-  orderId: string;
+  card_id: string;
+  coupon_id: string | null;
+  order_id: string;
 }
 
 declare interface OrderUpdateTable {
   id: string;
-  status: string;
+  order_status: string;
   observations: string;
   timestamp: string;
-  orderId: string;
+  order_id: string;
 }
 
 declare interface CategoryTable {
@@ -124,37 +124,37 @@ declare interface CouponTable {
   description: string;
   type: "discount" | "exchange";
   used: boolean;
-  attachedCustomerId?: string;
+  attached_customer_id?: string;
 }
 
 declare interface DatabaseCreateCustomerData {
   customer: CustomerFixtureData;
   address: AddressFixtureData;
-  isAdmin?: boolean;
-  isActive?: boolean;
+  is_admin?: boolean;
+  is_ative?: boolean;
 }
 
 declare interface DatabaseCreateAddressData {
   address: AddressFixtureData;
   active?: boolean;
-  customerId?: string;
+  customer_id?: string;
 }
 
 declare interface DatabaseUpdateAddressData {
-  customerId: string;
-  addressId: string;
+  customer_id: string;
+  address_id: string;
 }
 
 declare interface DatabaseCreateCardData {
   card: CardFixtureData;
   active?: boolean;
-  customerId: string;
+  customer_id: string;
 }
 
 declare interface DatabaseCreateCouponData {
   coupon: CouponFixtureData;
   used?: boolean;
-  attachedCustomerId?: string;
+  attached_customer_id?: string;
 }
 
 declare type DatabaseCreateBookData = BookFixtureData;

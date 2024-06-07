@@ -61,7 +61,7 @@ describe("CRUD de Cliente - Cartão", function () {
     cy.createCard([
       {
         card,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
     cy.visit("http://localhost:3000");
@@ -95,7 +95,7 @@ describe("CRUD de Cliente - Cartão", function () {
     cy.createCard([
       {
         card,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
 

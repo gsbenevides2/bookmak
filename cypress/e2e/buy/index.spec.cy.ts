@@ -1,11 +1,11 @@
 /// <reference types="cypress" />
 import { faker } from "@faker-js/faker";
-import * as utils from "../../utils";
-import { customersFixtures } from "../../fixtures/customer";
 import { addressesFixtures } from "../../fixtures/address";
-import { cardsFixtures } from "../../fixtures/card";
-import { booksFixtures } from "../../fixtures/books";
 import { bookmarkFixtures } from "../../fixtures/bookmark";
+import { booksFixtures } from "../../fixtures/books";
+import { cardsFixtures } from "../../fixtures/card";
+import { customersFixtures } from "../../fixtures/customer";
+import * as utils from "../../utils";
 
 describe("Fluxo de Compra", function () {
   const [customer] = customersFixtures;
@@ -23,7 +23,7 @@ describe("Fluxo de Compra", function () {
     cy.createCard([
       {
         card,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
     cy.createBook(books);

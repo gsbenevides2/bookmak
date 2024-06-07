@@ -35,7 +35,7 @@ describe("Pagamento", function () {
     cy.createCard([
       {
         card,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
     cy.setCookie("orderId", order.orders[0].id);
@@ -73,7 +73,7 @@ describe("Pagamento", function () {
     cy.createCard([
       {
         card,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
     cy.setCookie("orderId", order.orders[0].id);
@@ -111,11 +111,11 @@ describe("Pagamento", function () {
     cy.createCard([
       {
         card: cardOne,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
       {
         card: cardTwo,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
     cy.setCookie("orderId", order.orders[0].id);
@@ -174,11 +174,11 @@ describe("Pagamento", function () {
     cy.createCard([
       {
         card: cardOne,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
       {
         card: cardTwo,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
     cy.setCookie("orderId", order.orders[0].id);
@@ -288,7 +288,7 @@ describe("Pagamento", function () {
     cy.createCard([
       {
         card,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
 
@@ -459,7 +459,7 @@ describe("Pagamento", function () {
     cy.createCard([
       {
         card,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
 
@@ -498,7 +498,7 @@ describe("Pagamento", function () {
     cy.createCard([
       {
         card,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
     cy.setCookie("orderId", order.orders[0].id);
@@ -555,11 +555,11 @@ describe("Pagamento", function () {
     cy.createCard([
       {
         card: cardOne,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
       {
         card: cardTwo,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
 

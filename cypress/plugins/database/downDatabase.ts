@@ -3,7 +3,7 @@ import { getConnection } from "./getConnnection";
 export async function downDatabase(): Promise<null> {
   const dbConnection = getConnection();
   await dbConnection.transaction(async (trx) => {
-    await trx.raw('UPDATE "address" set "customerId" = NULL');
+    await trx.raw('UPDATE "address" set "customer_id" = NULL');
     await trx.raw('DELETE FROM "order_update"');
     await trx.raw('DELETE FROM "book_authors"');
     await trx.raw('DELETE FROM "book_categories"');

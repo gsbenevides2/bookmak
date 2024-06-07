@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 
-import * as utils from "../../utils";
-import { customersFixtures } from "../../fixtures/customer";
 import { addressesFixtures } from "../../fixtures/address";
+import { customersFixtures } from "../../fixtures/customer";
+import * as utils from "../../utils";
 
 describe("CRUD de Cliente - Endereço", function () {
   const customer = customersFixtures[0];
@@ -216,7 +216,7 @@ describe("CRUD de Cliente - Endereço", function () {
 
   it("Excluir Endereço", function () {
     const newAddress = remaingAdddressFixtures[0];
-    cy.createAddress([{ address: newAddress, customerId: customer.id }]);
+    cy.createAddress([{ address: newAddress, customer_id: customer.id }]);
     cy.visit("http://localhost:3000");
     cy.get("a:contains('Minha Conta')").click();
     cy.get("a:contains('Meus Endereços')").click();

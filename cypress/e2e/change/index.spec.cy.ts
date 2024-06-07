@@ -23,13 +23,13 @@ describe("Fluxo de Troca", function () {
       {
         customer: admin,
         address: addressAdmin,
-        isAdmin: true,
+        is_admin: true,
       },
     ]);
     cy.createCard([
       {
         card,
-        customerId: customer.id,
+        customer_id: customer.id,
       },
     ]);
     cy.createBook(books);

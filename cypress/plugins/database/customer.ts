@@ -12,19 +12,30 @@ export async function createCustomer(
       address: data.address,
     })),
   );
-  await knex<CustomerTable>("customer").insert(
-    customers.map((data) => ({
-      ...data.customer,
-      billingAddressId: data.address.id,
-      deliveryAddressId: data.address.id,
-      isActive: data.isActive ?? true,
-      isAdmin: data.isAdmin ?? false,
-    })),
-  );
+
+  const customersOk: CustomerTable[] = customers.map((data) => {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const { address, customer, is_admin, is_ative } = data;
+    const { dateOfBirth, phoneAreaCode, phoneNumber, phoneType, ...rest } =
+      customer;
+    return {
+      ...rest,
+      billing_address_id: address.id,
+      date_of_birth: dateOfBirth,
+      delivery_address_id: address.id,
+      is_active: is_ative ?? true,
+      is_admin: is_admin ?? false,
+      phone_area_code: phoneAreaCode,
+      phone_number: phoneNumber,
+      phone_type: phoneType,
+    };
+  });
+
+  await knex<CustomerTable>("customer").insert(customersOk);
   await updateCustomerId(
     customers.map((data) => ({
-      customerId: data.customer.id,
-      addressId: data.address.id,
+      address_id: data.address.id,
+      customer_id: data.customer.id,
     })),
   );
   await knex.destroy();
