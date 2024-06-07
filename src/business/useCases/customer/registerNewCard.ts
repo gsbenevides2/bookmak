@@ -1,7 +1,13 @@
 import { DatabaseConnection } from "../../../persistence/dbConnection";
-import { Card, CardFlag } from "../../models/Card";
-import { Customer } from "../../models/Customer";
+import { isMonthBefore } from "../../../utils/date";
 import { getEnumKeyByEnumValue } from "../../../utils/enums";
+import {
+  throwErrorIfFalse,
+  throwErrorIfNull,
+  throwErrorIfTrue,
+} from "../../../utils/errors";
+import { Card, CardFlag, cardNumberValidation } from "../../models/Card";
+import { Customer } from "../../models/Customer";
 
 interface RegisterNewCardInput {
   customerId: string;
@@ -18,11 +24,42 @@ export default async function registerNewCard(
   const { customerId, cardNumber, expirationDate, cvv, flag, holderName } =
     registerData;
 
-  const flagEnum = getEnumKeyByEnumValue(CardFlag, flag);
+  const cardNumberOnlyNumbers = cardNumber.replace(/\D/g, "");
 
-  if (flagEnum == null) {
-    throw new Error("Bandeira do cartão inválida");
-  }
+  throwErrorIfFalse(
+    cardNumberOnlyNumbers.length === 16,
+    "Número do cartão inválido",
+  );
+
+  const flagEnumToTest = getEnumKeyByEnumValue(CardFlag, flag);
+
+  throwErrorIfNull(flagEnumToTest, "Bandeira do cartão inválida");
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const flagEnumKey = flagEnumToTest!;
+  const flagEnumValue = CardFlag[flagEnumKey];
+
+  const cardNumberValidator = cardNumberValidation[flagEnumValue];
+
+  throwErrorIfFalse(
+    cardNumberValidator(cardNumberOnlyNumbers),
+    "Número do cartão inválido",
+  );
+
+  throwErrorIfFalse(cvv.length === 3, "CVV inválido");
+  const [yearOfValidity, monthOfValidity] = expirationDate
+    .split("-")
+    .map((a) => a.replace(/\D/g, ""));
+
+  throwErrorIfFalse(
+    yearOfValidity.length === 4 && monthOfValidity.length === 2,
+    "Data de validade inválida",
+  );
+
+  throwErrorIfTrue(
+    isMonthBefore(monthOfValidity, yearOfValidity),
+    "Cartão vencido",
+  );
 
   const datasource = await DatabaseConnection.getDataSource().catch(() => {
     throw new Error("Erro ao conectar com o banco de dados");
@@ -34,13 +71,12 @@ export default async function registerNewCard(
   if (customer == null) {
     throw new Error("Cliente não encontrado");
   }
-  const [yearOfValidity, monthOfValidity] = expirationDate.split("-");
 
   const card = new Card(
     customer,
-    cardNumber,
+    cardNumberOnlyNumbers,
     holderName,
-    CardFlag[flagEnum],
+    flagEnumValue,
     cvv,
     monthOfValidity,
     yearOfValidity,
