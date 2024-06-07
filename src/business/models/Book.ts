@@ -52,6 +52,6 @@ export class Book {
   @OneToMany(() => BookSku, (sku) => sku.book)
   skus!: BookSku[];
 
-  @Column({ name: "bookmark_style" })
+  @Column({ name: "bookmark_style", nullable: true })
   bookmarkStyle?: string;
 }

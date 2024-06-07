@@ -12,7 +12,8 @@
     "dev": "nodemon --watch src --ext \"*\" --exec \"npm run start\"",
     "lint": "eslint --ext .ts src",
     "createMigration": "typeorm-ts-node-commonjs migration:generate src/persistence/migrations/migration -d src/persistence/dataSourceConfig.ts",
-    "runMigration": "typeorm-ts-node-commonjs migration:run -d src/persistence/dataSourceConfig.ts"
+    "runMigration": "typeorm-ts-node-commonjs migration:run -d src/persistence/dataSourceConfig.ts",
+    "revertMigration": "typeorm-ts-node-commonjs migration:revert -d src/persistence/dataSourceConfig.ts"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
