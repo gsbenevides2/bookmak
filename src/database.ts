@@ -19,7 +19,7 @@ export async function createBook(book: Book): Promise<void> {
     title: book.title,
     cover: book.cover,
     description: book.translatedDescription ?? book.description,
-    bookmarkStyle: book.bookmarkStyle,
+    bookmark_style: book.bookmarkStyle,
   };
 
   await db("book").insert(bookContent).onConflict(["id"]).merge();
@@ -35,10 +35,10 @@ export async function createBook(book: Book): Promise<void> {
 
       await db("book_authors")
         .insert({
-          authorId: author.id,
-          bookId: book.id,
+          author_id: author.id,
+          book_id: book.id,
         })
-        .onConflict(["authorId", "bookId"])
+        .onConflict(["author_id", "book_id"])
         .ignore();
     }),
   );
@@ -51,10 +51,10 @@ export async function createBook(book: Book): Promise<void> {
       await db("category").insert(categoryContent).onConflict(["id"]).merge();
       await db("book_categories")
         .insert({
-          categoryId: category.id,
-          bookId: book.id,
+          category_id: category.id,
+          book_id: book.id,
         })
-        .onConflict(["categoryId", "bookId"])
+        .onConflict(["category_id", "book_id"])
         .merge();
     }),
   );
@@ -66,8 +66,8 @@ export async function createBook(book: Book): Promise<void> {
         cover: volume.cover,
         description: book.translatedDescription ?? book.description,
         price: volume.price,
-        stockQuantity: volume.stockQuantity,
-        bookId: book.id,
+        stock_quantity: volume.stockQuantity,
+        book_id: book.id,
       };
 
       await db("book_sku").insert(skuContent).onConflict(["id"]).merge();
@@ -96,7 +96,7 @@ export async function getCardIdOfCustomer(
 ): Promise<string | null> {
   const result = await db("card")
     .select("id")
-    .where("customerId", customerId)
+    .where("customer_id", customerId)
     .limit(1);
   return result[0].id;
 }
@@ -105,44 +105,44 @@ export async function getAddressIdOfCustomer(
   customerId: string,
 ): Promise<string | null> {
   const result = await db("customer")
-    .select("deliveryAddressId")
+    .select("delivery_address_id")
     .where("id", customerId)
     .limit(1);
-  return result[0].deliveryAddressId;
+  return result[0].delivery_address_id;
 }
 
 export async function saveOrderInDatabase(order: OrderToDB): Promise<void> {
   await db("order").insert({
     id: order.orderId,
     subtotal: order.subtotal,
-    totalPrice: order.totalPrice,
-    shippingPrice: order.shippingPrice,
-    bookmarkStyle: order.bookmarkStyle,
-    bookmarkText: order.bookmarkText,
-    customerId: order.customerId,
-    billingAddressId: order.billingAddressId,
-    shippingAddressId: order.shippingAddressId,
+    total_price: order.totalPrice,
+    shipping_price: order.shippingPrice,
+    bookmark_style: order.bookmarkStyle,
+    bookmark_text: order.bookmarkText,
+    customer_id: order.customerId,
+    billing_address_id: order.billingAddressId,
+    shipping_address_id: order.shippingAddressId,
   });
 
   await db("order_payment_method").insert({
-    orderId: order.orderId,
-    cardId: order.cardId,
+    order_id: order.orderId,
+    card_id: order.cardId,
     value: order.totalPrice,
   });
 
   await db("order_update").insert({
-    orderId: order.orderId,
-    status: "processing",
+    order_id: order.orderId,
+    order_status: "processing",
     observations: "Estamos recebendo seu pagamento. Aguarde!",
     timestamp: order.createdDate,
   });
 
   await db("order_item").insert(
     order.itensData.map((item) => ({
-      orderId: order.orderId,
-      skuId: item.skuId,
+      order_id: order.orderId,
+      sku_id: item.skuId,
       quantity: item.quantity,
-      unitSellPrice: item.unitSellPrice,
+      unit_sell_price: item.unitSellPrice,
     })),
   );
 }
