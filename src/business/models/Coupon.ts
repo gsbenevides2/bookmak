@@ -17,9 +17,9 @@ export const couponsText: Record<CouponType, string> = {
   exchange: "Troca",
 };
 
-@Entity()
+@Entity({ name: "coupon" })
 export class Coupon {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", { primaryKeyConstraintName: "pk_coupon" })
   id!: string;
 
   @Column()
@@ -34,6 +34,7 @@ export class Coupon {
   @Column({
     type: "enum",
     enum: CouponType,
+    enumName: "coupon_type",
   })
   type!: CouponType;
 
@@ -43,12 +44,16 @@ export class Coupon {
   used: boolean = false;
 
   @ManyToOne(() => Customer, (customer) => customer.attachedCoupons)
-  @JoinColumn()
+  @JoinColumn({
+    name: "attached_customer_id",
+    foreignKeyConstraintName: "fk_coupon_customer",
+  })
   attachedCustomer?: Customer;
 
   @Column({
     type: "timestamp",
     default: () => "CURRENT_TIMESTAMP",
+    name: "created_at",
   })
   createdAt!: Date;
 }

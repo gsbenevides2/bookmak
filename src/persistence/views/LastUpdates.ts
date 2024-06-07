@@ -2,17 +2,18 @@ import { ViewColumn, ViewEntity } from "typeorm";
 import { OrderUpdate } from "../../business/models/OrderUpdate";
 
 @ViewEntity({
+  name: "last_updates",
   expression: (connection) =>
     connection
       .createQueryBuilder()
-      .from(OrderUpdate, "orderUpdate")
-      .select("orderUpdate.id", "id")
-      .distinctOn(["orderUpdate.orderId"])
-      .addSelect("orderUpdate.status", "status")
-      .addSelect("orderUpdate.orderId", "orderId")
-      .addSelect("orderUpdate.timestamp", "timestamp")
-      .orderBy("orderUpdate.orderId", "DESC")
-      .addOrderBy("orderUpdate.timestamp", "DESC"),
+      .from(OrderUpdate, "order_update")
+      .select("order_update.id", "id")
+      .distinctOn(["order_update.order_id"])
+      .addSelect("order_update.status", "status")
+      .addSelect("order_update.order_id", "order_id")
+      .addSelect("order_update.timestamp", "timestamp")
+      .orderBy("order_update.order_id", "DESC")
+      .addOrderBy("order_update.timestamp", "DESC"),
 })
 export class LastUpdates {
   @ViewColumn()
@@ -27,6 +28,6 @@ export class LastUpdates {
   @ViewColumn()
   timestamp!: Date;
 
-  @ViewColumn()
+  @ViewColumn({ name: "order_id" })
   orderId!: string;
 }

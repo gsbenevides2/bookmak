@@ -37,14 +37,17 @@ export const orderStatusText = {
   [OrderStatus.CANCEL_REJECTED]: "Cancelamento recusado",
 };
 
-@Entity()
+@Entity({ name: "order_update" })
 export class OrderUpdate {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", {
+    primaryKeyConstraintName: "pk_order_update",
+  })
   id!: string;
 
   @Column({
     type: "enum",
     enum: OrderStatus,
+    name: "order_status",
   })
   status!: OrderStatus;
 
@@ -58,6 +61,6 @@ export class OrderUpdate {
   timestamp!: Date;
 
   @ManyToOne(() => Order, (order) => order.updates)
-  @JoinColumn()
+  @JoinColumn({ name: "order_id", foreignKeyConstraintName: "fk_order_update" })
   order!: Order;
 }

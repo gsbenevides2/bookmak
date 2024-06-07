@@ -1,21 +1,21 @@
 import {
   Column,
   Entity,
-  JoinTable,
+  JoinColumn,
   ManyToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Book } from "./Book";
 
-@Entity()
+@Entity({ name: "category" })
 export class Category {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", { primaryKeyConstraintName: "pk_category" })
   id!: string;
 
   @Column()
   name!: string;
 
   @ManyToMany(() => Book, (book) => book.categories)
-  @JoinTable({ name: "book_categories" })
+  @JoinColumn({ name: "book_id" })
   books!: Book[];
 }

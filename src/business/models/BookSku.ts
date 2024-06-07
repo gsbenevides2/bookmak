@@ -7,9 +7,9 @@ import {
 } from "typeorm";
 import { Book } from "./Book";
 
-@Entity()
+@Entity({ name: "book_sku" })
 export class BookSku {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", { primaryKeyConstraintName: "pk_book_sku" })
   id!: string;
 
   @Column()
@@ -24,10 +24,10 @@ export class BookSku {
   @Column()
   price!: number;
 
-  @Column()
+  @Column({ name: "stock_quantity" })
   stockQuantity!: number;
 
   @ManyToOne(() => Book, (book) => book.skus)
-  @JoinColumn()
+  @JoinColumn({ name: "book_id", foreignKeyConstraintName: "fk_book_sku" })
   book!: Book;
 }

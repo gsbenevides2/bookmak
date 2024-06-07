@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Customer } from "./Customer";
 
 export enum HouseType {
@@ -27,23 +33,31 @@ export const streetTypesTexts = {
   [StreetType.Alley]: "Beco",
 };
 
-@Entity()
+@Entity({ name: "address" })
 export class Address {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", { primaryKeyConstraintName: "pk_address" })
   id!: string;
 
   @ManyToOne(() => Customer, (customer) => customer.addresses)
+  @JoinColumn({
+    name: "customer_id",
+    foreignKeyConstraintName: "fk_address_customer",
+  })
   customer?: Customer;
 
   @Column({
     type: "enum",
     enum: HouseType,
+    name: "house_type",
+    enumName: "house_type",
   })
   houseType: HouseType;
 
   @Column({
     type: "enum",
     enum: StreetType,
+    name: "street_type",
+    enumName: "street_type",
   })
   streetType: StreetType;
 
@@ -59,7 +73,9 @@ export class Address {
   @Column()
   district: string;
 
-  @Column()
+  @Column({
+    name: "zip_code",
+  })
   zipCode: string;
 
   @Column()

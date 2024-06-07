@@ -4,69 +4,73 @@ import { OrderItem } from "../../business/models/OrderItem";
 import { OrderExecuted } from "./OrderExecuted";
 
 @ViewEntity({
+  name: "order_selled_skus",
   expression: (connection) => {
     const sqlOfOrders = connection
       .createQueryBuilder()
-      .from(OrderExecuted, "orderExecuted")
-      .select("orderExecuted.orderId")
+      .from(OrderExecuted, "order_executed")
+      .select("order_executed.order_id")
       .getSql();
     return connection
       .createQueryBuilder()
-      .from(OrderItem, "orderItem")
-      .select("orderItem.orderId", "orderId")
-      .addSelect("orderItem.skuId", "skuId")
-      .addSelect("orderItem.quantity", "quantity")
-      .addSelect("orderItem.unitSellPrice", "unitSellPrice")
-      .addSelect("orderExecuted.timestamp", "selledTimestamp")
-      .addSelect("bookSku.title", "title")
-      .addSelect("bookSku.cover", "cover")
-      .addSelect("bookSku.bookId", "bookId")
-      .addSelect("book.title", "bookTitle")
-      .addSelect("array_agg(distinct bookAuthors.authorId)", "authors")
-      .addSelect("array_agg(distinct bookCategories.categoryId)", "categories")
+      .from(OrderItem, "order_item")
+      .select("order_item.order_id", "order_id")
+      .addSelect("order_item.sku_id", "sku_id")
+      .addSelect("order_item.quantity", "quantity")
+      .addSelect("order_item.unit_sell_price", "unit_sell_price")
+      .addSelect("order_executed.timestamp", "selled_timestamp")
+      .addSelect("book_sku.title", "title")
+      .addSelect("book_sku.cover", "cover")
+      .addSelect("book_sku.book_id", "book_id")
+      .addSelect("book.title", "book_title")
+      .addSelect("array_agg(distinct book_authors.author_id)", "authors")
+      .addSelect(
+        "array_agg(distinct book_categories.category_id)",
+        "categories",
+      )
       .innerJoin(
         OrderExecuted,
-        "orderExecuted",
-        "orderItem.orderId = orderExecuted.orderId",
+        "order_executed",
+        "order_item.order_id = order_executed.order_id",
       )
-      .innerJoin(BookSku, "bookSku", "orderItem.skuId = bookSku.id")
+      .innerJoin(BookSku, "book_sku", "order_item.sku_id = book_sku.id")
       .innerJoin(
         "book_authors",
-        "bookAuthors",
-        "bookAuthors.bookId = bookSku.bookId",
+        "book_authors",
+        "book_authors.book_id = book_sku.book_id",
       )
       .innerJoin(
         "book_categories",
-        "bookCategories",
-        "bookCategories.bookId = bookSku.bookId",
+        "book_categories",
+        "book_categories.book_id = book_sku.book_id",
       )
-      .innerJoin("book", "book", "book.id = bookSku.bookId")
-      .where(`orderItem.orderId IN (${sqlOfOrders})`)
-      .groupBy("orderItem.orderId")
-      .addGroupBy("orderItem.skuId")
-      .addGroupBy("orderItem.quantity")
-      .addGroupBy("orderItem.unitSellPrice")
-      .addGroupBy("orderExecuted.timestamp")
-      .addGroupBy("bookSku.title")
-      .addGroupBy("bookSku.cover")
-      .addGroupBy("bookSku.bookId")
+      .innerJoin("book", "book", "book.id = book_sku.book_id")
+      .where(`order_item.order_id IN (${sqlOfOrders})`)
+      .groupBy("order_item.order_id")
+      .addGroupBy("order_item.sku_id")
+      .addGroupBy("order_item.quantity")
+      .addGroupBy("order_item.unit_sell_price")
+      .addGroupBy("order_executed.timestamp")
+      .addGroupBy("book_sku.title")
+      .addGroupBy("book_sku.cover")
+      .addGroupBy("book_sku.book_id")
       .addGroupBy("book.title");
   },
 })
 export class OrderSelledSkus {
-  @ViewColumn()
+  @ViewColumn({ name: "sku_id" })
   skuId!: string;
 
   @ViewColumn()
   quantity!: number;
 
-  @ViewColumn()
+  @ViewColumn({ name: "order_id" })
   orderId!: string;
 
-  @ViewColumn()
+  @ViewColumn({ name: "unit_sell_price" })
   unitSellPrice!: number;
 
-  @ViewColumn()
+  @ViewColumn({ name: "selled_timestamp" })
   selledTimestamp!: Date;
 
   @ViewColumn()
@@ -81,9 +85,9 @@ export class OrderSelledSkus {
   @ViewColumn()
   categories!: string[];
 
-  @ViewColumn()
+  @ViewColumn({ name: "book_id" })
   bookId!: string;
 
-  @ViewColumn()
+  @ViewColumn({ name: "book_title" })
   bookTitle!: string;
 }

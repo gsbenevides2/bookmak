@@ -24,9 +24,9 @@ export enum PhoneType {
   Landline = "landline",
 }
 
-@Entity()
+@Entity({ name: "customer" })
 export class Customer {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", { primaryKeyConstraintName: "pk_customer" })
   id!: string;
 
   @Unique("unique_email", ["email"])
@@ -40,28 +40,31 @@ export class Customer {
   @Column()
   cpf: string;
 
-  @Column()
+  @Column({ name: "date_of_birth" })
   dateOfBirth!: Date;
 
   @Column({
     type: "enum",
     enum: Gender,
+    enumName: "gender",
   })
   gender: Gender;
 
   @Column({
     enum: PhoneType,
     type: "enum",
+    enumName: "phone_type",
+    name: "phone_type",
   })
   phoneType: PhoneType;
 
-  @Column()
+  @Column({ name: "phone_area_code" })
   phoneAreaCode: string;
 
-  @Column()
+  @Column({ name: "phone_number" })
   phoneNumber: string;
 
-  @Column()
+  @Column({ name: "is_active" })
   isActive: boolean;
 
   @Column()
@@ -73,20 +76,30 @@ export class Customer {
   @OneToMany(() => Card, (card) => card.customer)
   cards: Card[];
 
-  @OneToOne(() => Address, { nullable: false })
-  @JoinColumn()
+  @OneToOne(() => Address, {
+    nullable: false,
+  })
+  @JoinColumn({
+    name: "delivery_address_id",
+    foreignKeyConstraintName: "fk_customer_delivery_address",
+  })
   deliveryAddress: Address;
 
-  @OneToOne(() => Address, { nullable: false })
-  @JoinColumn()
+  @OneToOne(() => Address, {
+    nullable: false,
+  })
+  @JoinColumn({
+    name: "billing_address_id",
+    foreignKeyConstraintName: "fk_customer_billing_address",
+  })
   billingAddress: Address;
 
   @OneToMany(() => Coupon, (coupon) => coupon.attachedCustomer)
-  @JoinColumn()
   attachedCoupons!: Coupon[];
 
   @Column({
     default: false,
+    name: "is_admin",
   })
   isAdmin!: boolean;
 

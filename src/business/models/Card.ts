@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Customer } from "./Customer";
 
 export enum CardFlag {
@@ -11,33 +17,46 @@ export const cardFlagText = {
   [CardFlag.Visa]: "Visa",
 };
 
-@Entity()
+@Entity({ name: "card" })
 export class Card {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", { primaryKeyConstraintName: "pk_card" })
   id!: string;
 
   @Column()
   number: string;
 
   @ManyToOne(() => Customer, (customer) => customer.cards)
+  @JoinColumn({
+    name: "customer_id",
+    foreignKeyConstraintName: "fk_card_customer",
+  })
   customer: Customer;
 
-  @Column()
+  @Column({ name: "holder_name" })
   holderName: string;
 
   @Column({
     type: "enum",
     enum: CardFlag,
+    enumName: "card_flag",
   })
   flag: CardFlag;
 
-  @Column()
+  @Column({
+    length: "3",
+  })
   cvv: string;
 
-  @Column()
+  @Column({
+    length: "2",
+    name: "month_of_validity",
+  })
   monthOfValidity: string;
 
-  @Column()
+  @Column({
+    length: "4",
+    name: "year_of_validity",
+  })
   yearOfValidity: string;
 
   @Column({ default: true })

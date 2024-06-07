@@ -7,12 +7,12 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Author } from "./Author";
-import { Category } from "./Category";
 import { BookSku } from "./BookSku";
+import { Category } from "./Category";
 
-@Entity()
+@Entity({ name: "book" })
 export class Book {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", { primaryKeyConstraintName: "pk_book" })
   id!: string;
 
   @Column()
@@ -24,17 +24,34 @@ export class Book {
   @Column()
   description!: string;
 
-  @ManyToMany(() => Author)
-  @JoinTable({ name: "book_authors" })
+  @ManyToMany(() => Author, (author) => author.books)
+  @JoinTable({
+    name: "book_authors",
+    joinColumn: { name: "book_id", foreignKeyConstraintName: "fk_book_author" },
+    inverseJoinColumn: {
+      name: "author_id",
+      foreignKeyConstraintName: "fk_author_book",
+    },
+  })
   authors!: Author[];
 
-  @ManyToMany(() => Category)
-  @JoinTable({ name: "book_categories" })
+  @ManyToMany(() => Category, (category) => category.books)
+  @JoinTable({
+    name: "book_categories",
+    joinColumn: {
+      name: "book_id",
+      foreignKeyConstraintName: "fb_book_category",
+    },
+    inverseJoinColumn: {
+      name: "category_id",
+      foreignKeyConstraintName: "fk_category_book",
+    },
+  })
   categories!: Category[];
 
   @OneToMany(() => BookSku, (sku) => sku.book)
   skus!: BookSku[];
 
-  @Column({ nullable: true })
+  @Column({ name: "bookmark_style" })
   bookmarkStyle?: string;
 }

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import path from "path";
 import { DataSource } from "typeorm";
+import { MyNamingStrategy } from "./namingStrategy";
 function getEnviromentVariable(variable: string): string {
   const value = process.env[variable];
   if (value == null) {
@@ -19,6 +20,8 @@ export default new DataSource({
   synchronize: false,
   migrations: [path.join(__dirname, "..", "persistence", "migrations", "*")],
   logging: process.env.DB_LOGGING === "true",
+  namingStrategy: new MyNamingStrategy(),
+
   entities: [
     path.join(__dirname, "..", "business", "models", "*"),
     path.join(__dirname, "..", "persistence", "views", "*"),

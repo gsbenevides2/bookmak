@@ -5,30 +5,34 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Order } from "./Order";
 import { BookSku } from "./BookSku";
+import { Order } from "./Order";
 
-@Entity()
+@Entity({ name: "order_item" })
 export class OrderItem {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", { primaryKeyConstraintName: "pk_order_item" })
   id!: string;
 
   @Column()
   quantity!: number;
 
-  @Column()
+  @Column({ name: "unit_sell_price" })
   unitSellPrice!: number;
 
   @ManyToOne(() => BookSku)
-  @JoinColumn()
+  @JoinColumn({
+    name: "sku_id",
+    foreignKeyConstraintName: "fk_order_item_sku",
+  })
   sku!: BookSku;
 
   @ManyToOne(() => Order, (order) => order.items)
-  @JoinColumn()
+  @JoinColumn({ name: "order_id", foreignKeyConstraintName: "fk_order_item" })
   order!: Order;
 
   @Column({
     default: 0,
+    name: "change_quantity",
   })
   changeQuantity!: number;
 }
