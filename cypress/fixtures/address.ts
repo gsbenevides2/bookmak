@@ -10,10 +10,10 @@ export const addressesFixtures: AddressFixtureData[] = [
     nickname: "Casa",
     number: "100",
     observations: "Casa de esquina",
-    state: "Ceará",
-    street: "João José",
+    state: "São Paulo",
+    street: "Cinco",
     streetType: "street",
-    zipCode: "61629220",
+    zipCode: "08633238",
   },
   {
     id: "72d9c799-69fe-472d-8aef-eb1ad5213da3",

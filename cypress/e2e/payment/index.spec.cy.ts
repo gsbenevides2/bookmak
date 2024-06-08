@@ -7,7 +7,6 @@ import { cardsFixtures } from "../../fixtures/card";
 import { customersFixtures } from "../../fixtures/customer";
 import { ordersFixtures } from "../../fixtures/orders";
 import * as utils from "../../utils";
-
 describe("Pagamento", function () {
   const [customer] = customersFixtures;
 
@@ -51,6 +50,7 @@ describe("Pagamento", function () {
       .invoke("text")
       .then((totalPrice) => {
         const totalPriceParsed = totalPrice.replace(/[^\d]/g, "");
+        cy.wrap(totalPriceParsed).as("totalPriceParsed");
         cy.get("#value").then((input) => {
           input.val((parseInt(totalPriceParsed) / 100).toFixed(2));
         });
@@ -227,61 +227,92 @@ describe("Pagamento", function () {
   it("Usar um cupom para pagar o todo.", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
+    cy.setCookie("orderId", order.orders[0].id);
+
+    cy.visit("http://localhost:3000/checkout/payment");
+
+    cy.get(".totalPrice")
+      .invoke("text")
+      .then((totalPrice) => {
+        const totalPriceParsed = totalPrice.replace(/[^\d]/g, "");
+        cy.wrap(totalPriceParsed).as("totalPriceParsed");
+      });
     const couponCode = "CUPOM-DE-DESCONTO";
     const couponUUID = faker.string.uuid();
-    cy.createCoupon({
-      coupon: {
-        code: couponCode,
-        id: couponUUID,
-        description: "Cupom de desconto",
-        type: "discount",
-        value: order.orders[0].totalPrice,
-      },
+
+    cy.get<string>("@totalPriceParsed").then((totalPriceParsed) => {
+      cy.createCoupon({
+        coupon: {
+          code: couponCode,
+          id: couponUUID,
+          description: "Cupom de desconto",
+          type: "discount",
+          value: parseInt(totalPriceParsed),
+        },
+      });
     });
 
-    cy.setCookie("orderId", order.orders[0].id);
-    cy.visit("http://localhost:3000/checkout/payment");
     cy.get(".input-group > .form-control").type(couponCode);
     cy.get("#button-addon2").click();
     cy.get(".totalPrice").should("contains.text", utils.formatMoney(0));
-    cy.get(".d-flex > .mb-0").should(
-      "contains.text",
-      `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((order.orders[0].totalPrice / 100) * -1)}`,
-    );
-    cy.get(".discount").should(
-      "contains.text",
-      utils.formatMoney((order.orders[0].totalPrice / 100) * -1),
-    );
+    cy.get<string>("@totalPriceParsed").then((totalPriceParsed) => {
+      const toalPrice = parseInt(totalPriceParsed);
+      cy.get(".d-flex > .mb-0").should(
+        "contains.text",
+        `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((toalPrice / 100) * -1)}`,
+      );
+      cy.get(".discount").should(
+        "contains.text",
+        utils.formatMoney((toalPrice / 100) * -1),
+      );
+    });
+
     cy.get("button.pay").click();
 
     cy.get(".status").should("contains.text", "Em processamento");
     cy.get(".totalPrice").should("contains.text", utils.formatMoney(0));
-    cy.get(".d-flex > .mb-0").should(
-      "contains.text",
-      `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((order.orders[0].totalPrice / 100) * -1)}`,
-    );
-    cy.get(".discount").should(
-      "contains.text",
-      utils.formatMoney((order.orders[0].totalPrice / 100) * -1),
-    );
+    cy.get<string>("@totalPriceParsed").then((totalPriceParsed) => {
+      const toalPrice = parseInt(totalPriceParsed);
+      cy.get(".d-flex > .mb-0").should(
+        "contains.text",
+        `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((toalPrice / 100) * -1)}`,
+      );
+      cy.get(".discount").should(
+        "contains.text",
+        utils.formatMoney((toalPrice / 100) * -1),
+      );
+    });
   });
 
   it("Metade Cartão e outra metade com um cupom", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
+    cy.setCookie("orderId", order.orders[0].id);
+    cy.visit("http://localhost:3000/checkout/payment");
+    cy.get(".totalPrice")
+      .invoke("text")
+      .then((totalPrice) => {
+        const totalPriceParsed = totalPrice.replace(/[^\d]/g, "");
+        cy.wrap(totalPriceParsed).as("totalPriceParsed");
+      });
 
     const couponCode = "CUPOM-DE-DESCONTO";
     const couponUUID = faker.string.uuid();
-    const couponValue = parseInt((order.orders[0].totalPrice / 2).toFixed(2));
-    const missingValue = order.orders[0].totalPrice - couponValue;
-    cy.createCoupon({
-      coupon: {
-        code: couponCode,
-        id: couponUUID,
-        description: "Cupom de desconto",
-        type: "discount",
-        value: couponValue,
-      },
+    cy.get<string>("@totalPriceParsed").then((totalPriceParsed) => {
+      const totalPrice = parseInt(totalPriceParsed);
+      const couponValue = parseInt((totalPrice / 2).toFixed(2));
+      const missingValue = totalPrice - couponValue;
+      cy.createCoupon({
+        coupon: {
+          code: couponCode,
+          id: couponUUID,
+          description: "Cupom de desconto",
+          type: "discount",
+          value: couponValue,
+        },
+      });
+      cy.wrap(missingValue).as("missingValue");
+      cy.wrap(couponValue).as("couponValue");
     });
 
     const [card] = cardsFixtures;
@@ -292,202 +323,244 @@ describe("Pagamento", function () {
       },
     ]);
 
-    cy.setCookie("orderId", order.orders[0].id);
-    cy.visit("http://localhost:3000/checkout/payment");
     cy.get(".input-group > .form-control").type(couponCode);
     cy.get("#button-addon2").click();
-    cy.get(".totalPrice").should(
-      "contains.text",
-      utils.formatMoney(missingValue / 100),
-    );
-    cy.get(".d-flex > .mb-0").should(
-      "contains.text",
-      `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
-    );
-    cy.get(".discount").should(
-      "contains.text",
-      utils.formatMoney((couponValue / 100) * -1),
-    );
+
+    cy.get<number>("@missingValue").then((missingValue) => {
+      cy.get(".totalPrice").should(
+        "contains.text",
+        utils.formatMoney(missingValue / 100),
+      );
+    });
+    cy.get<number>("@couponValue").then((couponValue) => {
+      cy.get(".d-flex > .mb-0").should(
+        "contains.text",
+        `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
+      );
+      cy.get(".discount").should(
+        "contains.text",
+        utils.formatMoney((couponValue / 100) * -1),
+      );
+    });
 
     cy.get(".cardSelect").select(
       `${utils.formatCardNumber(card.number)} - ${utils.parseCardFlag(card.flag)}`,
     );
+    cy.get<number>("@missingValue").then((missingValue) => {
+      cy.get("#value").type((missingValue / 100).toFixed(2));
+      cy.get("#addCard").click();
 
-    cy.get("#value").type((missingValue / 100).toFixed(2));
-    cy.get("#addCard").click();
+      cy.get("button.pay").click();
 
-    cy.get("button.pay").click();
-
-    cy.get(".status").should("contains.text", "Em processamento");
-    cy.get(".totalPrice").should(
-      "contains.text",
-      utils.formatMoney(missingValue / 100),
-    );
-    cy.get(".d-flex > .mb-0").should(
-      "contains.text",
-      `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
-    );
-    cy.get(".discount").should(
-      "contains.text",
-      utils.formatMoney((couponValue / 100) * -1),
-    );
-
-    cy.get(".card").should(
-      "contains.text",
-      `${utils.formatCardNumber(card.number)} - ${utils.parseCardFlag(card.flag)} - ${utils.formatMoney(missingValue / 100)}`,
-    );
+      cy.get(".status").should("contains.text", "Em processamento");
+      cy.get(".totalPrice").should(
+        "contains.text",
+        utils.formatMoney(missingValue / 100),
+      );
+    });
+    cy.get<number>("@couponValue").then((couponValue) => {
+      cy.get(".d-flex > .mb-0").should(
+        "contains.text",
+        `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
+      );
+      cy.get(".discount").should(
+        "contains.text",
+        utils.formatMoney((couponValue / 100) * -1),
+      );
+    });
+    cy.get<number>("@missingValue").then((missingValue) => {
+      cy.get(".card").should(
+        "contains.text",
+        `${utils.formatCardNumber(card.number)} - ${utils.parseCardFlag(card.flag)} - ${utils.formatMoney(missingValue / 100)}`,
+      );
+    });
   });
 
   it("Pagamento com um cupom de valor maior de compra, gera um cupom de troca.", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
-    const couponCode = "CUPOM-DE-DESCONTO";
-    const couponUUID = faker.string.uuid();
-    const couponValue = parseInt((order.orders[0].totalPrice * 1.1).toString());
-    const missingValue = order.orders[0].totalPrice - couponValue;
-    cy.createCoupon({
-      coupon: {
-        code: couponCode,
-        id: couponUUID,
-        description: "Cupom de desconto",
-        type: "discount",
-        value: couponValue,
-      },
-    });
-
     cy.setCookie("orderId", order.orders[0].id);
     cy.visit("http://localhost:3000/checkout/payment");
-    cy.get(".input-group > .form-control").type(couponCode);
-    cy.get("#button-addon2").click();
-    cy.get(".alert").should(
-      "contains.text",
-      "Identificamos uso de cupons que geraram um valor negativo, o valor negativo será convertido em um cupom de troco, após a confirmação do pagamento. Você pode prosseguir com o pagamento sem usar cartões.",
-    );
-    cy.get(".totalPrice").should(
-      "contains.text",
-      utils.formatMoney(missingValue / 100),
-    );
-    cy.get(".d-flex > .mb-0").should(
-      "contains.text",
-      `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
-    );
-    cy.get(".discount").should(
-      "contains.text",
-      utils.formatMoney((couponValue / 100) * -1),
-    );
 
-    cy.get("button.pay").click();
+    cy.get(".totalPrice")
+      .invoke("text")
+      .then((totalPrice) => {
+        const totalPriceParsed = totalPrice.replace(/[^\d]/g, "");
+        const couponValue = parseInt(
+          (parseInt(totalPriceParsed) * 1.1).toString(),
+        );
+        const missingValue = parseInt(totalPriceParsed) - couponValue;
+        cy.wrap({
+          couponValue,
+          missingValue,
+        }).as("variables");
+      });
 
-    cy.get(".status").should("contains.text", "Em processamento");
-    cy.get(".totalPrice").should(
-      "contains.text",
-      utils.formatMoney(missingValue / 100),
-    );
-    cy.get(".d-flex > .mb-0").should(
-      "contains.text",
-      `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
-    );
-    cy.get(".discount").should(
-      "contains.text",
-      utils.formatMoney((couponValue / 100) * -1),
-    );
-    cy.get(".statusObs").should(
-      "contains.text",
-      "Em processamento - Identificamos um valor excedente em seu pedido. Seu cupom de troca é: ",
-    );
+    interface Variables {
+      couponValue: number;
+      missingValue: number;
+    }
+
+    cy.get<Variables>("@variables").then(({ couponValue, missingValue }) => {
+      const couponCode = "CUPOM-DE-DESCONTO";
+      const couponUUID = faker.string.uuid();
+
+      cy.createCoupon({
+        coupon: {
+          code: couponCode,
+          id: couponUUID,
+          description: "Cupom de desconto",
+          type: "discount",
+          value: couponValue,
+        },
+      });
+
+      cy.get(".input-group > .form-control").type(couponCode);
+      cy.get("#button-addon2").click();
+      cy.get(".alert").should(
+        "contains.text",
+        "Identificamos uso de cupons que geraram um valor negativo, o valor negativo será convertido em um cupom de troco, após a confirmação do pagamento. Você pode prosseguir com o pagamento sem usar cartões.",
+      );
+      cy.get(".totalPrice").should(
+        "contains.text",
+        utils.formatMoney(missingValue / 100),
+      );
+      cy.get(".d-flex > .mb-0").should(
+        "contains.text",
+        `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
+      );
+      cy.get(".discount").should(
+        "contains.text",
+        utils.formatMoney((couponValue / 100) * -1),
+      );
+
+      cy.get("button.pay").click();
+
+      cy.get(".status").should("contains.text", "Em processamento");
+      cy.get(".totalPrice").should(
+        "contains.text",
+        utils.formatMoney(missingValue / 100),
+      );
+      cy.get(".d-flex > .mb-0").should(
+        "contains.text",
+        `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
+      );
+      cy.get(".discount").should(
+        "contains.text",
+        utils.formatMoney((couponValue / 100) * -1),
+      );
+      cy.get(".statusObs").should(
+        "contains.text",
+        "Em processamento - Identificamos um valor excedente em seu pedido. Seu cupom de troca é: ",
+      );
+    });
   });
 
   it("Pagamento com dois cupons sendo que o primeiro já paga o pedido todo. Ao tentar usar o segundo gera um aviso", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
-    const couponCodeOne = "CUPOM-DE-DESCONTO";
-    const couponUUIDOne = faker.string.uuid();
-    const couponValueOne = order.orders[0].totalPrice + 10;
-    const couponCodeTwo = "CUPOM-DE-DESCONTO-2";
-    const couponUUIDTwo = faker.string.uuid();
-    const couponValueTwo = 10;
-    cy.createCoupon({
-      coupon: {
-        code: couponCodeOne,
-        id: couponUUIDOne,
-        description: "Cupom de desconto",
-        type: "discount",
-        value: couponValueOne,
-      },
-    });
-    cy.createCoupon({
-      coupon: {
-        code: couponCodeTwo,
-        id: couponUUIDTwo,
-        description: "Cupom de troca",
-        type: "discount",
-        value: couponValueTwo,
-      },
-    });
-
     cy.setCookie("orderId", order.orders[0].id);
     cy.visit("http://localhost:3000/checkout/payment");
-    cy.get(".input-group > .form-control").type(couponCodeOne);
-    cy.get("#button-addon2").click();
 
-    cy.get(".input-group > .form-control").type(couponCodeTwo);
-    cy.get("#button-addon2").click();
-    cy.get(".alert.alert-danger").should(
-      "contains.text",
-      "Não é possível adicionar mais cupons ao pedido.",
-    );
+    cy.get(".totalPrice")
+      .invoke("text")
+      .then((totalPrice) => {
+        const totalPriceParsed = parseInt(totalPrice.replace(/[^\d]/g, ""));
+
+        const couponCodeOne = "CUPOM-DE-DESCONTO";
+        const couponUUIDOne = faker.string.uuid();
+        const couponValueOne = totalPriceParsed + 10;
+        const couponCodeTwo = "CUPOM-DE-DESCONTO-2";
+        const couponUUIDTwo = faker.string.uuid();
+        const couponValueTwo = 10;
+        cy.createCoupon({
+          coupon: {
+            code: couponCodeOne,
+            id: couponUUIDOne,
+            description: "Cupom de desconto",
+            type: "discount",
+            value: couponValueOne,
+          },
+        });
+        cy.createCoupon({
+          coupon: {
+            code: couponCodeTwo,
+            id: couponUUIDTwo,
+            description: "Cupom de troca",
+            type: "discount",
+            value: couponValueTwo,
+          },
+        });
+
+        cy.get(".input-group > .form-control").type(couponCodeOne);
+        cy.get("#button-addon2").click();
+
+        cy.get(".input-group > .form-control").type(couponCodeTwo);
+        cy.get("#button-addon2").click();
+        cy.get(".alert.alert-danger").should(
+          "contains.text",
+          "Não é possível adicionar mais cupons ao pedido.",
+        );
+      });
   });
 
   it("Pagamento com cupom e cartão, porem ainda não paga toda a compra.", function () {
     const order = ordersFixtures[8];
     cy.createOrder(order);
-    const couponCode = "CUPOM-DE-DESCONTO";
-    const couponUUID = faker.string.uuid();
-    const couponValue = parseInt((order.orders[0].totalPrice - 10).toFixed(2));
-    const missingValue = order.orders[0].totalPrice - couponValue;
-    cy.createCoupon({
-      coupon: {
-        code: couponCode,
-        id: couponUUID,
-        description: "Cupom de desconto",
-        type: "discount",
-        value: couponValue,
-      },
-    });
-
-    const [card] = cardsFixtures;
-    cy.createCard([
-      {
-        card,
-        customer_id: customer.id,
-      },
-    ]);
-
     cy.setCookie("orderId", order.orders[0].id);
     cy.visit("http://localhost:3000/checkout/payment");
-    cy.get(".input-group > .form-control").type(couponCode);
-    cy.get("#button-addon2").click();
-    cy.get(".totalPrice").should(
-      "contains.text",
-      utils.formatMoney(missingValue / 100),
-    );
-    cy.get(".d-flex > .mb-0").should(
-      "contains.text",
-      `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
-    );
-    cy.get(".discount").should(
-      "contains.text",
-      utils.formatMoney((couponValue / 100) * -1),
-    );
 
-    cy.get("#addCard").click();
+    cy.get(".totalPrice")
+      .invoke("text")
+      .then((totalPrice) => {
+        const totalPriceParsed = parseInt(totalPrice.replace(/[^\d]/g, ""));
 
-    cy.get("button.pay").click();
+        const couponCode = "CUPOM-DE-DESCONTO";
+        const couponUUID = faker.string.uuid();
+        const couponValue = parseInt((totalPriceParsed - 10).toFixed(2));
+        const missingValue = totalPriceParsed - couponValue;
+        cy.createCoupon({
+          coupon: {
+            code: couponCode,
+            id: couponUUID,
+            description: "Cupom de desconto",
+            type: "discount",
+            value: couponValue,
+          },
+        });
 
-    cy.get(".alert").should(
-      "contains.text",
-      "O valor dos cartões não é suficiente para pagar o pedido",
-    );
+        const [card] = cardsFixtures;
+        cy.createCard([
+          {
+            card,
+            customer_id: customer.id,
+          },
+        ]);
+
+        cy.get(".input-group > .form-control").type(couponCode);
+        cy.get("#button-addon2").click();
+        cy.get(".totalPrice").should(
+          "contains.text",
+          utils.formatMoney(missingValue / 100),
+        );
+        cy.get(".d-flex > .mb-0").should(
+          "contains.text",
+          `Cupom de Desconto: ${couponCode} - Valor Abatido: ${utils.formatMoney((couponValue / 100) * -1)}`,
+        );
+        cy.get(".discount").should(
+          "contains.text",
+          utils.formatMoney((couponValue / 100) * -1),
+        );
+
+        cy.get("#addCard").click();
+
+        cy.get("button.pay").click();
+
+        cy.get(".alert").should(
+          "contains.text",
+          "O valor dos cartões não é suficiente para pagar o pedido",
+        );
+      });
   });
 
   it("Tentar pagar uma compra menor que 10 reais. Usando um cartão no valor menor que 10 reais", function () {
@@ -522,96 +595,99 @@ describe("Pagamento", function () {
     // Criar Um Cupon com valor da compra menos 20
     const order = ordersFixtures[8];
     cy.createOrder(order);
-    const couponOneCode = "CUPOM-DE-DESCONTO-1";
-    const couponOneUUID = faker.string.uuid();
-    const couponOneValue = order.orders[0].totalPrice - 2000;
-    cy.createCoupon({
-      coupon: {
-        code: couponOneCode,
-        id: couponOneUUID,
-        description: "Cupom de desconto",
-        type: "discount",
-        value: couponOneValue,
-      },
-    });
-
-    // Cria um Outro cupom com valor de 20 - 8
-    const couponTwoCode = "CUPOM-DE-DESCONTO-2";
-    const couponTwoUUID = faker.string.uuid();
-    const couponTwoValue = (20 - 8) * 100;
-    cy.createCoupon({
-      coupon: {
-        code: couponTwoCode,
-        id: couponTwoUUID,
-        description: "Cupom de desconto",
-        type: "discount",
-        value: couponTwoValue,
-      },
-    });
-    // Valor restante a ser pago em cada cartão
-    const cardValue = (8 * 100) / 2;
-    // Criar dois cartões
-    const [cardOne, cardTwo] = cardsFixtures;
-    cy.createCard([
-      {
-        card: cardOne,
-        customer_id: customer.id,
-      },
-      {
-        card: cardTwo,
-        customer_id: customer.id,
-      },
-    ]);
-
     cy.setCookie("orderId", order.orders[0].id);
-
     cy.visit("http://localhost:3000/checkout/payment");
+    cy.get(".totalPrice")
+      .invoke("text")
+      .then((totalPrice) => {
+        const totalPriceParsed = parseInt(totalPrice.replace(/[^\d]/g, ""));
+        const couponOneCode = "CUPOM-DE-DESCONTO-1";
+        const couponOneUUID = faker.string.uuid();
+        const couponOneValue = totalPriceParsed - 2000;
+        cy.createCoupon({
+          coupon: {
+            code: couponOneCode,
+            id: couponOneUUID,
+            description: "Cupom de desconto",
+            type: "discount",
+            value: couponOneValue,
+          },
+        });
 
-    // Usa o cupom
-    cy.get(".input-group > .form-control").type(couponOneCode);
-    cy.get("#button-addon2").click();
+        // Cria um Outro cupom com valor de 20 - 8
+        const couponTwoCode = "CUPOM-DE-DESCONTO-2";
+        const couponTwoUUID = faker.string.uuid();
+        const couponTwoValue = (20 - 8) * 100;
+        cy.createCoupon({
+          coupon: {
+            code: couponTwoCode,
+            id: couponTwoUUID,
+            description: "Cupom de desconto",
+            type: "discount",
+            value: couponTwoValue,
+          },
+        });
+        // Valor restante a ser pago em cada cartão
+        const cardValue = (8 * 100) / 2;
+        // Criar dois cartões
+        const [cardOne, cardTwo] = cardsFixtures;
+        cy.createCard([
+          {
+            card: cardOne,
+            customer_id: customer.id,
+          },
+          {
+            card: cardTwo,
+            customer_id: customer.id,
+          },
+        ]);
 
-    // Usa o segundo cupom
-    cy.get(".input-group > .form-control").type(couponTwoCode);
-    cy.get("#button-addon2").click();
+        // Usa o cupom
+        cy.get(".input-group > .form-control").type(couponOneCode);
+        cy.get("#button-addon2").click();
 
-    // Paga com o primeiro cartão
-    cy.get(".cardSelect").select(
-      `${utils.formatCardNumber(cardOne.number)} - ${utils.parseCardFlag(cardOne.flag)}`,
-    );
-    cy.get("#value").type(cardValue.toFixed(2));
-    cy.get("#addCard").click();
+        // Usa o segundo cupom
+        cy.get(".input-group > .form-control").type(couponTwoCode);
+        cy.get("#button-addon2").click();
 
-    // Paga com o segundo cartão
-    cy.get(".cardSelect").select(
-      `${utils.formatCardNumber(cardTwo.number)} - ${utils.parseCardFlag(cardTwo.flag)}`,
-    );
-    cy.get("#value").clear().type(cardValue.toFixed(2));
-    cy.get("#addCard").click();
+        // Paga com o primeiro cartão
+        cy.get(".cardSelect").select(
+          `${utils.formatCardNumber(cardOne.number)} - ${utils.parseCardFlag(cardOne.flag)}`,
+        );
+        cy.get("#value").type(cardValue.toFixed(2));
+        cy.get("#addCard").click();
 
-    cy.get("button.pay").click();
+        // Paga com o segundo cartão
+        cy.get(".cardSelect").select(
+          `${utils.formatCardNumber(cardTwo.number)} - ${utils.parseCardFlag(cardTwo.flag)}`,
+        );
+        cy.get("#value").clear().type(cardValue.toFixed(2));
+        cy.get("#addCard").click();
 
-    // Verifica o Status
-    cy.get(".status").should("contains.text", "Em processamento");
+        cy.get("button.pay").click();
 
-    // Verifica os dois cartões
-    cy.get(".card").should(
-      "contains.text",
-      `${utils.formatCardNumber(cardOne.number)} - ${utils.parseCardFlag(cardOne.flag)} - ${utils.formatMoney(cardValue / 100)}`,
-    );
-    cy.get(".card").should(
-      "contains.text",
-      `${utils.formatCardNumber(cardTwo.number)} - ${utils.parseCardFlag(cardTwo.flag)} - ${utils.formatMoney(cardValue / 100)}`,
-    );
+        // Verifica o Status
+        cy.get(".status").should("contains.text", "Em processamento");
 
-    // Verifica os cupons
-    cy.get(".d-flex > .mb-0").should(
-      "contains.text",
-      `Cupom de Desconto: ${couponOneCode} - Valor Abatido: ${utils.formatMoney((couponOneValue / 100) * -1)}`,
-    );
-    cy.get(".d-flex > .mb-0").should(
-      "contains.text",
-      `Cupom de Desconto: ${couponTwoCode} - Valor Abatido: ${utils.formatMoney((couponTwoValue / 100) * -1)}`,
-    );
+        // Verifica os dois cartões
+        cy.get(".card").should(
+          "contains.text",
+          `${utils.formatCardNumber(cardOne.number)} - ${utils.parseCardFlag(cardOne.flag)} - ${utils.formatMoney(cardValue / 100)}`,
+        );
+        cy.get(".card").should(
+          "contains.text",
+          `${utils.formatCardNumber(cardTwo.number)} - ${utils.parseCardFlag(cardTwo.flag)} - ${utils.formatMoney(cardValue / 100)}`,
+        );
+
+        // Verifica os cupons
+        cy.get(".d-flex > .mb-0").should(
+          "contains.text",
+          `Cupom de Desconto: ${couponOneCode} - Valor Abatido: ${utils.formatMoney((couponOneValue / 100) * -1)}`,
+        );
+        cy.get(".d-flex > .mb-0").should(
+          "contains.text",
+          `Cupom de Desconto: ${couponTwoCode} - Valor Abatido: ${utils.formatMoney((couponTwoValue / 100) * -1)}`,
+        );
+      });
   });
 });
