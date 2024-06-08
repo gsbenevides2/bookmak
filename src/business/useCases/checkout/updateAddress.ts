@@ -2,7 +2,6 @@ import { DatabaseConnection } from "../../../persistence/dbConnection";
 import { Address } from "../../models/Address";
 import { Customer } from "../../models/Customer";
 import { Order } from "../../models/Order";
-import { shippingSimulator } from "../../../utils/shippingSimulator";
 import recalculateOrderTotal from "./recalculateOrderTotal";
 
 interface Params {
@@ -43,7 +42,6 @@ export default async function updateAddress(params: Params): Promise<void> {
   }
   order.billingAddress = billingAddress;
   order.shippingAddress = shippingAddress;
-  order.shippingPrice = shippingSimulator();
   order.customer = customer;
   await orderRepository.save(order);
   await recalculateOrderTotal(orderId);

@@ -18,4 +18,9 @@
   <% if(enableEdit) { %>
   <a href="/checkout/addresses" class="btn btn-secondary">Alterar</a>
   <% } %>
+  <% if(order.shippingIsAvailable === false) { %>
+  <div class="alert alert-danger mt-3" role="alert">
+    Não é possível enviar para o endereço selecionado. Tente mudar os itens em seu carrinho ou alterar o endereço de envio.
+  </div>
+  <% } %>
 </div>

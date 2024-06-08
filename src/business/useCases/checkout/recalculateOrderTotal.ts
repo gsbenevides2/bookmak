@@ -1,5 +1,7 @@
 import { DatabaseConnection } from "../../../persistence/dbConnection";
+import { promiseOrNull } from "../../../utils/promise";
 import { Order } from "../../models/Order";
+import calculateShippingForOrder from "../shipping/calculateShipping";
 
 export default async function recalculateOrderTotal(
   orderId: string,
@@ -10,12 +12,15 @@ export default async function recalculateOrderTotal(
 
   const order = await orderRepository.findOne({
     where: { id: orderId },
-    relations: [
-      "items",
-      "items.sku",
-      "usedPaymentMethods",
-      "usedPaymentMethods.coupon",
-    ],
+    relations: {
+      items: {
+        sku: true,
+      },
+      usedPaymentMethods: {
+        coupon: true,
+      },
+      shippingAddress: true,
+    },
   });
 
   if (order === null) {
@@ -41,7 +46,24 @@ export default async function recalculateOrderTotal(
 
   order.discounts = discounts;
   order.subtotal = subtotal;
-  order.totalPrice = subtotal - discounts + order.shippingPrice;
+  console.log("order.shippingAddress?.zipCode", order.shippingAddress?.zipCode);
+  if (order.shippingAddress?.zipCode != null) {
+    const priceOrNull = await promiseOrNull(
+      calculateShippingForOrder(
+        order.shippingAddress.zipCode,
+        order.items.reduce((acc, item) => acc + item.quantity, 0),
+        order.subtotal,
+      ),
+    );
+    if (priceOrNull !== null) {
+      order.shippingPrice = priceOrNull;
+      order.shippingIsAvailable = true;
+    } else {
+      order.shippingPrice = 0;
+      order.shippingIsAvailable = false;
+    }
+  }
 
+  order.totalPrice = subtotal - discounts + order.shippingPrice;
   await orderRepository.save(order);
 }

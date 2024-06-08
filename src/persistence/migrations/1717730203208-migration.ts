@@ -18,9 +18,6 @@ export class Migration1717730203208 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "order" ALTER COLUMN "generated_bookmarks" SET DEFAULT ARRAY[]`,
-    );
-    await queryRunner.query(
       `CREATE TYPE "public"."card_flag_old" AS ENUM('mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb')`,
     );
     await queryRunner.query(

@@ -30,6 +30,9 @@ export class Order {
   @Column({ default: 0, name: "shipping_price" })
   shippingPrice!: number;
 
+  @Column({ default: false, name: "shipping_is_available" })
+  shippingIsAvailable!: boolean;
+
   @Column({ nullable: true, name: "bookmark_style" })
   bookmarkStyle?: string;
 
