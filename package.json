@@ -7,6 +7,7 @@
     "start": "ts-node --transpile-only src/index.ts",
     "dev": "nodemon -w src -x ts-node --transpile-only src/index.ts",
     "makeOrders": "ts-node --transpile-only src/makeOrders.ts",
+    "readVtexShipping": "ts-node --transpile-only src/readVtexShipping.ts",
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
@@ -17,6 +18,7 @@
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
     "lowdb": "^7.0.1",
+    "node-xlsx": "^0.24.0",
     "openapi-client-axios": "^7.5.4",
     "openapicmd": "^2.3.1",
     "pg": "^8.11.5",

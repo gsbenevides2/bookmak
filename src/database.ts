@@ -1,6 +1,8 @@
+import "dotenv/config";
 import knex from "knex";
 import LowDb, { type Book } from "./lowdb";
 import { type OrderToDB } from "./makeOrders";
+import { type ShippingToDB } from "./readVtexShipping";
 
 const db = knex({
   client: "pg",
@@ -122,6 +124,7 @@ export async function saveOrderInDatabase(order: OrderToDB): Promise<void> {
     customer_id: order.customerId,
     billing_address_id: order.billingAddressId,
     shipping_address_id: order.shippingAddressId,
+    shipping_is_available: true,
   });
 
   await db("order_payment_method").insert({
@@ -145,4 +148,29 @@ export async function saveOrderInDatabase(order: OrderToDB): Promise<void> {
       unit_sell_price: item.unitSellPrice,
     })),
   );
+}
+
+export async function saveShippings(shippings: ShippingToDB[]): Promise<void> {
+  const shippingParsed = shippings.map((shipping) => ({
+    zip_code_start: shipping.zipCodeStart,
+    zip_code_end: shipping.zipCodeEnd,
+    weight_start: shipping.weightStart,
+    weight_end: shipping.weightEnd,
+    absolute_money_cost: shipping.absoluteMoneyCost,
+    price_percentage: shipping.pricePercentage,
+    price_by_weight: shipping.priceByWeight,
+  }));
+  await db("shipping_rate_template").insert(shippingParsed);
+}
+
+export async function saveShipping(shipping: ShippingToDB): Promise<void> {
+  await db("shipping_rate_template").insert({
+    zip_code_start: shipping.zipCodeStart,
+    zip_code_end: shipping.zipCodeEnd,
+    weight_start: shipping.weightStart,
+    weight_end: shipping.weightEnd,
+    absolute_money_cost: shipping.absoluteMoneyCost,
+    price_percentage: shipping.pricePercentage,
+    price_by_weight: shipping.priceByWeight,
+  });
 }
