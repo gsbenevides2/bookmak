@@ -11,11 +11,6 @@ export default async function calculateShippingForOrder(
   quantityOfItems: number,
   subtotal: number,
 ): Promise<number> {
-  console.log("Calculating shipping for order", {
-    zipCode,
-    quantityOfItems,
-    subtotal,
-  });
   const dataSource = await DatabaseConnection.getDataSource();
 
   const shippingRateTemplateRepository =
@@ -31,7 +26,6 @@ export default async function calculateShippingForOrder(
         weightEnd: MoreThanOrEqual(weight),
       },
     });
-  console.log("shippingRateTemplateOrNot", shippingRateTemplateOrNot);
 
   throwErrorIfNull(
     shippingRateTemplateOrNot,

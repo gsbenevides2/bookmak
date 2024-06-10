@@ -41,7 +41,6 @@ export class MyNamingStrategy extends DefaultNamingStrategy {
       return `idx_${tableName}_${columnNames.join("_")}`;
     }
 
-    console.log(tableOrName, columnNames, where);
     return super.indexName(tableOrName, columnNames, where);
   }
 }

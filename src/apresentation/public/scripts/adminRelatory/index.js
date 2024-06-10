@@ -157,7 +157,6 @@ window.onload = async function () {
 };
 
 async function reloadData(event) {
-  console.log("reloadData");
   event.preventDefault();
   const dateStartInput = document.getElementById("dateStart");
   const dateEndInput = document.getElementById("dateEnd");

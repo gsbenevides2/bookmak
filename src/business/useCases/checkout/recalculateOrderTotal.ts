@@ -46,7 +46,6 @@ export default async function recalculateOrderTotal(
 
   order.discounts = discounts;
   order.subtotal = subtotal;
-  console.log("order.shippingAddress?.zipCode", order.shippingAddress?.zipCode);
   if (order.shippingAddress?.zipCode != null) {
     const priceOrNull = await promiseOrNull(
       calculateShippingForOrder(

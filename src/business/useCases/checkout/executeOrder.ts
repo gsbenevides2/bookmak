@@ -1,11 +1,11 @@
 import { DatabaseConnection } from "../../../persistence/dbConnection";
+import { getRandomCouponCode } from "../../../utils/coupon";
+import { throwErrorIfFalse } from "../../../utils/errors";
 import { Card } from "../../models/Card";
 import { Coupon, CouponType } from "../../models/Coupon";
 import { Order } from "../../models/Order";
 import { OrderPaymentMethod } from "../../models/OrderPaymentMethod";
 import { OrderStatus, OrderUpdate } from "../../models/OrderUpdate";
-import { getRandomCouponCode } from "../../../utils/coupon";
-import { throwErrorIfFalse } from "../../../utils/errors";
 import recalculateOrderTotal from "./recalculateOrderTotal";
 
 interface Params {
@@ -54,6 +54,11 @@ export default async function executeOrder(params: Params): Promise<void> {
     if (order == null) {
       throw new Error("Pedido não encontrado");
     }
+
+    throwErrorIfFalse(
+      order.shippingIsAvailable,
+      "Pedido não pode ser pago pois o frete não está disponível. Verifique o endereço de entrega",
+    );
 
     throwErrorIfFalse(
       !detectCardToPayNegativeOrder(cards, order.totalPrice),
