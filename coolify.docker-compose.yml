@@ -17,3 +17,5 @@ services:
       SESSION_SECRET: ${SESSION_SECRET}
       ENABLE_SECURE_COOKIE: true
       BCRYPT_SALT_ROUNDS: ${BCRYPT_SALT_ROUNDS}
+    labels:
+      - traefik.http.services.http-0-k4scgs8.loadbalancer.server.port=3000
