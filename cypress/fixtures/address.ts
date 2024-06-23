@@ -14,6 +14,16 @@ export const addressesFixtures: AddressFixtureData[] = [
     street: "Cinco",
     streetType: "street",
     zipCode: "08633138",
+    shippingTableInfo: {
+      id: "a240d54c-7845-47c2-a457-e56cbb684e57",
+      zipCodeStart: "08600000",
+      zipCodeEnd: "08699999",
+      weightStart: 0,
+      weightEnd: 1000,
+      absoluteMoneyCost: 0,
+      pricePercentage: 0,
+      priceByWeight: 0,
+    },
   },
   {
     id: "72d9c799-69fe-472d-8aef-eb1ad5213da3",
@@ -28,5 +38,15 @@ export const addressesFixtures: AddressFixtureData[] = [
     street: "Professora Maria Helena Emilia da Silva",
     streetType: "street",
     zipCode: "55643664",
+    shippingTableInfo: {
+      id: "2dfef4c6-49ae-46ba-b470-685f7387ec59",
+      zipCodeStart: "55600000",
+      zipCodeEnd: "55699999",
+      weightStart: 0,
+      weightEnd: 1000,
+      absoluteMoneyCost: 0,
+      pricePercentage: 0,
+      priceByWeight: 0,
+    },
   },
 ];

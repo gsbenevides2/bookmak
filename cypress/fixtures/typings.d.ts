@@ -11,6 +11,16 @@ declare interface AddressFixtureData {
   state: string;
   country: string;
   observations: string;
+  shippingTableInfo: {
+    id: string;
+    zipCodeStart: string;
+    zipCodeEnd: string;
+    weightStart: number;
+    weightEnd: number;
+    absoluteMoneyCost: number;
+    pricePercentage: number;
+    priceByWeight: number;
+  };
 }
 declare interface CustomerFixtureData {
   id: string;

@@ -6,8 +6,8 @@ export async function createAddress(
 ): Promise<null> {
   const knex = getConnection();
   const addressesOk: AddressTable[] = addresses.map((address) => {
-    console.log(address);
-    const { houseType, streetType, zipCode, ...rest } = address.address;
+    const { houseType, streetType, zipCode, shippingTableInfo, ...rest } =
+      address.address;
     return {
       ...rest,
       house_type: houseType,
@@ -18,6 +18,22 @@ export async function createAddress(
     };
   });
   await knex<AddressTable>("address").insert(addressesOk);
+  await knex<ShippingRateTemplateTable>("shipping_rate_template")
+    .insert(
+      addresses.map((address) => ({
+        absolute_money_cost:
+          address.address.shippingTableInfo.absoluteMoneyCost,
+        id: address.address.shippingTableInfo.id,
+        price_by_weight: address.address.shippingTableInfo.priceByWeight,
+        price_percentage: address.address.shippingTableInfo.pricePercentage,
+        weight_end: address.address.shippingTableInfo.weightEnd,
+        weight_start: address.address.shippingTableInfo.weightStart,
+        zip_code_end: address.address.shippingTableInfo.zipCodeEnd,
+        zip_code_start: address.address.shippingTableInfo.zipCodeStart,
+      })),
+    )
+    .onConflict("id")
+    .ignore();
   await knex.destroy();
   return null;
 }

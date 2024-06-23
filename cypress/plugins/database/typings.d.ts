@@ -34,6 +34,17 @@ declare interface AddressTable {
   customer_id?: string;
 }
 
+declare interface ShippingRateTemplateTable {
+  id: string;
+  zip_code_start: string;
+  zip_code_end: string;
+  weight_start: number;
+  weight_end: number;
+  absolute_money_cost: number;
+  price_percentage: number;
+  price_by_weight: number;
+}
+
 declare interface CardTable {
   id: string;
   number: string;
