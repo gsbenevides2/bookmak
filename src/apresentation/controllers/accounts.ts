@@ -1,8 +1,8 @@
-import { type Controller } from "./types";
 import customerUseCase from "../../business/useCases/customer";
+import { type Controller } from "./types";
 
 export const getMyAccount: Controller = (req, res) => {
-  const accountIdCookie = req.cookies?.accountId as string;
+  const accountIdCookie = req.session?.accountId as string;
   customerUseCase
     .getCustomerData(accountIdCookie)
     .then((account) => {
@@ -21,7 +21,7 @@ export const getMyAccount: Controller = (req, res) => {
     });
 };
 export const changeMyAccountData: Controller = (req, res) => {
-  const accountIdCookie = req.cookies?.accountId as string;
+  const accountIdCookie = req.session?.accountId as string;
   interface Body {
     name: string;
     email: string;
@@ -44,7 +44,7 @@ export const changeMyAccountData: Controller = (req, res) => {
     });
 };
 export const deactivateMyAccount: Controller = (req, res) => {
-  const accountIdCookie = req.cookies?.accountId as string;
+  const accountIdCookie = req.session?.accountId as string;
   customerUseCase
     .deactivateAccount(accountIdCookie)
     .then(() => {
@@ -62,7 +62,7 @@ export const changeMyPassword: Controller = (req, res) => {
     confirmPassword: string;
   }
   const body = req.body as Body;
-  const accountIdCookie = req.cookies?.accountId as string;
+  const accountIdCookie = req.session?.accountId as string;
   customerUseCase
     .changePassword({
       accountId: accountIdCookie,
@@ -95,7 +95,7 @@ export const newAddress: Controller = (req, res) => {
     observations: string;
   }
   const body = req.body as Body;
-  const customerId = req.cookies?.accountId as string;
+  const customerId = req.session?.accountId as string;
 
   customerUseCase
     .registerNewAddress({
@@ -112,7 +112,7 @@ export const newAddress: Controller = (req, res) => {
     });
 };
 export const getAddresses: Controller = (req, res) => {
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   customerUseCase
     .getAddresses(accountId)
     .then((addresses) => {
@@ -128,7 +128,7 @@ export const getAddresses: Controller = (req, res) => {
 };
 export const getAddress: Controller = (req, res) => {
   const addressId = req.params.id;
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   customerUseCase
     .getAdddress(addressId, accountId)
     .then((address) => {
@@ -158,7 +158,7 @@ export const editAddress: Controller = (req, res) => {
     observations: string;
   }
   const body = req.body as Body;
-  const customerId = req.cookies?.accountId as string;
+  const customerId = req.session?.accountId as string;
 
   customerUseCase
     .updateAddress({
@@ -175,7 +175,7 @@ export const editAddress: Controller = (req, res) => {
 };
 export const deleteAddress: Controller = (req, res) => {
   const id = req.params.id;
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
 
   customerUseCase
     .removeAddress(id, accountId)
@@ -188,7 +188,7 @@ export const deleteAddress: Controller = (req, res) => {
 };
 
 export const newCard: Controller = (req, res) => {
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   const { cardNumber, cardName, cardCVV, cardBrand, cardExpiry } = req.body;
   customerUseCase
     .registerNewCard({
@@ -210,7 +210,7 @@ export const newCard: Controller = (req, res) => {
     });
 };
 export const getCards: Controller = (req, res) => {
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   customerUseCase
     .getCards(accountId)
     .then((cards) => {
@@ -226,7 +226,7 @@ export const getCards: Controller = (req, res) => {
 };
 export const deleteCard: Controller = (req, res) => {
   const id = req.params.id;
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   customerUseCase
     .deleteCard(id, accountId)
     .then(() => {
@@ -238,7 +238,7 @@ export const deleteCard: Controller = (req, res) => {
 };
 
 export const getMyCupons: Controller = (req, res) => {
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   customerUseCase
     .viewCoupons(accountId)
     .then((coupons) => {
@@ -252,7 +252,7 @@ export const getMyCupons: Controller = (req, res) => {
 };
 
 export const getMyOrders: Controller = (req, res) => {
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   const error = req.query.error;
   customerUseCase
     .getOrders(accountId)
@@ -268,7 +268,7 @@ export const getMyOrders: Controller = (req, res) => {
 };
 export const getDataFromOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   const error = req.query.error;
   customerUseCase
     .getOrder(orderId, accountId)
@@ -288,7 +288,7 @@ export const getDataFromOrder: Controller = (req, res) => {
 };
 export const checkOrderIsExchangeable: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   customerUseCase
     .checkOrderIsExchangeable(orderId, accountId)
     .then(async (isExchangeable) => {
@@ -310,7 +310,7 @@ export const checkOrderIsExchangeable: Controller = (req, res) => {
 };
 export const exchangeOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   const itemsQuantity = req.body.quantity as Record<string, string>;
   customerUseCase
     .changeOrder(orderId, accountId, itemsQuantity)
@@ -324,7 +324,7 @@ export const exchangeOrder: Controller = (req, res) => {
 
 export const checkOrderIsCancelable: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   customerUseCase
     .checkOrderIsCancelable(orderId, accountId)
     .then(async () => {
@@ -343,7 +343,7 @@ export const checkOrderIsCancelable: Controller = (req, res) => {
 
 export const cancelOrder: Controller = (req, res) => {
   const orderId = req.params.orderId;
-  const accountId = req.cookies?.accountId as string;
+  const accountId = req.session?.accountId as string;
   customerUseCase
     .cancelOrder(orderId, accountId)
     .then(() => {

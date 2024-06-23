@@ -19,6 +19,7 @@
     "@faker-js/faker": "^8.4.1",
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
     "@types/node": "^20.11.25",
     "@types/pg": "^8.11.4",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
@@ -34,11 +35,13 @@
     "typescript": "*"
   },
   "dependencies": {
+    "connect-typeorm": "^2.0.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.9",
     "express": "^4.18.3",
     "express-minify-html-2": "^2.0.0",
+    "express-session": "^1.18.0",
     "openai": "^4.33.1",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.2.1",

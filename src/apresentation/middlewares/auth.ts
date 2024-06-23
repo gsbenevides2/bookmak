@@ -8,7 +8,7 @@ export const authMiddleware = (
   next: NextFunction,
 ): void => {
   const handler = async (): Promise<void> => {
-    const accountIdCookie = req.cookies?.accountId;
+    const accountIdCookie = req.session.accountId;
     if (accountIdCookie == null) {
       res.redirect(
         "/login?error=Você precisa estar logado&redirectTo=" + req.originalUrl,

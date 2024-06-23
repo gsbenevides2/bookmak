@@ -6,16 +6,17 @@ import { type Controller } from "./types";
 export const getLogInPage: Controller = (req, res) => {
   const handles = async (): Promise<void> => {
     const { redirectTo, error } = req.query;
-    if (req.cookies.accountId == null) {
+    if (req.session.accountId == null) {
       res.render("login/login", { error, redirectTo });
     } else {
       const dataSource = await DatabaseConnection.getDataSource();
       const customerRepository = dataSource.getRepository(Customer);
       const account = await customerRepository.findOne({
-        where: { id: req.cookies.accountId },
+        where: { id: req.session.accountId },
       });
       if (account == null || error != null) {
-        res.cookie("accountId", "", { maxAge: 0 });
+        req.session.accountId = undefined;
+        req.session.save();
         res.render("login/login", {
           error: error ?? "Sua sessão expirou",
           redirectTo,
@@ -53,7 +54,8 @@ export const logIn: Controller = (req, res) => {
     });
 
     if (account != null) {
-      res.cookie("accountId", account.id);
+      req.session.accountId = account.id;
+      req.session.save();
       if (redirectTo?.length != null) {
         res.redirect(redirectTo as string);
         return;
@@ -69,8 +71,9 @@ export const logIn: Controller = (req, res) => {
   void handler();
 };
 
-export const logOut: Controller = (_req, res) => {
-  res.clearCookie("accountId");
+export const logOut: Controller = (req, res) => {
+  req.session.accountId = undefined;
+  req.session.save();
   res.redirect("/");
 };
 
@@ -102,7 +105,8 @@ export const register: Controller = (req, res) => {
   const body = req.body as Body;
   registerCustomer(body)
     .then((userId) => {
-      res.cookie("accountId", userId);
+      req.session.accountId = userId;
+      req.session.save();
       if (req.query.redirectTo?.length != null) {
         res.redirect(req.query.redirectTo as string);
         return;

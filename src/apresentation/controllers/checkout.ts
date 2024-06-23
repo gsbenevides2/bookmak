@@ -130,7 +130,7 @@ export const updateBookmarkTextInOrder: Controller = (req, res) => {
 };
 
 export const getAddressSettigsForCurrentOrder: Controller = (req, res) => {
-  const customerId = req.cookies?.accountId as string;
+  const customerId = req.session?.accountId as string;
   const orderId = req.cookies?.orderId as string;
   checkoutUseCases
     .getOrder(orderId)
@@ -165,7 +165,7 @@ export const getAddressSettigsForCurrentOrder: Controller = (req, res) => {
 };
 export const updateAddressSettingsForCurrentOrder: Controller = (req, res) => {
   const { billingAddress, deliveryAddress } = req.body;
-  const customerId = req.cookies?.accountId as string;
+  const customerId = req.session?.accountId as string;
   const orderId = req.cookies?.orderId as string;
 
   checkoutUseCases

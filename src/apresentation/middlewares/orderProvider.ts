@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from "express";
-import { DatabaseConnection } from "../../persistence/dbConnection";
 import { Order } from "../../business/models/Order";
+import { DatabaseConnection } from "../../persistence/dbConnection";
 
 export const orderProvider = (
   req: Request,
@@ -9,7 +9,7 @@ export const orderProvider = (
 ): void => {
   const handler = async (): Promise<void> => {
     const orderId = req.cookies?.orderId;
-    const accountId = req.cookies?.accountId;
+    const accountId = req.session?.accountId;
     const dataSource = await DatabaseConnection.getDataSource();
     const orderRepository = dataSource.getRepository(Order);
     if (orderId == null) {

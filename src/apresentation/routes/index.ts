@@ -1,6 +1,12 @@
+import { TypeormStore } from "connect-typeorm";
+import console from "console";
 import cookieParser from "cookie-parser";
+import "dotenv/config";
 import express, { Router } from "express";
 import minifyHTML from "express-minify-html-2";
+import session from "express-session";
+import { Session } from "../../business/models/Session";
+import { DatabaseConnection } from "../../persistence/dbConnection";
 import { orderProvider } from "../middlewares/orderProvider";
 import locals from "../views/locals";
 import accountsRouter from "./accounts";
@@ -45,7 +51,30 @@ defaultRouter.get("/", (_req, res) => {
   res.redirect("/books");
 });
 
-export default function setupServer(server: express.Express): void {
+export async function setupSession(server: express.Express): Promise<void> {
+  const repository = await DatabaseConnection.getDataSource().then(
+    (dataSource) => dataSource.getRepository(Session),
+  );
+  server.use(
+    session({
+      secret: process.env.SESSION_SECRET ?? "secret",
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: false },
+      store: new TypeormStore({
+        cleanupLimit: 2,
+        limitSubquery: false,
+        ttl: 86400,
+      }).connect(repository),
+    }),
+  );
+}
+export default async function setupServer(
+  server: express.Express,
+): Promise<void> {
+  console.log("Setting up server");
+  await setupSession(server);
+  console.log("Session setup");
   server.use(defaultRouter);
   server.set("views", "src/apresentation/views");
   server.set("view engine", "ejs");
