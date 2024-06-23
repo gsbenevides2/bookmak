@@ -1,5 +1,3 @@
-import "express-session";
-
 declare module "express-minify-html-2" {
   import { type RequestHandler } from "express";
 
@@ -19,10 +17,4 @@ declare module "express-minify-html-2" {
   function minifyHTML(options: MinifyHTMLOptions): RequestHandler;
 
   export = minifyHTML;
-}
-
-declare module "express-session" {
-  interface SessionData {
-    accountId?: string;
-  }
 }

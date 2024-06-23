@@ -55,12 +55,14 @@ export async function setupSession(server: express.Express): Promise<void> {
   const repository = await DatabaseConnection.getDataSource().then(
     (dataSource) => dataSource.getRepository(Session),
   );
+  const sessionSecret = process.env.SESSION ?? "secret";
+  const enableSecureCookie = process.env.ENABLE_SECURE_COOKIE === "true";
   server.use(
     session({
-      secret: process.env.SESSION_SECRET ?? "secret",
+      secret: sessionSecret,
       resave: false,
       saveUninitialized: true,
-      cookie: { secure: false },
+      cookie: { secure: enableSecureCookie },
       store: new TypeormStore({
         cleanupLimit: 2,
         limitSubquery: false,
