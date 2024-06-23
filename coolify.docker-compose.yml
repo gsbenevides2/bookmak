@@ -1,0 +1,21 @@
+version: '3'
+services:
+  node:
+    build: .
+    container_name: node
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_TYPE: postgres
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_SYNCHRONIZE: false
+      DB_LOGGING: true
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      SESSION_SECRET: ${SESSION_SECRET}
+      ENABLE_SECURE_COOKIE: true
+      BCRYPT_SALT_ROUNDS: ${BCRYPT_SALT_ROUNDS}
