@@ -67,8 +67,8 @@ export class Customer {
   @Column({ name: "is_active" })
   isActive: boolean;
 
-  @Column()
-  password: string;
+  @Column({ name: "password_hash" })
+  passwordHash!: string;
 
   @OneToMany(() => Address, (address) => address.customer)
   addresses: Address[];
@@ -116,7 +116,6 @@ export class Customer {
     phoneAreaCode: string,
     phoneNumber: string,
     isActive: boolean,
-    password: string,
     addresses: Address[],
     cards: Card[],
     billingAddress: Address,
@@ -131,7 +130,6 @@ export class Customer {
     this.phoneAreaCode = phoneAreaCode;
     this.phoneNumber = phoneNumber;
     this.isActive = isActive;
-    this.password = password;
     this.addresses = addresses;
     this.cards = cards;
     this.billingAddress = billingAddress;

@@ -1,6 +1,7 @@
 import { Customer } from "../../business/models/Customer";
 import registerCustomer from "../../business/useCases/customer/registerCustomer";
 import { DatabaseConnection } from "../../persistence/dbConnection";
+import { comparePassword } from "../../utils/password";
 import { type Controller } from "./types";
 
 export const getLogInPage: Controller = (req, res) => {
@@ -47,13 +48,24 @@ export const logIn: Controller = (req, res) => {
     const account = await dataSource.getRepository(Customer).findOne({
       where: {
         email,
-        password,
         isActive: true,
       },
-      select: ["id"],
+      select: ["id", "passwordHash"],
     });
 
     if (account != null) {
+      const passwordMatch = await comparePassword(
+        password,
+        account.passwordHash,
+      );
+      if (passwordMatch === false) {
+        res.render("login/login", {
+          error: "Senha ou nome de usuário incorretos. Ou conta inativa.",
+          redirectTo,
+        });
+        return;
+      }
+
       req.session.accountId = account.id;
       req.session.save();
       if (redirectTo?.length != null) {

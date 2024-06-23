@@ -1,10 +1,4 @@
 import { DatabaseConnection } from "../../../persistence/dbConnection";
-import { Address, HouseType, StreetType } from "../../models/Address";
-import {
-  Customer,
-  Gender as GenderEnum,
-  PhoneType as PhoneTypeEnum,
-} from "../../models/Customer";
 import { validateCPF } from "../../../utils/cpf";
 import { validateBirthDate } from "../../../utils/date";
 import { validateEmail } from "../../../utils/email";
@@ -15,9 +9,18 @@ import {
   throwErrorIfNull,
 } from "../../../utils/errors";
 import { srtIsNumberOnly } from "../../../utils/number";
-import { validatePasswordSecurity } from "../../../utils/password";
+import {
+  encryptPassword,
+  validatePasswordSecurity,
+} from "../../../utils/password";
 import { validateDDD, validatePhone } from "../../../utils/phone";
 import { stringIsNotEmpty } from "../../../utils/string";
+import { Address, HouseType, StreetType } from "../../models/Address";
+import {
+  Customer,
+  Gender as GenderEnum,
+  PhoneType as PhoneTypeEnum,
+} from "../../models/Customer";
 
 interface CustomerDataToRegister {
   name: string;
@@ -150,7 +153,7 @@ export default async function registerCustomer(
         deliveryAddress: address,
         phoneAreaCode: registerData.phoneAreaCode,
         phoneNumber: parsedPhone,
-        password: registerData.password,
+        passwordHash: await encryptPassword(registerData.password),
         isActive: true,
         cards: [],
       });

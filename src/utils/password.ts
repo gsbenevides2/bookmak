@@ -1,3 +1,6 @@
+import bcrypt from "bcrypt";
+import { secure } from "./errors";
+
 function hasUpperCase(password: string): boolean {
   return /[A-Z]/.test(password);
 }
@@ -22,4 +25,18 @@ export function validatePasswordSecurity(password: string): boolean {
     hasNumber(password) &&
     hasSpecialCharacter(password)
   );
+}
+export async function encryptPassword(password: string): Promise<string> {
+  const saltRounds = secure(
+    () => parseInt(process.env.BCRYPT_SALT_ROUNDS ?? "10", 10),
+    "Configuração de BCRYPT_SALT_ROUNDS inválida",
+  );
+  return bcrypt.hash(password, saltRounds);
+}
+
+export async function comparePassword(
+  password: string,
+  hash: string,
+): Promise<boolean> {
+  return bcrypt.compare(password, hash);
 }
