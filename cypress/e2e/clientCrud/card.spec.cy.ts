@@ -15,7 +15,7 @@ describe("CRUD de Cliente - Cartão", function () {
       },
     ]);
 
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
   });
 
   it("Cadastrar Cartão", function () {

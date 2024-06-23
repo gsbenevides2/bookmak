@@ -16,12 +16,20 @@ export async function createCustomer(
   const customersOk: CustomerTable[] = customers.map((data) => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { address, customer, is_admin, is_ative } = data;
-    const { dateOfBirth, phoneAreaCode, phoneNumber, phoneType, ...rest } =
-      customer;
+    const {
+      dateOfBirth,
+      phoneAreaCode,
+      phoneNumber,
+      phoneType,
+      passwordHash,
+      password,
+      ...rest
+    } = customer;
     return {
       ...rest,
       billing_address_id: address.id,
       date_of_birth: dateOfBirth,
+      password_hash: passwordHash,
       delivery_address_id: address.id,
       is_active: is_ative ?? true,
       is_admin: is_admin ?? false,

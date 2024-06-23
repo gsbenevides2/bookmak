@@ -57,7 +57,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
   });
 
   it("Erro: Não seleciona nada", function () {
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
     const [bookmarks] = bookmarkFixtures;
 
     cy.intercept("/checkout/bookmark/getInfo", bookmarks);
@@ -72,7 +72,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
   });
 
   it("Erro: Seleciona somente um estilo", function () {
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
     const [bookmarks] = bookmarkFixtures;
     cy.intercept("/checkout/bookmark/getInfo", bookmarks);
 
@@ -100,7 +100,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
   });
 
   it("Erro: Seleciona somente um texto", function () {
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
     const [bookmarks] = bookmarkFixtures;
     cy.intercept("/checkout/bookmark/getInfo", bookmarks);
 
@@ -126,7 +126,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
   });
 
   it("Erro: Digita somente um texto", function () {
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
     const [bookmarks] = bookmarkFixtures;
     cy.intercept("/checkout/bookmark/getInfo", bookmarks);
 
@@ -145,7 +145,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
   });
 
   it("Erro: Carrinho Vazio", function () {
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
     cy.clearCookie("orderId");
     cy.visit("http://localhost:3000");
     cy.visit("http://localhost:3000/checkout/bookmark");
@@ -156,7 +156,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
   });
 
   it("Erro: Digita mais de 200 caracteres", function () {
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
     const [bookmarks] = bookmarkFixtures;
     cy.intercept("/checkout/bookmark/getInfo", bookmarks);
 
@@ -191,7 +191,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
   });
 
   it("Sucesso: Escolhe o estilo e o texto", function () {
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
     const [bookmarks] = bookmarkFixtures;
     cy.intercept("/checkout/bookmark/getInfo", bookmarks);
 
@@ -229,7 +229,7 @@ describe("Acesso a paǵina de Marca Pagina", function () {
   });
 
   it("Sucesso: Escolhe estilo e digita o texto", function () {
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
     const [bookmarks] = bookmarkFixtures;
     cy.intercept("/checkout/bookmark/getInfo", bookmarks);
 

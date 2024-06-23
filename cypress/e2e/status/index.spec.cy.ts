@@ -33,14 +33,15 @@ describe("Alteração de Status", function () {
       },
     ]);
     cy.createBook(books);
-    cy.setCookie("accountId", customer.id);
+
+    cy.login(customer.email, customer.password);
   });
 
   it("Aprovar Pagamento", function () {
     const [order] = ordersFixtures;
     cy.createOrder(order);
-    cy.setCookie("accountId", admin.id);
 
+    cy.login(admin.email, admin.password);
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
@@ -49,8 +50,9 @@ describe("Alteração de Status", function () {
     cy.get(".btn:contains('Aprovar Pagamento')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("have.text", "Pagamento aprovado");
+
+    cy.login(customer.email, customer.password);
     cy.visit("http://localhost:3000");
-    cy.setCookie("accountId", customer.id);
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/accounts/me/orders"]').click();
     cy.get(".mt-3 > .btn").click();
@@ -58,7 +60,7 @@ describe("Alteração de Status", function () {
   });
 
   it("Reprovar Pagamento", function () {
-    cy.setCookie("accountId", admin.id);
+    cy.login(admin.email, admin.password);
 
     const [order] = ordersFixtures;
     cy.createOrder(order);
@@ -78,8 +80,9 @@ describe("Alteração de Status", function () {
       "contains.text",
       "A operadora de cartão não aprovou o pagamento",
     );
+
+    cy.login(customer.email, customer.password);
     cy.visit("http://localhost:3000");
-    cy.setCookie("accountId", customer.id);
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/accounts/me/orders"]').click();
     cy.get(".mt-3 > .btn").click();
@@ -93,7 +96,7 @@ describe("Alteração de Status", function () {
   it("Inciar Preparação", function () {
     const order = ordersFixtures[1];
     cy.createOrder(order);
-    cy.setCookie("accountId", admin.id);
+    cy.login(admin.email, admin.password);
 
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
@@ -103,10 +106,10 @@ describe("Alteração de Status", function () {
     cy.get(".btn:contains('Iniciar Preparação')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("have.text", "Em preparação");
+
+    cy.login(customer.email, customer.password);
+
     cy.visit("http://localhost:3000");
-
-    cy.setCookie("accountId", customer.id);
-
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/accounts/me/orders"]').click();
     cy.get(".mt-3 > .btn").click();
@@ -114,7 +117,8 @@ describe("Alteração de Status", function () {
   });
 
   it("Enviar Pedido", function () {
-    cy.setCookie("accountId", admin.id);
+    cy.login(admin.email, admin.password);
+
     const order = ordersFixtures[2];
     cy.createOrder(order);
     cy.visit("http://localhost:3000");
@@ -129,9 +133,10 @@ describe("Alteração de Status", function () {
     cy.get(".status").should("have.text", "Em transporte");
     cy.get(".statusObs").should("contains.text", "Correios");
     cy.get(".statusObs").should("contains.text", "BR123456789BR");
-    cy.visit("http://localhost:3000");
 
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
+
+    cy.visit("http://localhost:3000");
 
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/accounts/me/orders"]').click();
@@ -144,7 +149,8 @@ describe("Alteração de Status", function () {
   it("Confirmar Entrega", function () {
     const order = ordersFixtures[3];
     cy.createOrder(order);
-    cy.setCookie("accountId", admin.id);
+
+    cy.login(admin.email, admin.password);
 
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
@@ -154,8 +160,10 @@ describe("Alteração de Status", function () {
     cy.get(".btn:contains('Confirmar Entrega')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("have.text", "Entregue");
+
+    cy.login(customer.email, customer.password);
+
     cy.visit("http://localhost:3000");
-    cy.setCookie("accountId", customer.id);
 
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/accounts/me/orders"]').click();

@@ -6,7 +6,7 @@ declare interface CustomerTable {
   name: string;
   email: string;
   cpf: string;
-  password: string;
+  password_hash: string;
   phone_type: string;
   phone_number: string;
   phone_area_code: string;

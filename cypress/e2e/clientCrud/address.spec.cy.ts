@@ -16,7 +16,7 @@ describe("CRUD de Cliente - Endereço", function () {
       },
     ]);
 
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
   });
 
   it("Cadastrar Endereço", function () {

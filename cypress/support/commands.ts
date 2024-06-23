@@ -21,3 +21,10 @@ Cypress.Commands.add("createOrder", (data) => {
 Cypress.Commands.add("createCoupon", (data) => {
   return cy.task("db:createCoupon", data);
 });
+Cypress.Commands.add("login", (email, password) => {
+  cy.clearCookie("connect.sid");
+  cy.visit("http://localhost:3000/login?redirectTo=/");
+  cy.get('input[name="email"]').type(email);
+  cy.get('input[name="password"]').type(password);
+  cy.get("form").submit();
+});

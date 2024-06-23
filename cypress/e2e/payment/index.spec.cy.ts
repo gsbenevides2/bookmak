@@ -23,7 +23,7 @@ describe("Pagamento", function () {
 
     cy.createBook(books);
 
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
   });
 
   it("Um cartão para pagar o todo.", function () {

@@ -33,13 +33,16 @@ describe("Fluxo de Troca", function () {
       },
     ]);
     cy.createBook(books);
-    cy.setCookie("accountId", customer.id);
+
+    cy.login(customer.email, customer.password);
   });
 
   it("Fazer um pedido de troca", function () {
     const order = ordersFixtures[4];
     cy.createOrder(order);
-    cy.setCookie("accountId", customer.id);
+
+    cy.login(customer.email, customer.password);
+
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/accounts/me/orders"]').click();
@@ -60,7 +63,9 @@ describe("Fluxo de Troca", function () {
   it("Aprovar troca: Todos os Items", function () {
     const order = ordersFixtures[5];
     cy.createOrder(order);
-    cy.setCookie("accountId", admin.id);
+
+    cy.login(admin.email, admin.password);
+
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
@@ -69,7 +74,9 @@ describe("Fluxo de Troca", function () {
     cy.get(".btn:contains('Trocar Pedido')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("contain.text", "Trocado");
-    cy.setCookie("accountId", customer.id);
+
+    cy.login(customer.email, customer.password);
+
     cy.visit(`http://localhost:3000/accounts/me/orders/${order.orders[0].id}`);
     cy.get(".status").should("contain.text", "Trocado");
     cy.visit("http://localhost:3000/accounts/me/coupons");
@@ -82,7 +89,9 @@ describe("Fluxo de Troca", function () {
   it("Aprovar troca: Um dos Items", function () {
     const order = ordersFixtures[9];
     cy.createOrder(order);
-    cy.setCookie("accountId", admin.id);
+
+    cy.login(admin.email, admin.password);
+
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
@@ -91,7 +100,9 @@ describe("Fluxo de Troca", function () {
     cy.get(".btn:contains('Trocar Pedido')").click();
     cy.get("form > .btn").click();
     cy.get(".status").should("contain.text", "Trocado");
-    cy.setCookie("accountId", customer.id);
+
+    cy.login(customer.email, customer.password);
+
     cy.visit(`http://localhost:3000/accounts/me/orders/${order.orders[0].id}`);
     cy.get(".status").should("contain.text", "Trocado");
     cy.visit("http://localhost:3000/accounts/me/coupons");
@@ -108,7 +119,9 @@ describe("Fluxo de Troca", function () {
   it("Reprovar troca", function () {
     const order = ordersFixtures[5];
     cy.createOrder(order);
-    cy.setCookie("accountId", admin.id);
+
+    cy.login(admin.email, admin.password);
+
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();

@@ -23,6 +23,7 @@ declare interface CustomerFixtureData {
   phoneAreaCode: string;
   phoneNumber: string;
   password: string;
+  passwordHash: string;
 }
 declare interface CardFixtureData {
   id: string;

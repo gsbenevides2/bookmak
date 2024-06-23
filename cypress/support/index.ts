@@ -11,5 +11,9 @@ declare namespace Cypress {
     createBook: (data: DatabaseCreateBookData) => Chainable<void>;
     createOrder: (data: DatabaseCreateOrderData) => Chainable<void>;
     createCoupon: (data: DatabaseCreateCouponData) => Chainable<void>;
+    login: (
+      email: string,
+      password: string,
+    ) => Chainable<Cypress.Response<any>>;
   }
 }

@@ -34,7 +34,8 @@ describe("Fluxo de Cancelamento", function () {
       },
     ]);
     cy.createBook(books);
-    cy.setCookie("accountId", customer.id);
+
+    cy.login(customer.email, customer.password);
   });
 
   it("Fazer um pedido de cancelamento, sem o produto ter sido enviado", function () {
@@ -74,7 +75,8 @@ describe("Fluxo de Cancelamento", function () {
   it("Admin Aprovar Cancelamento", function () {
     const order = ordersFixtures[10];
     cy.createOrder(order);
-    cy.setCookie("accountId", admin.id);
+
+    cy.login(admin.email, admin.password);
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();
@@ -83,7 +85,8 @@ describe("Fluxo de Cancelamento", function () {
     cy.get('.btn:contains("Aprovar Cancelamento")').click();
     cy.get("form > .btn").click();
     cy.get(".status").should("contain.text", "Cancelado");
-    cy.setCookie("accountId", customer.id);
+
+    cy.login(customer.email, customer.password);
     cy.visit(`http://localhost:3000/accounts/me/orders/${order.orders[0].id}`);
     cy.get(".status").should("contain.text", "Cancelado");
     cy.visit("http://localhost:3000/accounts/me/coupons");
@@ -96,7 +99,8 @@ describe("Fluxo de Cancelamento", function () {
   it("Admin Reprovar cancelamento", function () {
     const order = ordersFixtures[10];
     cy.createOrder(order);
-    cy.setCookie("accountId", admin.id);
+
+    cy.login(admin.email, admin.password);
     cy.visit("http://localhost:3000");
     cy.get('[href="/accounts/me"]').click();
     cy.get('[href="/admin"]').click();

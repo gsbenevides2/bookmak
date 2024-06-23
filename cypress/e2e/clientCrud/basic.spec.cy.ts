@@ -2,8 +2,8 @@
 
 import * as utils from "../../utils";
 
-import { customersFixtures } from "../../fixtures/customer";
 import { addressesFixtures } from "../../fixtures/address";
+import { customersFixtures } from "../../fixtures/customer";
 
 describe("CRUD de Cliente", function () {
   beforeEach(function () {
@@ -117,7 +117,7 @@ describe("CRUD de Cliente", function () {
       },
     ]);
 
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
 
     cy.visit("http://localhost:3000");
     cy.get("a:contains('Minha Conta')").click();
@@ -193,7 +193,7 @@ describe("CRUD de Cliente", function () {
       },
     ]);
 
-    cy.setCookie("accountId", customerOldData.id);
+    cy.login(customerOldData.email, customerOldData.password);
 
     cy.visit("http://localhost:3000");
     cy.get("a:contains('Minha Conta')").click();
@@ -249,7 +249,8 @@ describe("CRUD de Cliente", function () {
         customer,
       },
     ]);
-    cy.setCookie("accountId", customer.id);
+
+    cy.login(customer.email, customer.password);
 
     cy.visit("http://localhost:3000");
     cy.get("a:contains('Minha Conta')").click();

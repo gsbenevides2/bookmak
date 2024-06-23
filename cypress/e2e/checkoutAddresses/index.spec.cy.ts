@@ -20,7 +20,7 @@ describe("Escolha de Endereço de Cobrança e Entrega", function () {
 
     cy.createBook(books);
 
-    cy.setCookie("accountId", customer.id);
+    cy.login(customer.email, customer.password);
   });
   it("Escolha de Endereço", function () {
     const order = ordersFixtures[7];
@@ -41,7 +41,7 @@ describe("Escolha de Endereço de Cobrança e Entrega", function () {
     cy.url().should("be.equal", "http://localhost:3000/checkout/payment");
   });
   it("Erro: Usuário não logado", function () {
-    cy.clearCookie("accountId");
+    cy.clearCookies();
     cy.visit("http://localhost:3000/checkout/addresses");
     cy.get(".alert").should("contain.text", "Você precisa estar logado");
   });

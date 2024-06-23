@@ -12,6 +12,8 @@ export const customersFixtures: CustomerFixtureData[] = [
     phoneAreaCode: "51",
     phoneNumber: "995401492",
     password: "OTk)Zf+;t2",
+    passwordHash:
+      "$2a$10$sll2WU8I97eqzc1QvEELYehk0mKHiaLVC9VVdsrCgHTR9Fy4nQCPm",
   },
   {
     id: "d959fb55-8663-4ebc-93e2-4f95d5042069",
@@ -24,5 +26,7 @@ export const customersFixtures: CustomerFixtureData[] = [
     phoneAreaCode: "62",
     phoneNumber: "981711801",
     password: "7|DhL4u4Zl",
+    passwordHash:
+      "$2a$10$ncNJYi6MvBMMTC68T31N1ewCRJcJzDomZ1ewSoVsWmfd/JNtJITMm",
   },
 ];
