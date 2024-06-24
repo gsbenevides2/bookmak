@@ -10,6 +10,9 @@ import checkOrderIsSended from "./checkOrderIsSended";
 import createCoupon from "./createCoupon";
 import finishOrder from "./finishOrder";
 import getAllOrders from "./getAllOrders";
+import getAuthors from "./getAuthors";
+import getBooks from "./getBooks";
+import getCategories from "./getCategories";
 import getOrder from "./getOrder";
 import getOrdersToAnalysis from "./getOrdersToAnalysis";
 import listCoupons from "./listCoupons";
@@ -32,6 +35,9 @@ export default {
   createCoupon,
   finishOrder,
   getAllOrders,
+  getAuthors,
+  getBooks,
+  getCategories,
   getOrder,
   getOrdersToAnalysis,
   listCoupons,

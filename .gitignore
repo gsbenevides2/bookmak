@@ -44,4 +44,5 @@ dist
 #env file
 .env*
 
+service-account-key.json
 

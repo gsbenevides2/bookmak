@@ -337,3 +337,112 @@ export const getProductsToAnalyse: Controller = (req, res) => {
       res.redirect(`/admin?error=${err.message}`);
     });
 };
+
+export const getBooks: Controller = (req, res) => {
+  const searchQuery = req.query.searchQuery as string | undefined;
+  adminUseCases
+    .getBooks(searchQuery)
+    .then((books) => {
+      res.render("admin/books", {
+        books,
+        searchQuery: searchQuery ?? "",
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const getNewBookPage: Controller = (_req, res) => {
+  const promises = [adminUseCases.getAuthors(), adminUseCases.getCategories()];
+  Promise.all(promises)
+    .then(([authors, categories]) => {
+      res.render("admin/newBook", {
+        authors,
+        categories,
+      });
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const createBook: Controller = (req, res) => {
+  interface Body {
+    title: string;
+    description: string;
+    authors: string;
+    categories: string;
+    cover: string;
+    bookmarkStyle: string;
+  }
+  const {
+    title,
+    authors: authorsStr,
+    categories: categoriesStr,
+    description,
+  } = req.body as Partial<Body>;
+
+  if (title === undefined) {
+    res.redirect("/admin?error=Titulo não enviado");
+    return;
+  }
+  if (authorsStr === undefined) {
+    res.redirect("/admin?error=Autor não enviado");
+    return;
+  }
+  if (categoriesStr === undefined) {
+    res.redirect("/admin?error=Categoria não enviada");
+    return;
+  }
+  if (description === undefined) {
+    res.redirect("/admin?error=Descrição não enviada");
+    return;
+  }
+  const authors = authorsStr.split(",");
+  const categories = categoriesStr.split(",");
+  const files = req.files;
+  if (files === null || files === undefined) {
+    res.redirect("/admin?error=Arquivos não enviado");
+    return;
+  }
+  const cover = files.cover;
+  const bookmarkStyle = files.bookmarkStyle;
+
+  if (Array.isArray(cover)) {
+    res.redirect("/admin?error=Mutilpos arquivos enviados para capa");
+    return;
+  }
+  if (cover.mimetype !== "image/jpeg" && cover.mimetype !== "image/png") {
+    res.redirect("/admin?error=Formato de imagem inválido");
+  }
+  if (Array.isArray(bookmarkStyle)) {
+    res.redirect("/admin?error=Mutilpos arquivos enviados para marcador");
+    return;
+  }
+  if (
+    bookmarkStyle.mimetype !== "image/jpeg" &&
+    bookmarkStyle.mimetype !== "image/png"
+  ) {
+    res.redirect("/admin?error=Formato de imagem inválido");
+  }
+
+  const coverFile = {
+    filePath: cover.tempFilePath,
+    type: cover.mimetype,
+  };
+  const bookmarkStyleFile = {
+    tempFilePath: bookmarkStyle.tempFilePath,
+    type: bookmarkStyle.mimetype,
+  };
+
+  console.log({
+    title,
+    authors,
+    categories,
+    description,
+    cover: coverFile,
+    bookmarkStyle: bookmarkStyleFile,
+  });
+};

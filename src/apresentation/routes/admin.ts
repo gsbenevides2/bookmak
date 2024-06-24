@@ -78,4 +78,8 @@ adminRouter.post(
 
 adminRouter.get("/analysis", adminController.getProductsToAnalyse);
 
+adminRouter.get("/products", adminController.getBooks);
+adminRouter.get("/products/new", adminController.getNewBookPage);
+adminRouter.post("/products/new", adminController.createBook);
+
 export default adminRouter;

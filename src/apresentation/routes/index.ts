@@ -3,6 +3,7 @@ import console from "console";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 import express, { Router } from "express";
+import fileUpload from "express-fileupload";
 import minifyHTML from "express-minify-html-2";
 import session from "express-session";
 import { Session } from "../../business/models/Session";
@@ -33,6 +34,14 @@ defaultRouter.use(
       removeEmptyAttributes: true,
       minifyJS: true,
     },
+  }),
+);
+
+defaultRouter.use(
+  fileUpload({
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
   }),
 );
 
