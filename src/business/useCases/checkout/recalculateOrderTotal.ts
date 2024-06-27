@@ -1,6 +1,7 @@
 import { DatabaseConnection } from "../../../persistence/dbConnection";
 import { promiseOrNull } from "../../../utils/promise";
 import { Order } from "../../models/Order";
+import { OrderItem } from "../../models/OrderItem";
 import calculateShippingForOrder from "../shipping/calculateShipping";
 
 export default async function recalculateOrderTotal(
@@ -9,6 +10,7 @@ export default async function recalculateOrderTotal(
   const datasource = await DatabaseConnection.getDataSource();
 
   const orderRepository = datasource.getRepository(Order);
+  const orderItemRepository = datasource.getRepository(OrderItem);
 
   const order = await orderRepository.findOne({
     where: { id: orderId },
@@ -25,6 +27,13 @@ export default async function recalculateOrderTotal(
 
   if (order === null) {
     throw new Error("Order not found");
+  }
+
+  const inativeItems = order.items.filter((item) => !item.sku.isActive);
+  if (inativeItems.length > 0) {
+    await orderItemRepository.remove(inativeItems);
+    await recalculateOrderTotal(orderId);
+    return;
   }
 
   const newItems = order.items.map((item) => {

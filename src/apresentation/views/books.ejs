@@ -88,14 +88,14 @@
     <section class="row mt-5">
       <div class="d-flex flex-wrap justify-content-between book-shelf">
         <% books.forEach(book => { %>
-        <div class="card book-shelf-item mb-5">
+        <div class="card book-shelf-item mb-3 mb-lg-5 flex-row flex-lg-column">
           <div class="card-image">
             <img src="<%= utils.bookCoverImage.getMinifiedImageUrl(book.cover) %>" class="card-img-top" alt="Capa do Livro" loading="lazy" />
           </div>
           <div class="card-body d-flex flex-column">
             <h5 class="card-title book-shelf-item-title"><%= book.title %></h5>
             <p class="card-text fst-italic">Autor: <%= utils.authors.format(book.authors) %></p>
-            <p class="card-text book-description"><%= book.description %></p>
+            <p class="card-text book-description d-none d-lg-block"><%= book.description %></p>
             <p class="card-text fw-bold mt-auto book-shelf-item-price"><%= utils.price.format(book.price) %></p>
             <a href="/books/<%= book.id %>" class="btn btn-dark">Comprar</a>
           </div>

@@ -433,16 +433,179 @@ export const createBook: Controller = (req, res) => {
     type: cover.mimetype,
   };
   const bookmarkStyleFile = {
-    tempFilePath: bookmarkStyle.tempFilePath,
+    filePath: bookmarkStyle.tempFilePath,
     type: bookmarkStyle.mimetype,
   };
 
-  console.log({
+  adminUseCases
+    .createBook({
+      title,
+      authors,
+      categories,
+      description,
+      cover: coverFile,
+      bookmarkStyle: bookmarkStyleFile,
+    })
+    .then((id) => {
+      res.redirect("/admin/products?searchQuery=" + id);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const getEditBookPage: Controller = (req, res) => {
+  const id = req.params.bookId;
+  const promises = [
+    adminUseCases.getBook(id),
+    adminUseCases.getAuthors(),
+    adminUseCases.getCategories(),
+  ];
+  Promise.all(promises)
+    .then(([book, authors, categories]) => {
+      res.render("admin/editBook", {
+        book,
+        authors,
+        categories,
+      });
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const editBook: Controller = (req, res) => {
+  interface Body {
+    title: string;
+    description: string;
+    authors: string;
+    categories: string;
+    cover: string;
+    bookmarkStyle: string;
+  }
+  const {
     title,
-    authors,
-    categories,
+    authors: authorsStr,
+    categories: categoriesStr,
     description,
-    cover: coverFile,
-    bookmarkStyle: bookmarkStyleFile,
-  });
+  } = req.body as Partial<Body>;
+
+  const bookId = req.params.bookId;
+
+  if (title === undefined) {
+    res.redirect("/admin?error=Titulo não enviado");
+    return;
+  }
+  if (authorsStr === undefined) {
+    res.redirect("/admin?error=Autor não enviado");
+    return;
+  }
+  if (categoriesStr === undefined) {
+    res.redirect("/admin?error=Categoria não enviada");
+    return;
+  }
+  if (description === undefined) {
+    res.redirect("/admin?error=Descrição não enviada");
+    return;
+  }
+  const authors = authorsStr.split(",");
+  const categories = categoriesStr.split(",");
+  const files = req.files;
+  if (files === null || files === undefined) {
+    res.redirect("/admin?error=Arquivos não enviado");
+    return;
+  }
+  const cover = files.cover;
+  const bookmarkStyle = files.bookmarkStyle;
+
+  if (Array.isArray(cover)) {
+    res.redirect("/admin?error=Mutilpos arquivos enviados para capa");
+    return;
+  }
+  if (cover.mimetype !== "image/jpeg" && cover.mimetype !== "image/png") {
+    res.redirect("/admin?error=Formato de imagem inválido");
+  }
+  if (Array.isArray(bookmarkStyle)) {
+    res.redirect("/admin?error=Mutilpos arquivos enviados para marcador");
+    return;
+  }
+  if (
+    bookmarkStyle.mimetype !== "image/jpeg" &&
+    bookmarkStyle.mimetype !== "image/png"
+  ) {
+    res.redirect("/admin?error=Formato de imagem inválido");
+  }
+
+  const coverFile = {
+    filePath: cover.tempFilePath,
+    type: cover.mimetype,
+  };
+  const bookmarkStyleFile = {
+    filePath: bookmarkStyle.tempFilePath,
+    type: bookmarkStyle.mimetype,
+  };
+
+  adminUseCases
+    .editBook({
+      bookId,
+      title,
+      authors,
+      categories,
+      description,
+      cover: coverFile,
+      bookmarkStyle: bookmarkStyleFile,
+    })
+    .then((id) => {
+      res.redirect("/admin/products?searchQuery=" + id);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const disableBook: Controller = (req, res) => {
+  const bookId = req.params.bookId;
+  adminUseCases
+    .disableBook(bookId)
+    .then(() => {
+      res.status(200).send("Livro desativado com sucesso");
+    })
+    .catch((err) => {
+      res.status(500).send(err.message);
+    });
+};
+
+export const activateBook: Controller = (req, res) => {
+  const bookId = req.params.bookId;
+  adminUseCases
+    .activateBook(bookId)
+    .then(() => {
+      res.status(200).send("Livro ativado com sucesso");
+    })
+    .catch((err) => {
+      res.status(500).send(err.message);
+    });
+};
+
+export const activateSku: Controller = (req, res) => {
+  const skuId = req.params.skuId;
+  adminUseCases
+    .activateSku(skuId)
+    .then(() => {
+      res.status(200).send("Sku ativado com sucesso");
+    })
+    .catch((err) => {
+      res.status(500).send(err.message);
+    });
+};
+export const disableSku: Controller = (req, res) => {
+  const skuId = req.params.skuId;
+  adminUseCases
+    .disableSku(skuId)
+    .then(() => {
+      res.status(200).send("Sku desativado com sucesso");
+    })
+    .catch((err) => {
+      res.status(500).send(err.message);
+    });
 };

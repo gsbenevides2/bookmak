@@ -7,7 +7,7 @@ import { BookmarkGenerator } from "./utils/generateBookmarks";
 
 import setupServer from "./apresentation/routes";
 
-async function startSystems() {
+async function startSystems(): Promise<void> {
   console.log("Starting systems...");
   console.log("Connecting to database...");
   await DatabaseConnection.getDataSource();

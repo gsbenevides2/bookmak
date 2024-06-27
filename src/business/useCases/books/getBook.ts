@@ -19,7 +19,7 @@ export default async function getBookById(
   const dataSource = await DatabaseConnection.getDataSource();
   const skuRepository = dataSource.getRepository(BookSku);
   const sku = await skuRepository.findOne({
-    where: { id: bookId },
+    where: { id: bookId, isActive: true },
     relations: ["book", "book.authors", "book.categories"],
   });
 

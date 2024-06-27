@@ -79,7 +79,16 @@ adminRouter.post(
 adminRouter.get("/analysis", adminController.getProductsToAnalyse);
 
 adminRouter.get("/products", adminController.getBooks);
-adminRouter.get("/products/new", adminController.getNewBookPage);
-adminRouter.post("/products/new", adminController.createBook);
+adminRouter.get("/products/books/new", adminController.getNewBookPage);
+adminRouter.post("/products/books/new", adminController.createBook);
+adminRouter.get("/products/book/:bookId", adminController.getEditBookPage);
+adminRouter.post("/products/book/:bookId", adminController.editBook);
+adminRouter.post("/products/book/:bookId/disable", adminController.disableBook);
+adminRouter.post(
+  "/products/book/:bookId/activate",
+  adminController.activateBook,
+);
+adminRouter.post("/products/sku/:skuId/disable", adminController.disableSku);
+adminRouter.post("/products/sku/:skuId/activate", adminController.activateSku);
 
 export default adminRouter;

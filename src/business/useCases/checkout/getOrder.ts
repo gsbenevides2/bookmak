@@ -1,8 +1,10 @@
 import { Raw } from "typeorm";
 import { DatabaseConnection } from "../../../persistence/dbConnection";
 import { Order } from "../../models/Order";
+import recalculateOrderTotal from "./recalculateOrderTotal";
 
 export default async function getOrder(orderId: string): Promise<Order> {
+  await recalculateOrderTotal(orderId);
   const datasource = await DatabaseConnection.getDataSource().catch(() => {
     throw new Error(
       "Ocorreu um erro interno ao buscar o pedido. Code: DataConnectionError",

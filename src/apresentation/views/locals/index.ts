@@ -9,6 +9,7 @@ import * as date from "./utils/date";
 import * as orderUpdate from "./utils/orderUpdate";
 import * as phone from "./utils/phone";
 import * as price from "./utils/price";
+import * as skus from "./utils/skus";
 import * as text from "./utils/text";
 import * as time from "./utils/time";
 
@@ -25,6 +26,7 @@ export default {
     orderUpdate,
     phone,
     price,
+    skus,
     text,
     time,
   },

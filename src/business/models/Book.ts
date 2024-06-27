@@ -54,4 +54,7 @@ export class Book {
 
   @Column({ name: "bookmark_style", nullable: true })
   bookmarkStyle?: string;
+
+  @Column({ name: "is_active", default: true })
+  isActive!: boolean;
 }

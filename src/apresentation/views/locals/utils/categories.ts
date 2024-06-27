@@ -7,3 +7,7 @@ export function format(categories: Category[]): string {
 export function order(categories: Category[]): Category[] {
   return categories.sort((a, b) => a.name.localeCompare(b.name));
 }
+
+export function formatInputValue(categories: Category[]): string {
+  return categories.map((category) => category.name).join(",");
+}

@@ -30,4 +30,7 @@ export class BookSku {
   @ManyToOne(() => Book, (book) => book.skus)
   @JoinColumn({ name: "book_id", foreignKeyConstraintName: "fk_book_sku" })
   book!: Book;
+
+  @Column({ name: "is_active", default: true })
+  isActive!: boolean;
 }

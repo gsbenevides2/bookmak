@@ -1,10 +1,9 @@
 .book-shelf-item {
-  max-width: 230px;
-  width: 25vw;
+  width: 100%;
 }
-
 .card-image {
-  min-height: 355px;
+  min-width: 168px;
+  max-width: 168px;
   display: flex;
   justify-content: center;
 }
@@ -17,4 +16,15 @@
   height: 412px;
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
+}
+
+@media (min-width: 992px) {
+  .book-shelf-item {
+    max-width: 230px;
+    width: 25vw;
+  }
+  .card-image {
+    min-height: 355px;
+    max-width: unset;
+  }
 }

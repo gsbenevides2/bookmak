@@ -48,6 +48,7 @@
     "express-fileupload": "^1.5.0",
     "express-minify-html-2": "^2.0.0",
     "express-session": "^1.18.0",
+    "jimp": "^0.22.12",
     "openai": "^4.33.1",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.2.1",

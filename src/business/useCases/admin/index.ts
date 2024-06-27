@@ -1,3 +1,5 @@
+import activateBook from "./activateBook";
+import activateSku from "./activateSku";
 import aproveExchange from "./aproveExchange";
 import aprovePayment from "./aprovePayment";
 import cancelOrder from "./cancelOrder";
@@ -7,10 +9,15 @@ import checkOrderIsPayable from "./checkOrderIsPayable";
 import checkOrderIsPayed from "./checkOrderIsPayed";
 import checkOrderIsPreparing from "./checkOrderIsPreparing";
 import checkOrderIsSended from "./checkOrderIsSended";
+import createBook from "./createBook";
 import createCoupon from "./createCoupon";
+import disableBook from "./disableBook";
+import disableSku from "./disableSku";
+import editBook from "./editBook";
 import finishOrder from "./finishOrder";
 import getAllOrders from "./getAllOrders";
 import getAuthors from "./getAuthors";
+import getBook from "./getBook";
 import getBooks from "./getBooks";
 import getCategories from "./getCategories";
 import getOrder from "./getOrder";
@@ -23,6 +30,8 @@ import sendOrder from "./sendOrder";
 import startPreparing from "./startPreparing";
 
 export default {
+  activateBook,
+  activateSku,
   aproveExchange,
   aprovePayment,
   cancelOrder,
@@ -32,10 +41,15 @@ export default {
   checkOrderIsPayed,
   checkOrderIsPreparing,
   checkOrderIsSended,
+  createBook,
   createCoupon,
+  disableBook,
+  disableSku,
+  editBook,
   finishOrder,
   getAllOrders,
   getAuthors,
+  getBook,
   getBooks,
   getCategories,
   getOrder,

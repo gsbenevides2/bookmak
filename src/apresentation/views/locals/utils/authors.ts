@@ -7,3 +7,7 @@ export function format(authors: Author[]): string {
 export function order(authors: Author[]): Author[] {
   return authors.sort((a, b) => a.name.localeCompare(b.name));
 }
+
+export function formatInputValue(authors: Author[]): string {
+  return authors.map((author) => author.name).join(",");
+}

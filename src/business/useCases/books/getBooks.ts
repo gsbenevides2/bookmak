@@ -54,6 +54,8 @@ export default async function getBooks(
     skuQuery.andWhere("sku.price <= :maxPrice", { maxPrice: params.maxPrice });
   }
 
+  skuQuery.andWhere("sku.isActive = true");
+
   const skus = await skuQuery.getMany();
   return skus.map((sku) => {
     return {
