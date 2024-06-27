@@ -7,8 +7,9 @@ async function loadFileToBuffer(filePath: string): Promise<Buffer> {
   const fsRes = await fs.promises.readFile(filePath);
   return fsRes;
 }
+console.log(typeof process.env.GCP_SERVICE_ACCOUNT);
 const storage = new Storage({
-  keyFilename: process.env.GCP_SERVICE_ACCOUNT_KEY_PATH,
+  credentials: JSON.parse(process.env.GCP_SERVICE_ACCOUNT ?? ""),
 });
 const bucket = storage.bucket("bookmak");
 void bucket.setCorsConfiguration([
