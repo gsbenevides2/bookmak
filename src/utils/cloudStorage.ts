@@ -3,13 +3,22 @@ import "dotenv/config";
 import fs from "fs";
 import Jimp from "jimp";
 import { v4 } from "uuid";
+
+import { type ExternalAccountClientOptions } from "google-auth-library/build/src/auth/externalclient";
+
 async function loadFileToBuffer(filePath: string): Promise<Buffer> {
   const fsRes = await fs.promises.readFile(filePath);
   return fsRes;
 }
-console.log(typeof process.env.GCP_SERVICE_ACCOUNT);
+
+function readCredentials(): ExternalAccountClientOptions {
+  return JSON.parse(
+    Buffer.from(process.env.GCP_SERVICE_ACCOUNT ?? "", "base64").toString(),
+  );
+}
+
 const storage = new Storage({
-  credentials: JSON.parse(process.env.GCP_SERVICE_ACCOUNT ?? ""),
+  credentials: readCredentials(),
 });
 const bucket = storage.bucket("bookmak");
 void bucket.setCorsConfiguration([
