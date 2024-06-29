@@ -91,5 +91,5 @@ adminRouter.post(
 adminRouter.post("/products/sku/:skuId/disable", adminController.disableSku);
 adminRouter.post("/products/sku/:skuId/activate", adminController.activateSku);
 adminRouter.get("/products/sku/:skuId", adminController.getEditSkuPage);
-
+adminRouter.post("/products/sku/:skuId", adminController.editBookSku);
 export default adminRouter;

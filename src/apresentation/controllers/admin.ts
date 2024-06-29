@@ -623,3 +623,65 @@ export const getEditSkuPage: Controller = (req, res) => {
       res.redirect(`/admin?error=${err.message}`);
     });
 };
+
+export const editBookSku: Controller = (req, res) => {
+  interface Body {
+    title: string;
+    description: string;
+    cover: string;
+    stockQuantity: string;
+  }
+  const { title, description, stockQuantity } = req.body as Partial<Body>;
+
+  const { skuId } = req.params;
+
+  if (title === undefined) {
+    res.redirect("/admin?error=Titulo não enviado");
+    return;
+  }
+
+  if (stockQuantity === undefined) {
+    res.redirect("/admin?error=Quantidade em estoque não enviada");
+    return;
+  }
+
+  if (description === undefined) {
+    res.redirect("/admin?error=Descrição não enviada");
+    return;
+  }
+  const files = req.files;
+  if (files === null || files === undefined) {
+    res.redirect("/admin?error=Arquivos não enviado");
+    return;
+  }
+  const cover = files.cover;
+
+  if (Array.isArray(cover)) {
+    res.redirect("/admin?error=Mutilpos arquivos enviados para capa");
+    return;
+  }
+  if (cover.mimetype !== "image/jpeg" && cover.mimetype !== "image/png") {
+    res.redirect("/admin?error=Formato de imagem inválido");
+  }
+
+  const coverFile = {
+    filePath: cover.tempFilePath,
+    type: cover.mimetype,
+  };
+
+  adminUseCases
+    .editBookSku({
+      bookSkuId: skuId,
+      title,
+      description,
+      cover: coverFile,
+      stockQuantity: parseInt(stockQuantity, 10),
+    })
+    .then((id) => {
+      console.log(id);
+      res.redirect("/admin/products?searchQuery=" + id);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};

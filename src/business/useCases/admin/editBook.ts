@@ -108,8 +108,8 @@ export default async function editBook(data: EditBookData): Promise<string> {
     })
     .catch((err) => {
       if (err instanceof Error)
-        throw new Error(err.message ?? "An error occurred while creating book");
-      throw new Error("An error occurred while creating book");
+        throw new Error(err.message ?? "An error occurred while editing book");
+      throw new Error("An error occurred while editing book");
     });
 
   return id;

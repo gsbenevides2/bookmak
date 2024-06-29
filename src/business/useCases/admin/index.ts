@@ -14,6 +14,7 @@ import createCoupon from "./createCoupon";
 import disableBook from "./disableBook";
 import disableSku from "./disableSku";
 import editBook from "./editBook";
+import editBookSku from "./editBookSku";
 import finishOrder from "./finishOrder";
 import getAllOrders from "./getAllOrders";
 import getAuthors from "./getAuthors";
@@ -47,6 +48,7 @@ export default {
   disableBook,
   disableSku,
   editBook,
+  editBookSku,
   finishOrder,
   getAllOrders,
   getAuthors,
