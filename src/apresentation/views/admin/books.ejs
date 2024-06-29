@@ -87,7 +87,7 @@
               </div>
               <div>
                 <a class="btn btn-dark" target="_blank" href="/books/<%= sku.id %>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Ver Página de Produto"><i class="fa fa-eye"></i></a>
-                <button class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Editar SKU"><i class="fa fa-pencil"></i></button>
+                <a class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Editar SKU" href="/admin/products/sku/<%= sku.id %>"><i class="fa fa-pencil"></i></a>
                 <% if(sku.isActive) { %>
                 <button class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Inativar SKU" onclick="openConfirmationModal('<%= sku.id %>', 'sku', 'disable')"><i class="fa-solid fa-toggle-off"></i></button>
                 <% } else { %>

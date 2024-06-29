@@ -609,3 +609,17 @@ export const disableSku: Controller = (req, res) => {
       res.status(500).send(err.message);
     });
 };
+
+export const getEditSkuPage: Controller = (req, res) => {
+  const { skuId } = req.params;
+  adminUseCases
+    .getBookSku(skuId)
+    .then((sku) => {
+      res.render("admin/editSku", {
+        sku,
+      });
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};

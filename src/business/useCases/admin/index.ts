@@ -19,6 +19,7 @@ import getAllOrders from "./getAllOrders";
 import getAuthors from "./getAuthors";
 import getBook from "./getBook";
 import getBooks from "./getBooks";
+import getBookSku from "./getBookSku";
 import getCategories from "./getCategories";
 import getOrder from "./getOrder";
 import getOrdersToAnalysis from "./getOrdersToAnalysis";
@@ -50,6 +51,7 @@ export default {
   getAllOrders,
   getAuthors,
   getBook,
+  getBookSku,
   getBooks,
   getCategories,
   getOrder,
