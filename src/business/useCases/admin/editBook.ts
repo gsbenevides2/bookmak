@@ -49,8 +49,6 @@ export default async function editBook(data: EditBookData): Promise<string> {
     data.bookmarkStyle.type === "image/png" ? "png" : "jpg",
   );
 
-  console.log(coverPublicUrl, bookmarkStylePublicUrl);
-
   const datasource = await DatabaseConnection.getDataSource();
   const id = await datasource
     .transaction(async (manager) => {

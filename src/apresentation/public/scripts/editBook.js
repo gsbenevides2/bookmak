@@ -1,5 +1,4 @@
 function downloadFileToBlob(url) {
-  console.log(url);
   return fetch(url).then((response) => response.blob());
 }
 
@@ -89,9 +88,6 @@ function loadAuthorsInput() {
       const author = event.target.textContent;
       authorsTag.addValue(author);
     });
-  });
-  authorsInput.addEventListener("change", () => {
-    console.log("OI");
   });
 }
 function loadCategoriesInput() {

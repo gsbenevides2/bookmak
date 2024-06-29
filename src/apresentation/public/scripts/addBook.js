@@ -55,9 +55,6 @@ function loadAuthorsInput() {
       authorsTag.addValue(author);
     });
   });
-  authorsInput.addEventListener("change", () => {
-    console.log("OI");
-  });
 }
 function loadCategoriesInput() {
   const categoriesInput = document.getElementById("categoriesInput");

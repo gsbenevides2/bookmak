@@ -9,7 +9,6 @@ function openConfirmationModal(id, type, action) {
     const modalBody = modalElement.querySelector('.modal-body p');
     const modalTitle = modalElement.querySelector('.modal-title');
     const modalPrimaryButton = modalElement.querySelector('.btn-primary');
-    console.log({ modalBody, modalTitle, modalPrimaryButton })
     if (action === 'disable' && type === 'book') {
         modalTitle.innerHTML = 'Inativar Livro';
         modalBody.innerHTML = "Deseja realmente inativar o livro? Isso vai inativar todos os SKUs tambem!";

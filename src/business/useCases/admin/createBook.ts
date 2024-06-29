@@ -49,8 +49,6 @@ export default async function createBook(
     data.bookmarkStyle.type === "image/png" ? "png" : "jpg",
   );
 
-  console.log(coverPublicUrl, bookmarkStylePublicUrl);
-
   const datasource = await DatabaseConnection.getDataSource();
   const id = await datasource
     .transaction(async (manager) => {

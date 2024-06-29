@@ -10,6 +10,7 @@ import checkOrderIsPayed from "./checkOrderIsPayed";
 import checkOrderIsPreparing from "./checkOrderIsPreparing";
 import checkOrderIsSended from "./checkOrderIsSended";
 import createBook from "./createBook";
+import createBookSku from "./createBookSku";
 import createCoupon from "./createCoupon";
 import disableBook from "./disableBook";
 import disableSku from "./disableSku";
@@ -44,6 +45,7 @@ export default {
   checkOrderIsPreparing,
   checkOrderIsSended,
   createBook,
+  createBookSku,
   createCoupon,
   disableBook,
   disableSku,

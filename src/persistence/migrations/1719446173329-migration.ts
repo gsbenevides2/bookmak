@@ -5,8 +5,9 @@ export class Migration1719446173329 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "book_sku" ADD "is_active" boolean NOT NULL DEFAULT true`,
+      `ALTER TABLE "book_sku" ADD "is_active" boolean NOT NULL DEFAULT false`,
     );
+    await queryRunner.query(`UPDATE "book_sku" SET "is_active" = true`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

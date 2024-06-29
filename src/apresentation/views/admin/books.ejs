@@ -60,7 +60,7 @@
           </div>
           <div>
             <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%= book.id %>" aria-expanded="false" aria-controls="collapse-<%= book.id %>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Ver Lista de SKUs"><i class="fa fa-caret-down"></i></button>
-            <button class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Adicionar SKU"><i class="fa fa-plus"></i></button>
+            <a class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Adicionar SKU" href="/admin/products/book/<%= book.id %>/new"><i class="fa fa-plus"></i></a>
             <a class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Editar Produto" href="/admin/products/book/<%= book.id %>"><i class="fa fa-pencil"></i></a>
             <% if(book.isActive) { %>
             <button class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Inativar Produto" onclick="openConfirmationModal('<%= book.id %>', 'book', 'disable')"><i class="fa-solid fa-toggle-off"></i></button>

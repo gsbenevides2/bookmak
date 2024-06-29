@@ -1,7 +1,3 @@
-function downloadFileToBlob(url) {
-  return fetch(url).then((response) => response.blob());
-}
-
 function loadCoverInput() {
   const coverInputBtn = document.getElementById("coverInputBtn");
   /** @constant
@@ -24,19 +20,6 @@ function loadCoverInput() {
       };
       reader.readAsDataURL(file);
     }
-  });
-  downloadFileToBlob(window.skuCoverUrl).then((blob) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      coverPreview.src = e.target.result;
-      coverPreview.classList.remove("d-none");
-    };
-    reader.readAsDataURL(blob);
-
-    const file = new File([blob], "cover.jpg", { type: "image/jpeg" });
-    const container = new DataTransfer();
-    container.items.add(file);
-    coverInput.files = container.files;
   });
 }
 

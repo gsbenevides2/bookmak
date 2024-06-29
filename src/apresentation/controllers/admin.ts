@@ -630,6 +630,7 @@ export const editBookSku: Controller = (req, res) => {
     description: string;
     cover: string;
     stockQuantity: string;
+    price: string;
   }
   const { title, description, stockQuantity } = req.body as Partial<Body>;
 
@@ -669,6 +670,8 @@ export const editBookSku: Controller = (req, res) => {
     type: cover.mimetype,
   };
 
+  const price = parseInt((parseFloat(req.body.price) * 100).toFixed(0), 10);
+
   adminUseCases
     .editBookSku({
       bookSkuId: skuId,
@@ -676,9 +679,89 @@ export const editBookSku: Controller = (req, res) => {
       description,
       cover: coverFile,
       stockQuantity: parseInt(stockQuantity, 10),
+      price,
     })
     .then((id) => {
-      console.log(id);
+      res.redirect("/admin/products?searchQuery=" + id);
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const getNewSkuPage: Controller = (req, res) => {
+  const bookId = req.params.bookId;
+  adminUseCases
+    .getBook(bookId)
+    .then((book) => {
+      if (!book) {
+        res.redirect(`/admin?error=Livro não encontrado`);
+        return;
+      }
+      res.render("admin/newSku", {
+        book,
+      });
+    })
+    .catch((err) => {
+      res.redirect(`/admin?error=${err.message}`);
+    });
+};
+
+export const createBookSku: Controller = (req, res) => {
+  interface Body {
+    title: string;
+    description: string;
+    cover: string;
+    stockQuantity: string;
+    price: string;
+  }
+  const { title, description, stockQuantity } = req.body as Partial<Body>;
+  const { bookId } = req.params;
+  if (title === undefined) {
+    res.redirect("/admin?error=Titulo não enviado");
+    return;
+  }
+
+  if (description === undefined) {
+    res.redirect("/admin?error=Descrição não enviada");
+    return;
+  }
+
+  if (stockQuantity === undefined) {
+    res.redirect("/admin?error=Quantidade em estoque não enviada");
+    return;
+  }
+
+  const files = req.files;
+  if (files === null || files === undefined) {
+    res.redirect("/admin?error=Arquivos não enviado");
+    return;
+  }
+  const cover = files.cover;
+
+  if (Array.isArray(cover)) {
+    res.redirect("/admin?error=Mutilpos arquivos enviados para capa");
+    return;
+  }
+  if (cover.mimetype !== "image/jpeg" && cover.mimetype !== "image/png") {
+    res.redirect("/admin?error=Formato de imagem inválido");
+  }
+
+  const coverFile = {
+    filePath: cover.tempFilePath,
+    type: cover.mimetype,
+  };
+
+  adminUseCases
+    .createBookSku({
+      bookId,
+      title,
+      description,
+      cover: coverFile,
+      stockQuantity: parseInt(stockQuantity, 10),
+      price: parseInt((parseFloat(req.body.price) * 100).toFixed(0), 10),
+    })
+    .then((id) => {
       res.redirect("/admin/products?searchQuery=" + id);
     })
     .catch((err) => {
